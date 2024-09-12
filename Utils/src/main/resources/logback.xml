@@ -1,0 +1,13 @@
+<configuration>
+    <conversionRule conversionWord="coloredLevel"
+                    converterClass="repair.ColorConverter"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[ %coloredLevel(%level) ] %logger{15} - %message%n%xException{5}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
