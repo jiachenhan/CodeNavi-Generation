@@ -98,6 +98,13 @@ public enum MoNodeType {
     TYPEExpressionMethodReference("ExpressionMethodReference", 90),
     TYPESuperMethodReference("SuperMethodReference", 91),
     TYPETypeMethodReference("TypeMethodReference", 92),
+
+    // the following types are not in JDT
+    TYPEAssigmentOperator("AssignmentOperator", -1),
+    TYPEInfixOperator("InfixOperator", -1),
+    TYPEPrefixOperator("PrefixOperator", -1),
+    TYPEPostfixOperator("PostfixOperator", -1),
+
     UNKNOWN("Unknown", -1);
 
     private final String nodeType;

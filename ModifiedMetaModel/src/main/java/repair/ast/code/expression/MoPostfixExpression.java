@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.MoNodeType;
+import repair.ast.code.virtual.MoPostfixOperator;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
 import repair.ast.role.RoleDescriptor;
@@ -22,8 +23,8 @@ public class MoPostfixExpression extends MoExpression {
             new Description<>(ChildType.CHILD, MoPostfixExpression.class, MoExpression.class,
                     "operand", true);
 
-    private final static Description<MoPostfixExpression, MoPostfixExpression.OperatorKind> operatorDescription =
-            new Description<>(ChildType.CHILDLIST, MoPostfixExpression.class, MoPostfixExpression.OperatorKind.class,
+    private final static Description<MoPostfixExpression, MoPostfixOperator> operatorDescription =
+            new Description<>(ChildType.CHILD, MoPostfixExpression.class, MoPostfixOperator.class,
                     "operator", true);
 
     private final static Map<String, Description<MoPostfixExpression, ?>> descriptionsMap = Map.ofEntries(
@@ -33,39 +34,15 @@ public class MoPostfixExpression extends MoExpression {
 
     @RoleDescriptor(type = ChildType.CHILD, role = "operand", mandatory = true)
     private MoExpression operand;
-    @RoleDescriptor(type = ChildType.SIMPLE, role = "operator", mandatory = true)
-    private MoPostfixExpression.OperatorKind operator;
+    @RoleDescriptor(type = ChildType.CHILD, role = "operator", mandatory = true)
+    private MoPostfixOperator operator;
 
     @Override
     public boolean isSame(MoNode other) {
         if (other instanceof MoPostfixExpression moPostfixExpression) {
-            return moPostfixExpression.operator.equals(this.operator) && moPostfixExpression.operand.isSame(this.operand);
+            return moPostfixExpression.operator.isSame(this.operator) && moPostfixExpression.operand.isSame(this.operand);
         }
         return false;
-    }
-
-    public enum OperatorKind{
-        INCREMENT("++"),
-        DECREMENT("--");
-
-        private final String keyword;
-        OperatorKind(String operator){
-            this.keyword = operator;
-        }
-
-        public static OperatorKind fromCode(String value) {
-            for (OperatorKind operatorKind : OperatorKind.values()) {
-                if (operatorKind.keyword.equals(value)) {
-                    return operatorKind;
-                }
-            }
-            throw new IllegalArgumentException("No enum constant for operator: " + value);
-        }
-
-        @Override
-        public String toString(){
-            return keyword;
-        }
     }
 
     public MoPostfixExpression(String fileName, int startLine, int endLine, PostfixExpression postfixExpression) {
@@ -81,7 +58,7 @@ public class MoPostfixExpression extends MoExpression {
         return operand;
     }
 
-    public OperatorKind getOperator() {
+    public MoPostfixOperator getOperator() {
         return operator;
     }
 
@@ -109,7 +86,7 @@ public class MoPostfixExpression extends MoExpression {
         if(description == operandDescription) {
             this.operand = (MoExpression) value;
         } else if(description == operatorDescription) {
-            this.operator = OperatorKind.fromCode((String) value);
+            this.operator = (MoPostfixOperator) value;
         } else {
             logger.error("Role {} not found in MoPostfixExpression", role);
         }
@@ -122,9 +99,7 @@ public class MoPostfixExpression extends MoExpression {
 
     @Override
     public MoNode shallowClone() {
-        MoPostfixExpression clone = new MoPostfixExpression(getFileName(), getStartLine(), getEndLine(), null);
-        clone.setStructuralProperty("operator", getOperator().toString());
-        return clone;
+        return new MoPostfixExpression(getFileName(), getStartLine(), getEndLine(), null);
     }
 
 }

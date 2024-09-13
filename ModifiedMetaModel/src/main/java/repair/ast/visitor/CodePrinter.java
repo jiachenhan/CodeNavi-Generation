@@ -9,6 +9,10 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
+import repair.ast.code.virtual.MoAssignmentOperator;
+import repair.ast.code.virtual.MoInfixOperator;
+import repair.ast.code.virtual.MoPostfixOperator;
+import repair.ast.code.virtual.MoPrefixOperator;
 import repair.ast.declaration.*;
 
 import java.util.List;
@@ -115,7 +119,7 @@ public class CodePrinter implements Visitor {
     @Override
     public void visitMoAssignment(MoAssignment moAssignment) {
         scan("leftHandSide", moAssignment.getLeft());
-        write(moAssignment.getOperatorKind().toString());
+        scan("operator", moAssignment.getOperator());
         scan("rightHandSide", moAssignment.getRight());
     }
 
@@ -329,7 +333,7 @@ public class CodePrinter implements Visitor {
     @Override
     public void visitMoInfixExpression(MoInfixExpression moInfixExpression) {
         scan("leftHandSide", moInfixExpression.getLeft());
-        write(moInfixExpression.getOperator().toString());
+        scan("operator", moInfixExpression.getOperator());
         scan("rightHandSide", moInfixExpression.getRight());
         if(!moInfixExpression.getExtendedOperands().isEmpty()) {
             for (MoExpression operand : moInfixExpression.getExtendedOperands()) {
@@ -453,12 +457,12 @@ public class CodePrinter implements Visitor {
     @Override
     public void visitMoPostfixExpression(MoPostfixExpression moPostfixExpression) {
         scan("operand", moPostfixExpression.getOperand());
-        write(moPostfixExpression.getOperator().toString());
+        scan("operator", moPostfixExpression.getOperator());
     }
 
     @Override
     public void visitMoPrefixExpression(MoPrefixExpression moPrefixExpression) {
-        write(moPrefixExpression.getOperator().toString());
+        scan("operator", moPrefixExpression.getOperator());
         scan("operand", moPrefixExpression.getOperand());
     }
 
@@ -1009,6 +1013,26 @@ public class CodePrinter implements Visitor {
         writeTypeArguments(moTypeMethodReference.getTypeArguments());
         write("::");
         scan("name", moTypeMethodReference.getSimpleName());
+    }
+
+    @Override
+    public void visitMoInfixOperator(MoInfixOperator moInfixOperator) {
+        write(moInfixOperator.getOperator().toString());
+    }
+
+    @Override
+    public void visitMoAssignmentOperator(MoAssignmentOperator moAssignmentOperator) {
+        write(moAssignmentOperator.getOperator().toString());
+    }
+
+    @Override
+    public void visitMoPostfixOperator(MoPostfixOperator moPostfixOperator) {
+        write(moPostfixOperator.getOperator().toString());
+    }
+
+    @Override
+    public void visitMoPrefixOperator(MoPrefixOperator moPrefixOperator) {
+        write(moPrefixOperator.getOperator().toString());
     }
 
     private void writeJavadoc(MoJavadoc javadoc) {

@@ -7,6 +7,10 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
+import repair.ast.code.virtual.MoAssignmentOperator;
+import repair.ast.code.virtual.MoInfixOperator;
+import repair.ast.code.virtual.MoPostfixOperator;
+import repair.ast.code.virtual.MoPrefixOperator;
 import repair.ast.declaration.*;
 
 import java.util.Collection;
@@ -97,7 +101,7 @@ public class DeepScanner implements Visitor{
     public void visitMoAssignment(MoAssignment moAssignment) {
         enter(moAssignment);
         scan("leftHandSide", moAssignment.getLeft());
-        scan("operator");
+        scan("operator", moAssignment.getOperator());
         scan("rightHandSide", moAssignment.getRight());
         exit(moAssignment);
     }
@@ -264,7 +268,7 @@ public class DeepScanner implements Visitor{
     public void visitMoInfixExpression(MoInfixExpression moInfixExpression) {
         enter(moInfixExpression);
         scan("leftOperand", moInfixExpression.getLeft());
-        scan("operator");
+        scan("operator", moInfixExpression.getOperator());
         scan("rightOperand", moInfixExpression.getRight());
         scan("extendedOperands", moInfixExpression.getExtendedOperands());
         exit(moInfixExpression);
@@ -352,14 +356,14 @@ public class DeepScanner implements Visitor{
     public void visitMoPostfixExpression(MoPostfixExpression moPostfixExpression) {
         enter(moPostfixExpression);
         scan("operand", moPostfixExpression.getOperand());
-        scan("operator");
+        scan("operator", moPostfixExpression.getOperator());
         exit(moPostfixExpression);
     }
 
     @Override
     public void visitMoPrefixExpression(MoPrefixExpression moPrefixExpression) {
         enter(moPrefixExpression);
-        scan("operator");
+        scan("operator", moPrefixExpression.getOperator());
         scan("operand", moPrefixExpression.getOperand());
         exit(moPrefixExpression);
     }
@@ -772,6 +776,34 @@ public class DeepScanner implements Visitor{
         scan("typeArguments", moTypeMethodReference.getTypeArguments());
         scan("name", moTypeMethodReference.getSimpleName());
         exit(moTypeMethodReference);
+    }
+
+    @Override
+    public void visitMoInfixOperator(MoInfixOperator moInfixOperator) {
+        enter(moInfixOperator);
+        scan("operator");
+        exit(moInfixOperator);
+    }
+
+    @Override
+    public void visitMoAssignmentOperator(MoAssignmentOperator moAssignmentOperator) {
+        enter(moAssignmentOperator);
+        scan("operator");
+        exit(moAssignmentOperator);
+    }
+
+    @Override
+    public void visitMoPostfixOperator(MoPostfixOperator moPostfixOperator) {
+        enter(moPostfixOperator);
+        scan("operator");
+        exit(moPostfixOperator);
+    }
+
+    @Override
+    public void visitMoPrefixOperator(MoPrefixOperator moPrefixOperator) {
+        enter(moPrefixOperator);
+        scan("operator");
+        exit(moPrefixOperator);
     }
 
     private void scanExtendedModifier(List<? extends MoExtendedModifier> extendedModifiers) {

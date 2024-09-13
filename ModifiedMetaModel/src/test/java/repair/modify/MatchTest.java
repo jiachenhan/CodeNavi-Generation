@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static repair.common.JDTUtils.genASTFromFile;
 import static repair.common.JDTUtils.getOnlyMethodDeclaration;
@@ -50,6 +51,7 @@ public class MatchTest {
         ApplyModification applyModification = new ApplyModification(pattern, moNode, matchInstances.get(0));
         applyModification.apply();
         System.out.println(applyModification.getRight());
+        assertEquals("not same", pattern.getPatternAfter0().toString(), applyModification.getRight().toString());
     }
 
 

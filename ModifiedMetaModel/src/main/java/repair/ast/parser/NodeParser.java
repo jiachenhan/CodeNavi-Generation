@@ -11,6 +11,10 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
+import repair.ast.code.virtual.MoAssignmentOperator;
+import repair.ast.code.virtual.MoInfixOperator;
+import repair.ast.code.virtual.MoPostfixOperator;
+import repair.ast.code.virtual.MoPrefixOperator;
 import repair.ast.declaration.*;
 import repair.ast.role.Description;
 
@@ -187,7 +191,17 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoAssignment assignment = new MoAssignment(fileName, startLine, endLine, node);
-        assignment.setStructuralProperty("operator", node.getOperator().toString());
+
+        // 设置operator
+        MoAssignmentOperator assignmentOperator = new MoAssignmentOperator(fileName, startLine, endLine, null);
+        assignmentOperator.setStructuralProperty("operator", node.getOperator().toString());
+        assignment.setStructuralProperty("operator", assignmentOperator);
+
+        // 设置description
+        @SuppressWarnings("unchecked")
+        Description<MoAssignment, ?> description = (Description<MoAssignment, ?>) assignment.getDescription("operator");
+        assignmentOperator.setParent(assignment, description);
+
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -688,7 +702,16 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoInfixExpression infixExpression = new MoInfixExpression(fileName, startLine, endLine, node);
-        infixExpression.setStructuralProperty("operator", node.getOperator().toString());
+
+        // 设置operator
+        MoInfixOperator infixOperator = new MoInfixOperator(fileName, startLine, endLine, null);
+        infixOperator.setStructuralProperty("operator", node.getOperator().toString());
+        infixExpression.setStructuralProperty("operator", infixOperator);
+
+        // 设置description
+        @SuppressWarnings("unchecked")
+        Description<MoInfixExpression, ?> description = (Description<MoInfixExpression, ?>) infixExpression.getDescription("operator");
+        infixOperator.setParent(infixExpression, description);
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1036,7 +1059,16 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoPostfixExpression postfixExpression = new MoPostfixExpression(fileName, startLine, endLine, node);
-        postfixExpression.setStructuralProperty("operator", node.getOperator().toString());
+
+        // 设置operator
+        MoPostfixOperator postfixOperator = new MoPostfixOperator(fileName, startLine, endLine, null);
+        postfixOperator.setStructuralProperty("operator", node.getOperator().toString());
+        postfixExpression.setStructuralProperty("operator", postfixOperator);
+
+        // 设置description
+        @SuppressWarnings("unchecked")
+        Description<MoPostfixExpression, ?> description = (Description<MoPostfixExpression, ?>) postfixExpression.getDescription("operator");
+        postfixOperator.setParent(postfixExpression, description);
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1054,7 +1086,16 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoPrefixExpression prefixExpression = new MoPrefixExpression(fileName, startLine, endLine, node);
-        prefixExpression.setStructuralProperty("operator", node.getOperator().toString());
+
+        // 设置operator
+        MoPrefixOperator prefixOperator = new MoPrefixOperator(fileName, startLine, endLine, null);
+        prefixOperator.setStructuralProperty("operator", node.getOperator().toString());
+        prefixExpression.setStructuralProperty("operator", prefixOperator);
+
+        // 设置description
+        @SuppressWarnings("unchecked")
+        Description<MoPrefixExpression, ?> description = (Description<MoPrefixExpression, ?>) prefixExpression.getDescription("operator");
+        prefixOperator.setParent(prefixExpression, description);
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();

@@ -11,6 +11,10 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
+import repair.ast.code.virtual.MoAssignmentOperator;
+import repair.ast.code.virtual.MoInfixOperator;
+import repair.ast.code.virtual.MoPostfixOperator;
+import repair.ast.code.virtual.MoPrefixOperator;
 import repair.ast.declaration.*;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
@@ -1608,6 +1612,78 @@ public class DeepCopyScanner extends DeepScanner{
         nodeStack.push(moTypeMethodReferenceNew);
 
         super.visitMoTypeMethodReference(moTypeMethodReference);
+    }
+
+    @Override
+    public void visitMoInfixOperator(MoInfixOperator moInfixOperator) {
+        MoInfixOperator moInfixOperatorNew = (MoInfixOperator) moInfixOperator.shallowClone();
+        copyMap.put(moInfixOperator, moInfixOperatorNew);
+
+        if (!nodeStack.isEmpty()) {
+            MoNode moParent = nodeStack.peek();
+            // 设置parent父子关系
+            bindingParentChildRelation(moParent, moInfixOperatorNew, moInfixOperator);
+        } else {
+            // 如果nodeStack为空，说明是根节点
+            rootNode = moInfixOperatorNew;
+        }
+        nodeStack.push(moInfixOperatorNew);
+
+        super.visitMoInfixOperator(moInfixOperator);
+    }
+
+    @Override
+    public void visitMoAssignmentOperator(MoAssignmentOperator moAssignmentOperator) {
+        MoAssignmentOperator moAssignmentOperatorNew = (MoAssignmentOperator) moAssignmentOperator.shallowClone();
+        copyMap.put(moAssignmentOperator, moAssignmentOperatorNew);
+
+        if (!nodeStack.isEmpty()) {
+            MoNode moParent = nodeStack.peek();
+            // 设置parent父子关系
+            bindingParentChildRelation(moParent, moAssignmentOperatorNew, moAssignmentOperator);
+        } else {
+            // 如果nodeStack为空，说明是根节点
+            rootNode = moAssignmentOperatorNew;
+        }
+        nodeStack.push(moAssignmentOperatorNew);
+
+        super.visitMoAssignmentOperator(moAssignmentOperator);
+    }
+
+    @Override
+    public void visitMoPostfixOperator(MoPostfixOperator moPostfixOperator) {
+        MoPostfixOperator moPostfixOperatorNew = (MoPostfixOperator) moPostfixOperator.shallowClone();
+        copyMap.put(moPostfixOperator, moPostfixOperatorNew);
+
+        if (!nodeStack.isEmpty()) {
+            MoNode moParent = nodeStack.peek();
+            // 设置parent父子关系
+            bindingParentChildRelation(moParent, moPostfixOperatorNew, moPostfixOperator);
+        } else {
+            // 如果nodeStack为空，说明是根节点
+            rootNode = moPostfixOperatorNew;
+        }
+        nodeStack.push(moPostfixOperatorNew);
+
+        super.visitMoPostfixOperator(moPostfixOperator);
+    }
+
+    @Override
+    public void visitMoPrefixOperator(MoPrefixOperator moPrefixOperator) {
+        MoPrefixOperator moPrefixOperatorNew = (MoPrefixOperator) moPrefixOperator.shallowClone();
+        copyMap.put(moPrefixOperator, moPrefixOperatorNew);
+
+        if (!nodeStack.isEmpty()) {
+            MoNode moParent = nodeStack.peek();
+            // 设置parent父子关系
+            bindingParentChildRelation(moParent, moPrefixOperatorNew, moPrefixOperator);
+        } else {
+            // 如果nodeStack为空，说明是根节点
+            rootNode = moPrefixOperatorNew;
+        }
+        nodeStack.push(moPrefixOperatorNew);
+
+        super.visitMoPrefixOperator(moPrefixOperator);
     }
 
     private void bindingParentChildRelation(MoNode moParent, MoNode moChild, MoNode oriChild) {

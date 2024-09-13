@@ -6,6 +6,10 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
+import repair.ast.code.virtual.MoAssignmentOperator;
+import repair.ast.code.virtual.MoInfixOperator;
+import repair.ast.code.virtual.MoPostfixOperator;
+import repair.ast.code.virtual.MoPrefixOperator;
 import repair.ast.declaration.*;
 
 public interface Visitor {
@@ -96,4 +100,10 @@ public interface Visitor {
     void visitMoExpressionMethodReference(MoExpressionMethodReference moExpressionMethodReference); // 90
     void visitMoSuperMethodReference(MoSuperMethodReference moSuperMethodReference); // 91
     void visitMoTypeMethodReference(MoTypeMethodReference moTypeMethodReference); // 92
+
+    // Virtual
+    void visitMoInfixOperator(MoInfixOperator moInfixOperator);
+    void visitMoAssignmentOperator(MoAssignmentOperator moAssignmentOperator);
+    void visitMoPostfixOperator(MoPostfixOperator moPostfixOperator);
+    void visitMoPrefixOperator(MoPrefixOperator moPrefixOperator);
 }

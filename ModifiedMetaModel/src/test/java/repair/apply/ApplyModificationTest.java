@@ -1,0 +1,144 @@
+package repair.apply;
+
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.junit.Test;
+import repair.apply.match.MatchInstance;
+import repair.apply.match.MatchMock;
+import repair.apply.match.Matcher;
+import repair.ast.MoNode;
+import repair.ast.parser.NodeParser;
+import repair.ast.visitor.DeepCopyScanner;
+import repair.pattern.Pattern;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.*;
+import static repair.common.JDTUtils.genASTFromFile;
+import static repair.common.JDTUtils.getOnlyMethodDeclaration;
+
+public class ApplyModificationTest {
+    private final Path datasetPath = Paths.get("E:/dataset/api/apache-API-cluster");
+
+    @Test
+    public void clusterDatasetAllTest() {
+        try(Stream<Path> javaStream = Files.walk(datasetPath)
+                .filter(Files::isRegularFile)
+                .filter(path -> path.getFileName().toString().equals("before.java"))) {
+            javaStream.forEach(patternBeforePath -> {
+                System.out.println("Processing: " + patternBeforePath);
+                Path patternAfterPath = patternBeforePath.resolveSibling("after.java");
+
+                CompilationUnit beforeCompilationUnit = genASTFromFile(patternBeforePath);
+                CompilationUnit afterCompilationUnit = genASTFromFile(patternAfterPath);
+
+                Optional<MethodDeclaration> methodBefore = getOnlyMethodDeclaration(beforeCompilationUnit);
+                Optional<MethodDeclaration> methodAfter = getOnlyMethodDeclaration(afterCompilationUnit);
+
+                if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
+                    fail("MethodDeclaration is not present");
+                }
+
+                NodeParser beforeParser = new NodeParser(patternBeforePath.toString(), beforeCompilationUnit);
+                NodeParser afterParser = new NodeParser(patternAfterPath.toString(), afterCompilationUnit);
+
+                MoNode moMethodBefore = beforeParser.process(methodBefore.get());
+                MoNode moMethodAfter = afterParser.process(methodAfter.get());
+
+                Pattern pattern = new Pattern(moMethodBefore, moMethodAfter);
+                DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moMethodBefore);
+                MoNode copyBefore = deepCopyScanner.getCopy();
+
+                // try repair
+                MatchInstance matchMock = MatchMock.match(pattern, copyBefore, deepCopyScanner.getCopyMap());
+
+                ApplyModification applyModification = new ApplyModification(pattern, copyBefore, matchMock);
+                applyModification.apply();
+
+                String afterCopyCode = "class PlaceHold {" + applyModification.getRight().toString() + "}";
+                afterCopyCode = clearAllSpaces(afterCopyCode);
+
+                // get oracle
+                String oracle = null;
+                try {
+                    oracle = Files.readString(patternAfterPath);
+                    oracle = clearAllSpaces(oracle);
+                } catch (IOException e) {
+                    System.out.println("Error reading origin file");
+                    fail();
+                }
+
+                assertEquals("Code not equal in " + patternBeforePath.toString(), oracle, afterCopyCode);
+
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void debug() {
+        Path base = Paths.get("E:/dataset/api/apache-API-cluster");
+        String projectName = "apex-core";
+        String groupName = "10";
+        String caseName = "e4d44e559376eb6203e19f186139334ad1b3f318--LaunchContainerRunnable-LaunchContainerRunnable--232-237_232-232";
+
+        Path patternBeforePath = base.resolve(projectName).resolve(groupName).resolve(caseName).resolve("before.java");
+        Path patternAfterPath = patternBeforePath.resolveSibling("after.java");
+
+        CompilationUnit beforeCompilationUnit = genASTFromFile(patternBeforePath);
+        CompilationUnit afterCompilationUnit = genASTFromFile(patternAfterPath);
+
+        Optional<MethodDeclaration> methodBefore = getOnlyMethodDeclaration(beforeCompilationUnit);
+        Optional<MethodDeclaration> methodAfter = getOnlyMethodDeclaration(afterCompilationUnit);
+
+        if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
+            fail("MethodDeclaration is not present");
+        }
+
+        NodeParser beforeParser = new NodeParser(patternBeforePath.toString(), beforeCompilationUnit);
+        NodeParser afterParser = new NodeParser(patternAfterPath.toString(), afterCompilationUnit);
+
+        MoNode moMethodBefore = beforeParser.process(methodBefore.get());
+        MoNode moMethodAfter = afterParser.process(methodAfter.get());
+
+        Pattern pattern = new Pattern(moMethodBefore, moMethodAfter);
+        DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moMethodBefore);
+        MoNode copyBefore = deepCopyScanner.getCopy();
+
+        // try repair
+        MatchInstance matchMock = MatchMock.match(pattern, copyBefore, deepCopyScanner.getCopyMap());
+
+        ApplyModification applyModification = new ApplyModification(pattern, copyBefore, matchMock);
+        applyModification.apply();
+
+        String afterCopyCode = "class PlaceHold {" + applyModification.getRight().toString() + "}";
+        afterCopyCode = clearAllSpaces(afterCopyCode);
+
+        // get oracle
+        String oracle = null;
+        try {
+            oracle = Files.readString(patternAfterPath);
+            oracle = clearAllSpaces(oracle);
+        } catch (IOException e) {
+            System.out.println("Error reading origin file");
+            fail();
+        }
+
+        assertEquals("Code not equal in " + patternBeforePath.toString(), oracle, afterCopyCode);
+    }
+
+
+    private String clearAllSpaces(String code) {
+        code = code.replaceAll("\\s", "");
+        return code;
+    }
+
+}

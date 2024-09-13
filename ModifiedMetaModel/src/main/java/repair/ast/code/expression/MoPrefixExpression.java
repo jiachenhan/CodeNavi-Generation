@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.MoNodeType;
 import repair.ast.code.type.MoType;
+import repair.ast.code.virtual.MoAssignmentOperator;
+import repair.ast.code.virtual.MoPrefixOperator;
 import repair.ast.declaration.MoFieldDeclaration;
 import repair.ast.declaration.MoVariableDeclarationFragment;
 import repair.ast.role.ChildType;
@@ -22,8 +24,8 @@ public class MoPrefixExpression extends MoExpression {
     @Serial
     private static final long serialVersionUID = -2782971528698470144L;
 
-    private final static Description<MoPrefixExpression, MoPrefixExpression.OperatorKind> operatorDescription =
-            new Description<>(ChildType.SIMPLE, MoPrefixExpression.class, MoPrefixExpression.OperatorKind.class,
+    private final static Description<MoPrefixExpression, MoPrefixOperator> operatorDescription =
+            new Description<>(ChildType.CHILD, MoPrefixExpression.class, MoPrefixOperator.class,
                     "operator", true);
 
     private final static Description<MoPrefixExpression, MoExpression> operandDescription =
@@ -35,64 +37,37 @@ public class MoPrefixExpression extends MoExpression {
             Map.entry("operand", operandDescription)
     );
 
-    @RoleDescriptor(type = ChildType.SIMPLE, role = "operator", mandatory = true)
-    private MoPrefixExpression.OperatorKind operator;
+    @RoleDescriptor(type = ChildType.CHILD, role = "operator", mandatory = true)
+    private MoPrefixOperator operator;
     @RoleDescriptor(type = ChildType.CHILD, role = "operand", mandatory = true)
     private MoExpression operand;
 
     @Override
     public boolean isSame(MoNode other) {
         if (other instanceof MoPrefixExpression moPrefixExpression) {
-            return moPrefixExpression.operator.equals(this.operator) && moPrefixExpression.operand.isSame(this.operand);
+            return moPrefixExpression.operator.isSame(this.operator) && moPrefixExpression.operand.isSame(this.operand);
         }
         return false;
     }
 
-
-    public enum OperatorKind{
-        INCREMENT("++"),
-        DECREMENT("--"),
-        PLUS("+"),
-        MINUS("-"),
-        COMPLEMENT("~"),
-        NOT("!");
-
-        private final String keyword;
-        OperatorKind(String operator){
-            this.keyword = operator;
-        }
-
-        public static OperatorKind fromCode(String value) {
-            for (OperatorKind operatorKind : OperatorKind.values()) {
-                if (operatorKind.keyword.equals(value)) {
-                    return operatorKind;
-                }
-            }
-            throw new IllegalArgumentException("No enum constant for operator: " + value);
-        }
-
-        @Override
-        public String toString(){
-            return keyword;
-        }
-    }
 
     public MoPrefixExpression(String fileName, int startLine, int endLine, PrefixExpression prefixExpression) {
         super(fileName, startLine, endLine, prefixExpression);
         moNodeType = MoNodeType.TYPEPrefixExpression;
     }
 
-    public OperatorKind getOperator() {
-        return operator;
-    }
-
     public void setOperand(MoExpression operand) {
         this.operand = operand;
+    }
+
+    public MoPrefixOperator getOperator() {
+        return operator;
     }
 
     public MoExpression getOperand() {
         return operand;
     }
+
 
     @Override
     public void accept(Visitor visitor) {
@@ -116,7 +91,7 @@ public class MoPrefixExpression extends MoExpression {
     public void setStructuralProperty(String role, Object value) {
         Description<MoPrefixExpression, ?> description = descriptionsMap.get(role);
         if(description == operatorDescription) {
-            this.operator = OperatorKind.fromCode((String) value);
+            this.operator = (MoPrefixOperator) value;
         } else if(description == operandDescription) {
             this.operand = (MoExpression) value;
         } else {
@@ -131,9 +106,7 @@ public class MoPrefixExpression extends MoExpression {
 
     @Override
     public MoNode shallowClone() {
-        MoPrefixExpression clone = new MoPrefixExpression(getFileName(), getStartLine(), getEndLine(), null);
-        clone.setStructuralProperty("operator", this.operator.toString());
-        return clone;
+        return new MoPrefixExpression(getFileName(), getStartLine(), getEndLine(), null);
     }
 
 }

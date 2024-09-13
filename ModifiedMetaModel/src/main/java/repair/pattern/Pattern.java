@@ -84,4 +84,12 @@ public class Pattern implements Serializable {
     public List<Operation<? extends Action>> getAllOperations() {
         return allOperations;
     }
+
+    public MoNode getPatternBefore0() {
+        return patternBefore0;
+    }
+
+    public MoNode getPatternAfter0() {
+        return patternAfter0;
+    }
 }

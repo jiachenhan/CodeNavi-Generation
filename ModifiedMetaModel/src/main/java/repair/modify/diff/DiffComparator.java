@@ -1,5 +1,6 @@
 package repair.modify.diff;
 
+import com.github.gumtreediff.actions.ChawatheScriptGenerator;
 import com.github.gumtreediff.actions.EditScript;
 import com.github.gumtreediff.actions.EditScriptGenerator;
 import com.github.gumtreediff.actions.SimplifiedChawatheScriptGenerator;
@@ -27,7 +28,7 @@ public class DiffComparator {
 
     public DiffComparator() {
         defaultMatcher = new CompositeMatchers.SimpleGumtree();
-        editScriptGenerator = new SimplifiedChawatheScriptGenerator();
+        editScriptGenerator = new ChawatheScriptGenerator();
     }
 
     private void buildTrees(MoNode beforeNode, MoNode afterNode) {

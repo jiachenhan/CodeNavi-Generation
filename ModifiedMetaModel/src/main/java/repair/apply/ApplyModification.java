@@ -8,6 +8,13 @@ import org.slf4j.LoggerFactory;
 import repair.apply.match.MatchInstance;
 import repair.ast.MoNode;
 import repair.ast.MoNodeList;
+import repair.ast.code.MoModifier;
+import repair.ast.code.expression.MoMethodInvocation;
+import repair.ast.code.expression.MoSimpleName;
+import repair.ast.code.expression.literal.MoBooleanLiteral;
+import repair.ast.code.expression.literal.MoCharacterLiteral;
+import repair.ast.code.expression.literal.MoNumberLiteral;
+import repair.ast.code.expression.literal.MoStringLiteral;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
 import repair.ast.visitor.DeepCopyScanner;
@@ -111,10 +118,10 @@ public class ApplyModification {
                             logger.error("error when Insert because insertParentType2Left is null, matching error");
                             return;
                         }
-                        insertParentInRight = this.leftToRightMap.get(insertParentType2Before);
+                        insertParentInRight = this.leftToRightMap.get(insertParentType2Left);
                     } else {
                         logger.info("insertParent type 3");
-                        MoNode insertParentType3 = maintenanceMap.getKey(insertParent);
+                        MoNode insertParentType3 = maintenanceMap.get(insertParent);
                         if(insertParentType3 == null) {
                             logger.error("error when Insert because insertParent is not in before tree and maintenanceMap");
                             return;
@@ -122,15 +129,13 @@ public class ApplyModification {
                         insertParentInRight = insertParentType3;
                     }
                 }
-
                 assert insertParentInRight != null;
 
 
                 // generate the insertee node in right
                 MoNode insertNodeTemplate = insertOperation.getAddNode();
-                DeepCopyScanner insertNodeDeepCopyScanner = new DeepCopyScanner(insertNodeTemplate);
-                MoNode insertNodeInRight = insertNodeDeepCopyScanner.getCopy();
-                maintenanceMap.putAll(insertNodeDeepCopyScanner.getCopyMap());
+                MoNode insertNodeInRight = insertNodeTemplate.shallowClone();
+                maintenanceMap.put(insertNodeTemplate, insertNodeInRight);
 
                 // insert the insertee node in right
                 if(insertLocation.classification() == ChildType.CHILDLIST) {
@@ -148,34 +153,46 @@ public class ApplyModification {
                     logger.error("error when Insert because insertLocation is single");
                 }
             } else if(operation instanceof MoveOperation moveOperation) {
-                // todo: 这个操作需要和insert操作一样考虑三种情况
                 MoNode moveNodeInBefore = moveOperation.getMoveNode();
                 MoNode moveParent = moveOperation.getMoveParent();
                 Description<? extends MoNode, ?> moveToLocation = moveOperation.getLocation();
 
                 // find the moveParent in right
-                // 和insert操作类似，move操作的两种情况
-                // 1. moveParent在before中有对应的节点 （这种情况属于一开始的插入），直接在right中找到对应的节点
-                // 2. moveParent在before中没有对应的节点，但是在之前的操作中已经插入到right中，这种情况需要从maintenanceMap中找到对应的节点
+                // 和insert操作类似，move操作的三种情况
+                // 1. moveParent在before中，这种情况出现于插入的节点插入到List中，产生新的结构
+                // 2. moveParent在After中，但是在before中有对应的节点 ，这种情况出现于插入元素对原本位置元素的替换
+                // 3. moveParent在before中没有对应的节点，但是在之前的操作中已经插入到right中，这种情况需要从maintenanceMap中找到对应的节点
                 MoNode moveParentInRight = null;
-                MoNode moveParentType1Before = this.beforeToAfterMap.getKey(moveParent);
-                if(moveParentType1Before == null) {
-                    logger.info("moveParent is not in before tree, try to find in maintenanceMap");
-                    MoNode moveParentType2 = maintenanceMap.getKey(moveParent);
-                    if(moveParentType2 == null) {
-                        logger.error("error when Move because moveParent is not in before tree and maintenanceMap");
-                        return;
-                    }
-                    moveParentInRight = moveParentType2;
-                } else {
-                    MoNode moveParentType1Left = this.matchInstance.getNodeMap().get(moveParentType1Before);
+                if(this.beforeToAfterMap.containsKey(moveParent)) {
+                    logger.info("moveParent type 1");
+                    MoNode moveParentType1Left = matchInstance.getNodeMap().get(moveParent);
                     if(moveParentType1Left == null) {
-                        logger.error("error when Insert because moveParentType1Left is null, matching error");
+                        logger.error("error when Move because moveParentType1Left is null, matching error");
                         return;
                     }
-                    moveParentInRight = this.leftToRightMap.get(moveParentType1Before);
+                    moveParentInRight = this.leftToRightMap.get(moveParentType1Left);
+                } else {
+                    MoNode moveParentType2Before = this.beforeToAfterMap.getKey(moveParent);
+                    if(moveParentType2Before != null) {
+                        logger.info("moveParent type 2");
+                        MoNode moveParentType2Left = this.matchInstance.getNodeMap().get(moveParentType2Before);
+                        if(moveParentType2Left == null) {
+                            logger.error("error when Move because moveParentType2Left is null, matching error");
+                            return;
+                        }
+                        moveParentInRight = this.leftToRightMap.get(moveParentType2Left);
+                    } else {
+                        logger.info("insertParent type 3");
+                        MoNode moveParentType3Right = maintenanceMap.getKey(moveParent);
+                        if(moveParentType3Right == null) {
+                            logger.error("error when Move because insertParent is not in before tree and maintenanceMap");
+                            return;
+                        }
+                        moveParentInRight = moveParentType3Right;
+                    }
                 }
                 assert moveParentInRight != null;
+
 
                 // 尝试找到moveNode在right中的位置
                 MoNode moveNodeInLeft = this.matchInstance.getNodeMap().get(moveNodeInBefore);
@@ -210,6 +227,8 @@ public class ApplyModification {
 
             } else if (operation instanceof UpdateOperation updateOperation) {
                 MoNode updateNodeInBefore = updateOperation.getUpdateNode();
+                String updateValue = updateOperation.getUpdateValue();
+
                 MoNode updateNodeInLeft = this.matchInstance.getNodeMap().get(updateNodeInBefore);
                 if(updateNodeInLeft == null) {
                     logger.error("error when update because updateNodeInLeft is null, matching error");
@@ -218,10 +237,40 @@ public class ApplyModification {
                 MoNode updateNodeInRight = this.leftToRightMap.get(updateNodeInLeft);
                 assert updateNodeInRight != null;
 
-                // todo: set value in different node type
+                if(setValue(updateNodeInRight, updateValue)) {
+                    logger.info("update success, node type: {}", updateNodeInRight.getClass().getName());
+                } else {
+                    logger.error("error when update, node type {} is not supported", updateNodeInRight.getClass().getName());
+                }
+
             } else {
                 logger.error("Unknown operation type");
             }
         }
     }
+
+    private boolean setValue(MoNode node, String value) {
+        // todo: set value in different node type
+        if(node instanceof MoSimpleName simpleName) {
+            simpleName.setStructuralProperty("identifier", value);
+            return true;
+        } else if (node instanceof MoBooleanLiteral booleanLiteral) {
+            booleanLiteral.setStructuralProperty("booleanValue", Boolean.parseBoolean(value));
+            return true;
+        } else if (node instanceof MoCharacterLiteral characterLiteral) {
+            characterLiteral.setStructuralProperty("escapedValue", value);
+            return true;
+        } else if (node instanceof MoStringLiteral stringLiteral) {
+            stringLiteral.setStructuralProperty("escapedValue", value);
+            return true;
+        } else if (node instanceof MoNumberLiteral numberLiteral) {
+            numberLiteral.setStructuralProperty("token", value);
+            return true;
+        } else if (node instanceof MoModifier modifier) {
+            modifier.setStructuralProperty("keyword", value);
+            return true;
+        }
+        return false;
+    }
+
 }

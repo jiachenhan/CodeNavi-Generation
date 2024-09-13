@@ -11,6 +11,7 @@ import repair.ast.code.MoExtendedModifier;
 import repair.ast.code.MoJavadoc;
 import repair.ast.code.type.MoPrimitiveType;
 import repair.ast.code.type.MoType;
+import repair.ast.code.virtual.MoInfixOperator;
 import repair.ast.declaration.MoFieldDeclaration;
 import repair.ast.declaration.MoVariableDeclarationFragment;
 import repair.ast.role.ChildType;
@@ -32,8 +33,8 @@ public class MoInfixExpression extends MoExpression {
             new Description<>(ChildType.CHILD, MoInfixExpression.class, MoExpression.class,
                     "leftOperand", false);
 
-    private final static Description<MoInfixExpression, MoInfixExpression.OperatorKind> operatorDescription =
-            new Description<>(ChildType.SIMPLE, MoInfixExpression.class, MoInfixExpression.OperatorKind.class,
+    private final static Description<MoInfixExpression, MoInfixOperator> operatorDescription =
+            new Description<>(ChildType.CHILD, MoInfixExpression.class, MoInfixOperator.class,
                     "operator", true);
 
     private final static Description<MoInfixExpression, MoExpression> rightOperandDescription =
@@ -53,8 +54,8 @@ public class MoInfixExpression extends MoExpression {
 
     @RoleDescriptor(type = ChildType.CHILD, role = "leftOperand", mandatory = true)
     private MoExpression left;
-    @RoleDescriptor(type = ChildType.SIMPLE, role = "operator", mandatory = true)
-    private MoInfixExpression.OperatorKind operator;
+    @RoleDescriptor(type = ChildType.CHILD, role = "operator", mandatory = true)
+    private MoInfixOperator operator;
     @RoleDescriptor(type = ChildType.CHILD, role = "rightOperand", mandatory = true)
     private MoExpression right;
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "extendedOperands", mandatory = true)
@@ -63,51 +64,10 @@ public class MoInfixExpression extends MoExpression {
     @Override
     public boolean isSame(MoNode other) {
         if(other instanceof MoInfixExpression otherInfix) {
-            return left.isSame(otherInfix.left) && operator.equals(otherInfix.operator) &&
+            return left.isSame(otherInfix.left) && operator.isSame(otherInfix.operator) &&
                     right.isSame(otherInfix.right) && MoNodeList.sameList(extendedOperands, otherInfix.extendedOperands);
         }
         return false;
-    }
-
-    public enum OperatorKind{
-        TIMES("*"),
-        DIVIDE("/"),
-        REMAINDER("%"),
-        PLUS("+"),
-        MINUS("-"),
-        LEFT_SHIFT("<<"),
-        RIGHT_SHIFT_SIGNED(">>"),
-        RIGHT_SHIFT_UNSIGNED(">>>"),
-        LESS("<"),
-        GREATER(">"),
-        LESS_EQUALS("<="),
-        GREATER_EQUALS(">="),
-        EQUALS("=="),
-        NOT_EQUALS("!="),
-        XOR("^"),
-        AND("&"),
-        OR("|"),
-        CONDITIONAL_AND("&&"),
-        CONDITIONAL_OR("||");
-
-        private final String keyword;
-        OperatorKind(String operator){
-            this.keyword = operator;
-        }
-
-        public static OperatorKind fromCode(String value) {
-            for (OperatorKind operatorKind : OperatorKind.values()) {
-                if (operatorKind.keyword.equals(value)) {
-                    return operatorKind;
-                }
-            }
-            throw new IllegalArgumentException("No enum constant for operator: " + value);
-        }
-
-        @Override
-        public String toString(){
-            return keyword;
-        }
     }
 
     public MoInfixExpression(String fileName, int startLine, int endLine, InfixExpression infixExpression) {
@@ -118,10 +78,6 @@ public class MoInfixExpression extends MoExpression {
 
     public void setLeft(MoExpression left) {
         this.left = left;
-    }
-
-    public void setOperator(OperatorKind operator) {
-        this.operator = operator;
     }
 
     public void setRight(MoExpression right) {
@@ -136,12 +92,12 @@ public class MoInfixExpression extends MoExpression {
         return left;
     }
 
-    public MoInfixExpression.OperatorKind getOperator() {
-        return operator;
-    }
-
     public MoExpression getRight() {
         return right;
+    }
+
+    public MoInfixOperator getOperator() {
+        return operator;
     }
 
     public MoNodeList<MoExpression> getExtendedOperands() {
@@ -177,7 +133,7 @@ public class MoInfixExpression extends MoExpression {
         if(description == leftOperandDescription) {
             left = (MoExpression) value;
         } else if(description == operatorDescription) {
-            operator = MoInfixExpression.OperatorKind.fromCode((String)value);
+            operator = (MoInfixOperator) value;
         } else if(description == rightOperandDescription) {
             right = (MoExpression) value;
         } else if(description == extendedOperandsDescription) {
@@ -195,9 +151,8 @@ public class MoInfixExpression extends MoExpression {
 
     @Override
     public MoNode shallowClone() {
-        MoInfixExpression clone = new MoInfixExpression(getFileName(), getStartLine(), getEndLine(), null);
-        clone.setStructuralProperty("operator", getOperator().toString());
-        return clone;
+        return new MoInfixExpression(getFileName(), getStartLine(), getEndLine(), null);
     }
+
 
 }
