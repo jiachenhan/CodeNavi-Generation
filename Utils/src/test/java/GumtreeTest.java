@@ -33,9 +33,9 @@ public class GumtreeTest {
     @Test
     public void GenJdtTest() {
         String projectName = "apex-core";
-        String GroupName = "10";
+        String GroupName = "6";
         Path groupPath = datasetPath.resolve(projectName).resolve(GroupName);
-        String casePattern = "e4d44e559376eb6203e19f186139334ad1b3f318--LaunchContainerRunnable-LaunchContainerRunnable--232-237_232-232";
+        String casePattern = "6349211c2e9644d889bbd1fad0536d4853947623--LogicalPlan-LogicalPlan--493-494_492-493";
 
         Path codeBeforePath = groupPath.resolve(casePattern).resolve("before.java");
         Path codeAfterPath = groupPath.resolve(casePattern).resolve("after.java");
@@ -59,7 +59,7 @@ public class GumtreeTest {
             Matcher defaultMatcher = Matchers.getInstance().getMatcher(); // retrieves the default matcher
             MappingStore mappings = defaultMatcher.match(beforeTree, afterTree); // computes the mappings between the trees
 
-            EditScriptGenerator editScriptGenerator = new ChawatheScriptGenerator(); // instantiates the simplified Chawathe script generator
+            EditScriptGenerator editScriptGenerator = new SimplifiedChawatheScriptGenerator(); // instantiates the simplified Chawathe script generator
             EditScript actions = editScriptGenerator.computeActions(mappings); // computes the edit script
 
             System.out.println(actions);

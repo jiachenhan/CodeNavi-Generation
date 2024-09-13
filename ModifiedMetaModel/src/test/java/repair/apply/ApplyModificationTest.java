@@ -96,8 +96,8 @@ public class ApplyModificationTest {
     public void debug() {
         Path base = Paths.get("E:/dataset/api/apache-API-cluster");
         String projectName = "apex-core";
-        String groupName = "10";
-        String caseName = "e4d44e559376eb6203e19f186139334ad1b3f318--LaunchContainerRunnable-LaunchContainerRunnable--232-237_232-232";
+        String groupName = "6";
+        String caseName = "6349211c2e9644d889bbd1fad0536d4853947623--LogicalPlan-LogicalPlan--493-494_492-493";
 
         Path patternBeforePath = base.resolve(projectName).resolve(groupName).resolve(caseName).resolve("before.java");
         Path patternAfterPath = patternBeforePath.resolveSibling("after.java");

@@ -10,6 +10,7 @@ import repair.ast.MoNode;
 import repair.ast.MoNodeList;
 import repair.ast.code.MoModifier;
 import repair.ast.code.expression.MoMethodInvocation;
+import repair.ast.code.expression.MoQualifiedName;
 import repair.ast.code.expression.MoSimpleName;
 import repair.ast.code.expression.literal.MoBooleanLiteral;
 import repair.ast.code.expression.literal.MoCharacterLiteral;
@@ -144,8 +145,16 @@ public class ApplyModification {
 
                 // generate the insertee node in right
                 MoNode insertNodeTemplate = insertOperation.getAddNode();
-                MoNode insertNodeInRight = insertNodeTemplate.shallowClone();
-                maintenanceMap.put(insertNodeTemplate, insertNodeInRight);
+                MoNode insertNodeInRight = null;
+                // 由于gumtreeScanner的实现，对于QualifiedName不对其子节点进行遍历，因此需要特殊处理
+                if(insertNodeTemplate instanceof MoQualifiedName moQualifiedName) {
+                    DeepCopyScanner copyScanner = new DeepCopyScanner(moQualifiedName);
+                    insertNodeInRight = copyScanner.getCopy();
+                    maintenanceMap.putAll(copyScanner.getCopyMap());
+                } else {
+                    insertNodeInRight = insertNodeTemplate.shallowClone();
+                    maintenanceMap.put(insertNodeTemplate, insertNodeInRight);
+                }
 
                 // insert the insertee node in right
                 if(insertLocation.classification() == ChildType.CHILDLIST) {

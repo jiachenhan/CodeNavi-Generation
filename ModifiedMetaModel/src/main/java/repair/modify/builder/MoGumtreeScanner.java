@@ -497,7 +497,8 @@ public class MoGumtreeScanner extends DeepScanner {
 
     @Override
     public void visitMoSimpleName(MoSimpleName moSimpleName) {
-        String nodeTypeName = getNodeType(moSimpleName);
+        // 区分SimpleName的类型
+        String nodeTypeName = moSimpleName.getLocationInParent().role() + getNodeType(moSimpleName);
         String label = moSimpleName.toString();
         Tree newNode = createNode(nodeTypeName, moSimpleName, label);
         pushToStack(newNode);
