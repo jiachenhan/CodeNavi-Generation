@@ -91,6 +91,16 @@ public class ApplyModification {
                 MoNode deleteNodeInRight = this.leftToRightMap.get(deleteNodeInLeft);
                 assert deleteNodeInRight != null;
                 deleteNodeInRight.removeFromParent();
+            } else if (operation instanceof TreeDeleteOperation treeDeleteOperation) {
+                MoNode deleteNodeInBefore = treeDeleteOperation.getDeleteNodeInBefore();
+                MoNode deleteNodeInLeft = this.matchInstance.getNodeMap().get(deleteNodeInBefore);
+                if(deleteNodeInLeft == null) {
+                    logger.error("can not find the delete node in left tree, matching error");
+                    return;
+                }
+                MoNode deleteNodeInRight = this.leftToRightMap.get(deleteNodeInLeft);
+                assert deleteNodeInRight != null;
+                deleteNodeInRight.removeFromParent();
             } else if(operation instanceof InsertOperation insertOperation) {
                 MoNode insertParent = insertOperation.getParent();
                 Description<? extends MoNode, ?> insertLocation = insertOperation.getLocation();
@@ -141,6 +151,68 @@ public class ApplyModification {
                 if(insertLocation.classification() == ChildType.CHILDLIST) {
                     MoNodeList<MoNode> children = (MoNodeList<MoNode>) insertParentInRight.getStructuralProperty(insertLocation.role());
                     int index = insertOperation.computeIndex();
+                    if(index < 0 || index > children.size()) {
+                        logger.error("error when Insert because index is out of bound");
+                        return;
+                    }
+
+                    children.add(index, insertNodeInRight);
+                } else if (insertLocation.classification() == ChildType.CHILD) {
+                    insertParentInRight.setStructuralProperty(insertLocation.role(), insertNodeInRight);
+                } else {
+                    logger.error("error when Insert because insertLocation is single");
+                }
+            } else if (operation instanceof TreeInsertOperation treeInsertOperation) {
+                MoNode insertParent = treeInsertOperation.getParent();
+                Description<? extends MoNode, ?> insertLocation = treeInsertOperation.getLocation();
+
+                // find the insertParent in right
+                // 对于insert操作有三种情况
+                // 1. insertParent在before中，这种情况出现于插入的节点插入到List中，产生新的结构
+                // 2. insertParent在After中，但是在before中有对应的节点 ，这种情况出现于插入元素对原本位置元素的替换
+                // 3. insertParent在before中没有对应的节点，但是在之前的操作中已经插入到right中，这种情况需要从maintenanceMap中找到对应的节点
+                MoNode insertParentInRight = null;
+                if(this.beforeToAfterMap.containsKey(insertParent)) {
+                    logger.info("insertParent type 1");
+                    MoNode insertParentType1Left = matchInstance.getNodeMap().get(insertParent);
+                    if(insertParentType1Left == null) {
+                        logger.error("error when Insert because insertParentType1Left is null, matching error");
+                        return;
+                    }
+                    insertParentInRight = this.leftToRightMap.get(insertParentType1Left);
+                } else {
+                    MoNode insertParentType2Before = this.beforeToAfterMap.getKey(insertParent);
+                    if(insertParentType2Before != null) {
+                        logger.info("insertParent type 2");
+                        MoNode insertParentType2Left = this.matchInstance.getNodeMap().get(insertParentType2Before);
+                        if(insertParentType2Left == null) {
+                            logger.error("error when Insert because insertParentType2Left is null, matching error");
+                            return;
+                        }
+                        insertParentInRight = this.leftToRightMap.get(insertParentType2Left);
+                    } else {
+                        logger.info("insertParent type 3");
+                        MoNode insertParentType3 = maintenanceMap.get(insertParent);
+                        if(insertParentType3 == null) {
+                            logger.error("error when Insert because insertParent is not in before tree and maintenanceMap");
+                            return;
+                        }
+                        insertParentInRight = insertParentType3;
+                    }
+                }
+                assert insertParentInRight != null;
+
+
+                // generate the insertee node in right
+                MoNode insertNodeTemplate = treeInsertOperation.getAddNode();
+                DeepCopyScanner deepCopyScanner = new DeepCopyScanner(insertNodeTemplate);
+                MoNode insertNodeInRight = deepCopyScanner.getCopy();
+                maintenanceMap.putAll(deepCopyScanner.getCopyMap());
+
+                // insert the insertee node in right
+                if(insertLocation.classification() == ChildType.CHILDLIST) {
+                    MoNodeList<MoNode> children = (MoNodeList<MoNode>) insertParentInRight.getStructuralProperty(insertLocation.role());
+                    int index = treeInsertOperation.computeIndex();
                     if(index < 0 || index > children.size()) {
                         logger.error("error when Insert because index is out of bound");
                         return;

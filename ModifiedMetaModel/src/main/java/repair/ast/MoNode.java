@@ -70,14 +70,23 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
         return fileName;
     }
 
-    /**
-     * start line number of current node in the source file
-     */
     private final int startLine;
-    /**
-     * end line number of current node in the source file
-     */
     private final int endLine;
+    private int startColumn = -1;
+    private int elementLength = -1;
+    public int getStartColumn() {
+        return startColumn;
+    }
+    public int getElementLength() {
+        return elementLength;
+    }
+    public void setStartColumn(int startColumn) {
+        this.startColumn = startColumn;
+    }
+    public void setElementLength(int elementLength) {
+        this.elementLength = elementLength;
+    }
+
     /**
      * parent node in the abstract syntax tree
      */

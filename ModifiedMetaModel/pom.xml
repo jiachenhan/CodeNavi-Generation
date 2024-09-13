@@ -29,11 +29,6 @@
             <artifactId>core</artifactId>
             <version>4.0.0-beta2</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.github.gumtreediff</groupId>-->
-<!--            <artifactId>gen.jdt</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>

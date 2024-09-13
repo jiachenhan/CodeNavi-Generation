@@ -4,7 +4,6 @@ import com.github.gumtreediff.actions.model.TreeDelete;
 import repair.ast.MoNode;
 import repair.modify.builder.GumtreeMetaConstant;
 
-@Deprecated
 public class TreeDeleteOperation extends Operation<TreeDelete>{
 
     private final MoNode deleteNodeInBefore;

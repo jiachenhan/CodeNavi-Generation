@@ -26,12 +26,21 @@ import static repair.common.JDTUtils.getOnlyMethodDeclaration;
 public class ApplyModificationTest {
     private final Path datasetPath = Paths.get("E:/dataset/api/apache-API-cluster");
 
+    private final List<Path> excludedPaths = List.of(
+            // over JLS8 limit (instanceof pattern)
+            Path.of("E:\\dataset\\api\\apache-API-cluster\\apex-core\\10\\e4d44e559376eb6203e19f186139334ad1b3f318--LaunchContainerRunnable-LaunchContainerRunnable--232-237_232-232\\before.java")
+    );
+
     @Test
     public void clusterDatasetAllTest() {
         try(Stream<Path> javaStream = Files.walk(datasetPath)
                 .filter(Files::isRegularFile)
                 .filter(path -> path.getFileName().toString().equals("before.java"))) {
             javaStream.forEach(patternBeforePath -> {
+                if(excludedPaths.contains(patternBeforePath)) {
+                    return;
+                }
+
                 System.out.println("Processing: " + patternBeforePath);
                 Path patternAfterPath = patternBeforePath.resolveSibling("after.java");
 
@@ -118,6 +127,7 @@ public class ApplyModificationTest {
 
         ApplyModification applyModification = new ApplyModification(pattern, copyBefore, matchMock);
         applyModification.apply();
+        System.out.println(applyModification.getRight());
 
         String afterCopyCode = "class PlaceHold {" + applyModification.getRight().toString() + "}";
         afterCopyCode = clearAllSpaces(afterCopyCode);
@@ -131,6 +141,7 @@ public class ApplyModificationTest {
             System.out.println("Error reading origin file");
             fail();
         }
+
 
         assertEquals("Code not equal in " + patternBeforePath.toString(), oracle, afterCopyCode);
     }

@@ -39,12 +39,16 @@ public class NodeParser extends ASTVisitor {
         return rootNode;
     }
 
+
+
     @Override
     public boolean visit(MethodDeclaration node) {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoMethodDeclaration method = new MoMethodDeclaration(fileName, startLine, endLine, node);
         method.setStructuralProperty("constructor", node.isConstructor());
+
+        setPositions(method, node.getStartPosition(), node.getLength());
 
         if (!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -78,6 +82,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoAnonymousClassDeclaration anonymousClass = new MoAnonymousClassDeclaration(fileName, startLine, endLine, node);
 
+        setPositions(anonymousClass, node.getStartPosition(), node.getLength());
+
         if (!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -96,6 +102,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoArrayAccess arrayAccess = new MoArrayAccess(fileName, startLine, endLine, node);
+
+        setPositions(arrayAccess, node.getStartPosition(), node.getLength());
 
         if (!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -116,6 +124,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoArrayCreation arrayCreation = new MoArrayCreation(fileName, startLine, endLine, node);
 
+        setPositions(arrayCreation, node.getStartPosition(), node.getLength());
+
         if (!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -134,6 +144,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoArrayInitializer arrayInitializer = new MoArrayInitializer(fileName, startLine, endLine, node);
+
+        setPositions(arrayInitializer, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -154,6 +166,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoArrayType arrayType = new MoArrayType(fileName, startLine, endLine, node);
 
+        setPositions(arrayType, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -173,6 +187,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoAssertStatement assertStatement = new MoAssertStatement(fileName, startLine, endLine, node);
 
+        setPositions(assertStatement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -191,6 +207,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoAssignment assignment = new MoAssignment(fileName, startLine, endLine, node);
+
+        setPositions(assignment, node.getStartPosition(), node.getLength());
 
         // 设置operator
         MoAssignmentOperator assignmentOperator = new MoAssignmentOperator(fileName, startLine, endLine, null);
@@ -222,6 +240,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoBlock block = new MoBlock(fileName, startLine, endLine, node);
 
+        setPositions(block, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -241,6 +261,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoBlockComment blockComment = new MoBlockComment(fileName, startLine, endLine, node);
         blockComment.setCommentStr(node.toString());
+
+        setPositions(blockComment, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -262,6 +284,8 @@ public class NodeParser extends ASTVisitor {
         MoBooleanLiteral booleanLiteral = new MoBooleanLiteral(fileName, startLine, endLine, node);
         booleanLiteral.setStructuralProperty("booleanValue", node.booleanValue());
 
+        setPositions(booleanLiteral, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -280,6 +304,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoBreakStatement breakStatement = new MoBreakStatement(fileName, startLine, endLine, node);
+
+        setPositions(breakStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -300,6 +326,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoCastExpression castExpression = new MoCastExpression(fileName, startLine, endLine, node);
 
+        setPositions(castExpression, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -318,6 +346,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoCatchClause catchClause = new MoCatchClause(fileName, startLine, endLine, node);
+
+        setPositions(catchClause, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -339,6 +369,8 @@ public class NodeParser extends ASTVisitor {
         MoCharacterLiteral characterLiteral = new MoCharacterLiteral(fileName, startLine, endLine, node);
         characterLiteral.setStructuralProperty("escapedValue", node.getEscapedValue());
 
+        setPositions(characterLiteral, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -359,6 +391,8 @@ public class NodeParser extends ASTVisitor {
         MoClassInstanceCreation classInstanceCreation = new MoClassInstanceCreation(fileName, startLine, endLine, node);
         classInstanceCreation.setTypeInferred(node.isResolvedTypeInferredFromExpectedType());
 
+        setPositions(classInstanceCreation, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -378,6 +412,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoCompilationUnit compilationUnit = new MoCompilationUnit(fileName, startLine, endLine, node);
 
+        setPositions(compilationUnit, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             logger.error("CompilationUnit should be the root node.");
         } else {
@@ -393,6 +429,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoConditionalExpression conditionalExpression = new MoConditionalExpression(fileName, startLine, endLine, node);
+
+        setPositions(conditionalExpression, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -412,6 +450,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoConstructorInvocation constructorInvocation = new MoConstructorInvocation(fileName, startLine, endLine, node);
 
+        setPositions(constructorInvocation, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -429,6 +469,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoContinueStatement continueStatement = new MoContinueStatement(fileName, startLine, endLine, node);
+
+        setPositions(continueStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -449,6 +491,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoCreationReference creationReference = new MoCreationReference(fileName, startLine, endLine, node);
 
+        setPositions(creationReference, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -466,6 +510,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoDimension dimension = new MoDimension(fileName, startLine, endLine, node);
+
+        setPositions(dimension, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -485,6 +531,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoDoStatement doStatement = new MoDoStatement(fileName, startLine, endLine, node);
 
+        setPositions(doStatement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -502,6 +550,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoEmptyStatement emptyStatement = new MoEmptyStatement(fileName, startLine, endLine, node);
+
+        setPositions(emptyStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -521,6 +571,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoEnhancedForStatement enhancedForStatement = new MoEnhancedForStatement(fileName, startLine, endLine, node);
 
+        setPositions(enhancedForStatement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -538,6 +590,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoEnumConstantDeclaration enumConstantDeclaration = new MoEnumConstantDeclaration(fileName, startLine, endLine, node);
+
+        setPositions(enumConstantDeclaration, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -557,6 +611,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoEnumDeclaration enumDeclaration = new MoEnumDeclaration(fileName, startLine, endLine, node);
 
+        setPositions(enumDeclaration, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -574,6 +630,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoExpressionMethodReference expressionMethodReference = new MoExpressionMethodReference(fileName, startLine, endLine, node);
+
+        setPositions(expressionMethodReference, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -593,6 +651,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoExpressionStatement expressionStatement = new MoExpressionStatement(fileName, startLine, endLine, node);
 
+        setPositions(expressionStatement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -610,6 +670,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoFieldAccess fieldAccess = new MoFieldAccess(fileName, startLine, endLine, node);
+
+        setPositions(fieldAccess, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -629,6 +691,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoFieldDeclaration fieldDeclaration = new MoFieldDeclaration(fileName, startLine, endLine, node);
 
+        setPositions(fieldDeclaration, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -647,6 +711,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoForStatement forStatement = new MoForStatement(fileName, startLine, endLine, node);
 
+        setPositions(forStatement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -664,6 +730,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoIfStatement ifStatement = new MoIfStatement(fileName, startLine, endLine, node);
+
+        setPositions(ifStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -685,6 +753,8 @@ public class NodeParser extends ASTVisitor {
         importDeclaration.setStructuralProperty("static", node.isStatic());
         importDeclaration.setStructuralProperty("onDemand", node.isOnDemand());
 
+        setPositions(importDeclaration, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             // 设置parent父子关系
@@ -702,6 +772,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoInfixExpression infixExpression = new MoInfixExpression(fileName, startLine, endLine, node);
+
+        setPositions(infixExpression, node.getStartPosition(), node.getLength());
 
         // 设置operator
         MoInfixOperator infixOperator = new MoInfixOperator(fileName, startLine, endLine, null);
@@ -731,6 +803,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoInitializer initializer = new MoInitializer(fileName, startLine, endLine, node);
 
+        setPositions(initializer, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, initializer, node);
@@ -747,6 +821,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoInstanceofExpression instanceofExpression = new MoInstanceofExpression(fileName, startLine, endLine, node);
+
+        setPositions(instanceofExpression, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -765,6 +841,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoIntersectionType intersectionType = new MoIntersectionType(fileName, startLine, endLine, node);
 
+        setPositions(intersectionType, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, intersectionType, node);
@@ -782,6 +860,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoJavadoc javadoc = new MoJavadoc(fileName, startLine, endLine, node);
 
+        setPositions(javadoc, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, javadoc, node);
@@ -798,6 +878,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoLabeledStatement labeledStatement = new MoLabeledStatement(fileName, startLine, endLine, node);
+
+        setPositions(labeledStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -817,6 +899,8 @@ public class NodeParser extends ASTVisitor {
         MoLambdaExpression lambdaExpression = new MoLambdaExpression(fileName, startLine, endLine, node);
         lambdaExpression.setStructuralProperty("parentheses", node.hasParentheses());
 
+        setPositions(lambdaExpression, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, lambdaExpression, node);
@@ -835,6 +919,8 @@ public class NodeParser extends ASTVisitor {
         MoLineComment lineComment = new MoLineComment(fileName, startLine, endLine, node);
         lineComment.setCommentStr(node.toString());
 
+        setPositions(lineComment, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, lineComment, node);
@@ -851,6 +937,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoMarkerAnnotation markerAnnotation = new MoMarkerAnnotation(fileName, startLine, endLine, node);
+
+        setPositions(markerAnnotation, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -874,6 +962,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoMemberValuePair memberValuePair = new MoMemberValuePair(fileName, startLine, endLine, node);
+
+        setPositions(memberValuePair, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -905,6 +995,8 @@ public class NodeParser extends ASTVisitor {
         MoMethodInvocation methodInvocation = new MoMethodInvocation(fileName, startLine, endLine, node);
         methodInvocation.setTypeInferred(node.isResolvedTypeInferredFromExpectedType());
 
+        setPositions(methodInvocation, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, methodInvocation, node);
@@ -923,6 +1015,8 @@ public class NodeParser extends ASTVisitor {
         MoModifier modifier = new MoModifier(fileName, startLine, endLine, node);
         modifier.setStructuralProperty("keyword", node.getKeyword().toString());
 
+        setPositions(modifier, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, modifier, node);
@@ -939,6 +1033,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoNameQualifiedType nameQualifiedType = new MoNameQualifiedType(fileName, startLine, endLine, node);
+
+        setPositions(nameQualifiedType, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -957,6 +1053,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoNormalAnnotation normalAnnotation = new MoNormalAnnotation(fileName, startLine, endLine, node);
 
+        setPositions(normalAnnotation, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, normalAnnotation, node);
@@ -973,6 +1071,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoNullLiteral nullLiteral = new MoNullLiteral(fileName, startLine, endLine, node);
+
+        setPositions(nullLiteral, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -992,6 +1092,8 @@ public class NodeParser extends ASTVisitor {
         MoNumberLiteral numberLiteral = new MoNumberLiteral(fileName, startLine, endLine, node);
         numberLiteral.setStructuralProperty("token", node.getToken());
 
+        setPositions(numberLiteral, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, numberLiteral, node);
@@ -1008,6 +1110,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoPackageDeclaration packageDeclaration = new MoPackageDeclaration(fileName, startLine, endLine, node);
+
+        setPositions(packageDeclaration, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1026,6 +1130,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoParameterizedType parameterizedType = new MoParameterizedType(fileName, startLine, endLine, node);
 
+        setPositions(parameterizedType, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, parameterizedType, node);
@@ -1043,6 +1149,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoParenthesizedExpression parenthesizedExpression = new MoParenthesizedExpression(fileName, startLine, endLine, node);
 
+        setPositions(parenthesizedExpression, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, parenthesizedExpression, node);
@@ -1059,6 +1167,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoPostfixExpression postfixExpression = new MoPostfixExpression(fileName, startLine, endLine, node);
+
+        setPositions(postfixExpression, node.getStartPosition(), node.getLength());
 
         // 设置operator
         MoPostfixOperator postfixOperator = new MoPostfixOperator(fileName, startLine, endLine, null);
@@ -1086,6 +1196,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoPrefixExpression prefixExpression = new MoPrefixExpression(fileName, startLine, endLine, node);
+
+        setPositions(prefixExpression, node.getStartPosition(), node.getLength());
 
         // 设置operator
         MoPrefixOperator prefixOperator = new MoPrefixOperator(fileName, startLine, endLine, null);
@@ -1115,6 +1227,8 @@ public class NodeParser extends ASTVisitor {
         MoPrimitiveType primitiveType = new MoPrimitiveType(fileName, startLine, endLine, node);
         primitiveType.setStructuralProperty("primitiveTypeCode", node.getPrimitiveTypeCode().toString());
 
+        setPositions(primitiveType, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, primitiveType, node);
@@ -1131,6 +1245,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoQualifiedName qualifiedName = new MoQualifiedName(fileName, startLine, endLine, node);
+
+        setPositions(qualifiedName, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1149,6 +1265,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoQualifiedType qualifiedType = new MoQualifiedType(fileName, startLine, endLine, node);
 
+        setPositions(qualifiedType, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, qualifiedType, node);
@@ -1165,6 +1283,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoReturnStatement returnStatement = new MoReturnStatement(fileName, startLine, endLine, node);
+
+        setPositions(returnStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1184,6 +1304,8 @@ public class NodeParser extends ASTVisitor {
         MoSimpleName simpleName = new MoSimpleName(fileName, startLine, endLine, node);
         simpleName.setStructuralProperty("identifier", node.getIdentifier());
 
+        setPositions(simpleName, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, simpleName, node);
@@ -1201,6 +1323,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoSimpleType simpleType = new MoSimpleType(fileName, startLine, endLine, node);
 
+        setPositions(simpleType, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, simpleType, node);
@@ -1217,6 +1341,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoSingleMemberAnnotation singleMemberAnnotation = new MoSingleMemberAnnotation(fileName, startLine, endLine, node);
+
+        setPositions(singleMemberAnnotation, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1236,6 +1362,8 @@ public class NodeParser extends ASTVisitor {
         MoSingleVariableDeclaration singleVariableDeclaration = new MoSingleVariableDeclaration(fileName, startLine, endLine, node);
         singleVariableDeclaration.setStructuralProperty("varargs", node.isVarargs());
 
+        setPositions(singleVariableDeclaration, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, singleVariableDeclaration, node);
@@ -1254,6 +1382,8 @@ public class NodeParser extends ASTVisitor {
         MoStringLiteral stringLiteral = new MoStringLiteral(fileName, startLine, endLine, node);
         stringLiteral.setStructuralProperty("escapedValue", node.getEscapedValue());
 
+        setPositions(stringLiteral, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, stringLiteral, node);
@@ -1271,6 +1401,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoSuperConstructorInvocation superConstructorInvocation = new MoSuperConstructorInvocation(fileName, startLine, endLine, node);
 
+        setPositions(superConstructorInvocation, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, superConstructorInvocation, node);
@@ -1287,6 +1419,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoSuperFieldAccess superFieldAccess = new MoSuperFieldAccess(fileName, startLine, endLine, node);
+
+        setPositions(superFieldAccess, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1306,6 +1440,8 @@ public class NodeParser extends ASTVisitor {
         MoSuperMethodInvocation superMethodInvocation = new MoSuperMethodInvocation(fileName, startLine, endLine, node);
         superMethodInvocation.setTypeInferred(node.isResolvedTypeInferredFromExpectedType());
 
+        setPositions(superMethodInvocation, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, superMethodInvocation, node);
@@ -1322,6 +1458,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoSuperMethodReference superMethodReference = new MoSuperMethodReference(fileName, startLine, endLine, node);
+
+        setPositions(superMethodReference, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1340,6 +1478,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoSwitchCase switchCase = new MoSwitchCase(fileName, startLine, endLine, node);
 
+        setPositions(switchCase, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, switchCase, node);
@@ -1357,6 +1497,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoSwitchStatement switchStatement = new MoSwitchStatement(fileName, startLine, endLine, node);
 
+        setPositions(switchStatement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, switchStatement, node);
@@ -1373,6 +1515,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoSynchronizedStatement synchronizedStatement = new MoSynchronizedStatement(fileName, startLine, endLine, node);
+
+        setPositions(synchronizedStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1392,6 +1536,8 @@ public class NodeParser extends ASTVisitor {
         MoTagElement tagElement = new MoTagElement(fileName, startLine, endLine, node);
         tagElement.setStructuralProperty("tagName", node.getTagName());
 
+        setPositions(tagElement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, tagElement, node);
@@ -1410,6 +1556,8 @@ public class NodeParser extends ASTVisitor {
         MoTextElement textElement = new MoTextElement(fileName, startLine, endLine, node);
         textElement.setStructuralProperty("text", node.getText());
 
+        setPositions(textElement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, textElement, node);
@@ -1426,6 +1574,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoThisExpression thisExpression = new MoThisExpression(fileName, startLine, endLine, node);
+
+        setPositions(thisExpression, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1444,6 +1594,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoThrowStatement throwStatement = new MoThrowStatement(fileName, startLine, endLine, node);
 
+        setPositions(throwStatement, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, throwStatement, node);
@@ -1460,6 +1612,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoTryStatement tryStatement = new MoTryStatement(fileName, startLine, endLine, node);
+
+        setPositions(tryStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1479,6 +1633,8 @@ public class NodeParser extends ASTVisitor {
         MoTypeDeclaration typeDeclaration = new MoTypeDeclaration(fileName, startLine, endLine, node);
         typeDeclaration.setStructuralProperty("interface", node.isInterface());
 
+        setPositions(typeDeclaration, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, typeDeclaration, node);
@@ -1495,6 +1651,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoTypeDeclarationStatement typeDeclarationStatement = new MoTypeDeclarationStatement(fileName, startLine, endLine, node);
+
+        setPositions(typeDeclarationStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1513,6 +1671,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoTypeLiteral typeLiteral = new MoTypeLiteral(fileName, startLine, endLine, node);
 
+        setPositions(typeLiteral, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, typeLiteral, node);
@@ -1529,6 +1689,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoTypeMethodReference typeMethodReference = new MoTypeMethodReference(fileName, startLine, endLine, node);
+
+        setPositions(typeMethodReference, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1547,6 +1709,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoTypeParameter typeParameter = new MoTypeParameter(fileName, startLine, endLine, node);
 
+        setPositions(typeParameter, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, typeParameter, node);
@@ -1563,6 +1727,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoUnionType unionType = new MoUnionType(fileName, startLine, endLine, node);
+
+        setPositions(unionType, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1581,6 +1747,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoVariableDeclarationExpression variableDeclarationExpression = new MoVariableDeclarationExpression(fileName, startLine, endLine, node);
 
+        setPositions(variableDeclarationExpression, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, variableDeclarationExpression, node);
@@ -1597,6 +1765,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoVariableDeclarationStatement variableDeclarationStatement = new MoVariableDeclarationStatement(fileName, startLine, endLine, node);
+
+        setPositions(variableDeclarationStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1616,6 +1786,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoVariableDeclarationFragment variableDeclarationFragment = new MoVariableDeclarationFragment(fileName, startLine, endLine, node);
 
+        setPositions(variableDeclarationFragment, node.getStartPosition(), node.getLength());
+
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, variableDeclarationFragment, node);
@@ -1632,6 +1804,8 @@ public class NodeParser extends ASTVisitor {
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoWhileStatement whileStatement = new MoWhileStatement(fileName, startLine, endLine, node);
+
+        setPositions(whileStatement, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1650,6 +1824,8 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoWildcardType wildcardType = new MoWildcardType(fileName, startLine, endLine, node);
         wildcardType.setStructuralProperty("upperBound", node.isUpperBound());
+
+        setPositions(wildcardType, node.getStartPosition(), node.getLength());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -2253,6 +2429,11 @@ public class NodeParser extends ASTVisitor {
 
     private int getEndLine(ASTNode node) {
         return cunit.getLineNumber(node.getStartPosition() + node.getLength());
+    }
+
+    private void setPositions(MoNode moNode, int startPosition, int length) {
+        moNode.setStartColumn(startPosition);
+        moNode.setElementLength(length);
     }
 
 }

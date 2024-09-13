@@ -5,7 +5,6 @@ import repair.ast.MoNode;
 import repair.ast.role.Description;
 import repair.modify.builder.GumtreeMetaConstant;
 
-@Deprecated
 public class TreeInsertOperation extends Operation<TreeInsert> implements AddOperator {
     private final MoNode insertParent;
     private final Description<? extends MoNode, ?> insertLocation;

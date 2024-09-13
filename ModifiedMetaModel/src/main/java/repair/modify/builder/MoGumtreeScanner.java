@@ -12,6 +12,10 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
+import repair.ast.code.virtual.MoAssignmentOperator;
+import repair.ast.code.virtual.MoInfixOperator;
+import repair.ast.code.virtual.MoPostfixOperator;
+import repair.ast.code.virtual.MoPrefixOperator;
 import repair.ast.declaration.*;
 import repair.ast.visitor.DeepScanner;
 
@@ -110,7 +114,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoAssignment(MoAssignment moAssignment) {
         String nodeTypeName = getNodeType(moAssignment);
-        String label = "=";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moAssignment, label);
         pushToStack(newNode);
 
@@ -315,7 +319,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoInfixExpression(MoInfixExpression moInfixExpression) {
         String nodeTypeName = getNodeType(moInfixExpression);
-        String label = moInfixExpression.getOperator().toString();
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moInfixExpression, label);
         pushToStack(newNode);
 
@@ -364,10 +368,38 @@ public class MoGumtreeScanner extends DeepScanner {
 
     @Override
     public void visitMoMethodInvocation(MoMethodInvocation moMethodInvocation) {
+        // 参考gen.jdt的实现, 他们专门对targetExpression和arguments进行了处理
         String nodeTypeName = getNodeType(moMethodInvocation);
         String label = "";
         Tree newNode = createNode(nodeTypeName, moMethodInvocation, label);
         pushToStack(newNode);
+
+//        moMethodInvocation.getExpression().ifPresent(expression -> {
+//            String MethodInvocationReceiverNodeTypeName = "MethodInvocationReceiver";
+//            String methodInvocationReceiverLabel = "";
+//            Tree receiverNode = createVirtualNode(MethodInvocationReceiverNodeTypeName, methodInvocationReceiverLabel, expression.getStartColumn(), expression.getElementLength());
+//            pushToStack(receiverNode);
+//            expression.accept(this);
+//            stack.pop();
+//        });
+//
+//        moMethodInvocation.getArguments().forEach(argument -> {
+//            argument.accept(this);
+//        });
+//
+//        if (!moMethodInvocation.getArguments().isEmpty()) {
+//            int start = moMethodInvocation.getArguments().get(0).getStartColumn();
+//            int length = moMethodInvocation.getArguments().get(moMethodInvocation.getArguments().size() - 1).getStartColumn() +
+//                    moMethodInvocation.getArguments().get(moMethodInvocation.getArguments().size() - 1).getElementLength() - start;
+//
+//            Tree argumentsNode = createVirtualNode("MethodInvocationReceiverArguments", "", start, length);
+//            pushToStack(argumentsNode);
+//            moMethodInvocation.getArguments().forEach(argument -> {
+//                argument.accept(this);
+//            });
+//            stack.pop();
+//        }
+//        exit(moMethodInvocation);
 
         super.visitMoMethodInvocation(moMethodInvocation);
     }
@@ -385,7 +417,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoNumberLiteral(MoNumberLiteral moNumberLiteral) {
         String nodeTypeName = getNodeType(moNumberLiteral);
-        String label = "";
+        String label = moNumberLiteral.getValue();
         Tree newNode = createNode(nodeTypeName, moNumberLiteral, label);
         pushToStack(newNode);
 
@@ -415,7 +447,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoPostfixExpression(MoPostfixExpression moPostfixExpression) {
         String nodeTypeName = getNodeType(moPostfixExpression);
-        String label = moPostfixExpression.getOperator().toString();
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moPostfixExpression, label);
         pushToStack(newNode);
 
@@ -425,7 +457,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoPrefixExpression(MoPrefixExpression moPrefixExpression) {
         String nodeTypeName = getNodeType(moPrefixExpression);
-        String label = moPrefixExpression.getOperator().toString();
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moPrefixExpression, label);
         pushToStack(newNode);
 
@@ -444,12 +476,13 @@ public class MoGumtreeScanner extends DeepScanner {
 
     @Override
     public void visitMoQualifiedName(MoQualifiedName moQualifiedName) {
+        // 参考gen.jdt的实现, 不对QualifiedName的子节点进行处理
         String nodeTypeName = getNodeType(moQualifiedName);
-        String label = "";
+        String label = moQualifiedName.toString();
         Tree newNode = createNode(nodeTypeName, moQualifiedName, label);
         pushToStack(newNode);
 
-        super.visitMoQualifiedName(moQualifiedName);
+        exit(moQualifiedName);
     }
 
     @Override
@@ -485,7 +518,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoSingleVariableDeclaration(MoSingleVariableDeclaration moSingleVariableDeclaration) {
         String nodeTypeName = getNodeType(moSingleVariableDeclaration);
-        String label = "";
+        String label = moSingleVariableDeclaration.isVarargs() ? "..." : "";
         Tree newNode = createNode(nodeTypeName, moSingleVariableDeclaration, label);
         pushToStack(newNode);
 
@@ -705,7 +738,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoTextElement(MoTextElement moTextElement) {
         String nodeTypeName = getNodeType(moTextElement);
-        String label = "";
+        String label = moTextElement.getText();
         Tree newNode = createNode(nodeTypeName, moTextElement, label);
         pushToStack(newNode);
 
@@ -922,6 +955,46 @@ public class MoGumtreeScanner extends DeepScanner {
         super.visitMoTypeMethodReference(moTypeMethodReference);
     }
 
+    @Override
+    public void visitMoInfixOperator(MoInfixOperator moInfixOperator) {
+        String nodeTypeName = getNodeType(moInfixOperator);
+        String label = "InfixOp" + moInfixOperator.getOperator().toString();
+        Tree newNode = createNode(nodeTypeName, moInfixOperator, label);
+        pushToStack(newNode);
+
+        super.visitMoInfixOperator(moInfixOperator);
+    }
+
+    @Override
+    public void visitMoAssignmentOperator(MoAssignmentOperator moAssignmentOperator) {
+        String nodeTypeName = getNodeType(moAssignmentOperator);
+        String label = "AssignOp" + moAssignmentOperator.getOperator().toString();
+        Tree newNode = createNode(nodeTypeName, moAssignmentOperator, label);
+        pushToStack(newNode);
+
+        super.visitMoAssignmentOperator(moAssignmentOperator);
+    }
+
+    @Override
+    public void visitMoPostfixOperator(MoPostfixOperator moPostfixOperator) {
+        String nodeTypeName = getNodeType(moPostfixOperator);
+        String label = "PostfixOp" + moPostfixOperator.getOperator().toString();
+        Tree newNode = createNode(nodeTypeName, moPostfixOperator, label);
+        pushToStack(newNode);
+
+        super.visitMoPostfixOperator(moPostfixOperator);
+    }
+
+    @Override
+    public void visitMoPrefixOperator(MoPrefixOperator moPrefixOperator) {
+        String nodeTypeName = getNodeType(moPrefixOperator);
+        String label = "PrefixOP" + moPrefixOperator.getOperator().toString();
+        Tree newNode = createNode(nodeTypeName, moPrefixOperator, label);
+        pushToStack(newNode);
+
+        super.visitMoPrefixOperator(moPrefixOperator);
+    }
+
 
     private String getNodeType(MoNode node) {
         String nodeTypeName = NOTYPE;
@@ -939,7 +1012,16 @@ public class MoGumtreeScanner extends DeepScanner {
 
     private Tree createNode(String nodeTypeName, MoNode node, String label) {
         Tree newNode = createNode(nodeTypeName, label);
+        newNode.setPos(node.getStartColumn());
+        newNode.setLength(node.getElementLength());
         newNode.setMetadata(GumtreeMetaConstant.MO_NODE_KEY, node);
+        return newNode;
+    }
+
+    private Tree createVirtualNode(String nodeTypeName, String label, int start, int length) {
+        Tree newNode = createNode(nodeTypeName, label);
+        newNode.setPos(start);
+        newNode.setLength(length);
         return newNode;
     }
 

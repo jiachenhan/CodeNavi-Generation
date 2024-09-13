@@ -28,7 +28,7 @@ public class DiffComparator {
 
     public DiffComparator() {
         defaultMatcher = new CompositeMatchers.SimpleGumtree();
-        editScriptGenerator = new ChawatheScriptGenerator();
+        editScriptGenerator = new SimplifiedChawatheScriptGenerator();
     }
 
     private void buildTrees(MoNode beforeNode, MoNode afterNode) {
