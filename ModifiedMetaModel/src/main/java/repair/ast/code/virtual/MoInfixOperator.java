@@ -31,8 +31,8 @@ public class MoInfixOperator extends MoVirtualChildNode {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "operator", mandatory = true)
     private OperatorKind operator;
 
-    public MoInfixOperator(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        super(fileName, startLine, endLine, null);
+    public MoInfixOperator(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEInfixOperator;
     }
 
@@ -113,7 +113,7 @@ public class MoInfixOperator extends MoVirtualChildNode {
 
     @Override
     public MoNode shallowClone() {
-        MoInfixOperator clone = new MoInfixOperator(getFileName(), getStartLine(), getEndLine(), null);
+        MoInfixOperator clone = new MoInfixOperator(getFileName(), getStartLine(), getEndLine(), getElementPos(), getElementLength(), null);
         clone.setStructuralProperty("operator", operator.toString());
         return clone;
     }

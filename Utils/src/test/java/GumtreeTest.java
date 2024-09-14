@@ -32,10 +32,10 @@ public class GumtreeTest {
      */
     @Test
     public void GenJdtTest() {
-        String projectName = "apex-core";
-        String GroupName = "6";
+        String projectName = "archiva";
+        String GroupName = "15";
         Path groupPath = datasetPath.resolve(projectName).resolve(GroupName);
-        String casePattern = "ac640c2923753f79adb6e4a3f7e8170996b7a99e--StramMiniClusterTest-StramMiniClusterTest--84-85_84-85";
+        String casePattern = "1e1f7cdacd0118a5fb9a707871c7b7100b7f09d2--DefaultRepositoryGroupService-DefaultRepositoryGroupService--101-103_102-105";
 
         Path codeBeforePath = groupPath.resolve(casePattern).resolve("before.java");
         Path codeAfterPath = groupPath.resolve(casePattern).resolve("after.java");

@@ -14,7 +14,7 @@ public abstract class MoVirtualChildListNode extends MoVirtualNode {
     @Serial
     private static final long serialVersionUID = 8960049876625630159L;
 
-    public MoVirtualChildListNode(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        super(fileName, startLine, endLine, null);
+    public MoVirtualChildListNode(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        super(fileName, startLine, endLine, elementPos, elementLength, null);
     }
 }

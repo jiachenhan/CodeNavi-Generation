@@ -29,8 +29,8 @@ public class MoAssignmentOperator extends MoVirtualChildNode {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "operator", mandatory = true)
     private OperatorKind operator;
 
-    public MoAssignmentOperator(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        super(fileName, startLine, endLine, null);
+    public MoAssignmentOperator(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEAssigmentOperator;
     }
 
@@ -104,7 +104,7 @@ public class MoAssignmentOperator extends MoVirtualChildNode {
 
     @Override
     public MoNode shallowClone() {
-        MoAssignmentOperator clone = new MoAssignmentOperator(getFileName(), getStartLine(), getEndLine(), null);
+        MoAssignmentOperator clone = new MoAssignmentOperator(getFileName(), getStartLine(), getEndLine(), getElementPos(), getElementLength(), null);
         clone.setStructuralProperty("operator", operator.toString());
         return clone;
     }

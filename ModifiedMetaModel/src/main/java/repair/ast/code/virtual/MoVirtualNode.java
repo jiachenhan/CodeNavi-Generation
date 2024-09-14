@@ -12,7 +12,7 @@ public abstract class MoVirtualNode extends MoNode {
     @Serial
     private static final long serialVersionUID = 7371327390030467463L;
 
-    public MoVirtualNode(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        super(fileName, startLine, endLine, null);
+    public MoVirtualNode(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        super(fileName, startLine, endLine, elementPos, elementLength, null);
     }
 }

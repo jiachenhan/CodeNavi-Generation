@@ -101,7 +101,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoAssertStatement(MoAssertStatement moAssertStatement) {
         String nodeTypeName = getNodeType(moAssertStatement);
-        String label = "assert";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moAssertStatement, label);
         pushToStack(newNode);
 
@@ -146,7 +146,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoBreakStatement(MoBreakStatement moBreakStatement) {
         String nodeTypeName = getNodeType(moBreakStatement);
-        String label = "break";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moBreakStatement, label);
         pushToStack(newNode);
 
@@ -226,7 +226,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoContinueStatement(MoContinueStatement moContinueStatement) {
         String nodeTypeName = getNodeType(moContinueStatement);
-        String label = "continue";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moContinueStatement, label);
         pushToStack(newNode);
 
@@ -236,7 +236,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoDoStatement(MoDoStatement moDoStatement) {
         String nodeTypeName = getNodeType(moDoStatement);
-        String label = "do";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moDoStatement, label);
         pushToStack(newNode);
 
@@ -246,7 +246,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoEmptyStatement(MoEmptyStatement moEmptyStatement) {
         String nodeTypeName = getNodeType(moEmptyStatement);
-        String label = ";";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moEmptyStatement, label);
         pushToStack(newNode);
 
@@ -286,7 +286,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoForStatement(MoForStatement moForStatement) {
         String nodeTypeName = getNodeType(moForStatement);
-        String label = "for";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moForStatement, label);
         pushToStack(newNode);
 
@@ -296,7 +296,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoIfStatement(MoIfStatement moIfStatement) {
         String nodeTypeName = getNodeType(moIfStatement);
-        String label = "if";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moIfStatement, label);
         pushToStack(newNode);
 
@@ -306,7 +306,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoImportDeclaration(MoImportDeclaration moImportDeclaration) {
         String nodeTypeName = getNodeType(moImportDeclaration);
-        String label = "import";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moImportDeclaration, label);
         pushToStack(newNode);
 
@@ -376,7 +376,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoNullLiteral(MoNullLiteral moNullLiteral) {
         String nodeTypeName = getNodeType(moNullLiteral);
-        String label = "null";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moNullLiteral, label);
         pushToStack(newNode);
 
@@ -396,7 +396,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoPackageDeclaration(MoPackageDeclaration moPackageDeclaration) {
         String nodeTypeName = getNodeType(moPackageDeclaration);
-        String label = "package";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moPackageDeclaration, label);
         pushToStack(newNode);
 
@@ -457,7 +457,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoReturnStatement(MoReturnStatement moReturnStatement) {
         String nodeTypeName = getNodeType(moReturnStatement);
-        String label = "return";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moReturnStatement, label);
         pushToStack(newNode);
 
@@ -498,7 +498,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoStringLiteral(MoStringLiteral moStringLiteral) {
         String nodeTypeName = getNodeType(moStringLiteral);
-        String label = moStringLiteral.toString();
+        String label = moStringLiteral.getEscapedValue();
         Tree newNode = createNode(nodeTypeName, moStringLiteral, label);
         pushToStack(newNode);
 
@@ -548,7 +548,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoSwitchStatement(MoSwitchStatement moSwitchStatement) {
         String nodeTypeName = getNodeType(moSwitchStatement);
-        String label = "switch";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moSwitchStatement, label);
         pushToStack(newNode);
 
@@ -558,7 +558,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoSynchronizedStatement(MoSynchronizedStatement moSynchronizedStatement) {
         String nodeTypeName = getNodeType(moSynchronizedStatement);
-        String label = "synchronized";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moSynchronizedStatement, label);
         pushToStack(newNode);
 
@@ -568,7 +568,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoThisExpression(MoThisExpression moThisExpression) {
         String nodeTypeName = getNodeType(moThisExpression);
-        String label = "this";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moThisExpression, label);
         pushToStack(newNode);
 
@@ -578,7 +578,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoThrowStatement(MoThrowStatement moThrowStatement) {
         String nodeTypeName = getNodeType(moThrowStatement);
-        String label = "throw";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moThrowStatement, label);
         pushToStack(newNode);
 
@@ -588,7 +588,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoTryStatement(MoTryStatement moTryStatement) {
         String nodeTypeName = getNodeType(moTryStatement);
-        String label = "try";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moTryStatement, label);
         pushToStack(newNode);
 
@@ -658,7 +658,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoWhileStatement(MoWhileStatement moWhileStatement) {
         String nodeTypeName = getNodeType(moWhileStatement);
-        String label = "while";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moWhileStatement, label);
         pushToStack(newNode);
 
@@ -668,7 +668,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoInstanceofExpression(MoInstanceofExpression moInstanceofExpression) {
         String nodeTypeName = getNodeType(moInstanceofExpression);
-        String label = "instanceof";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moInstanceofExpression, label);
         pushToStack(newNode);
 
@@ -678,7 +678,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoLineComment(MoLineComment moLineComment) {
         String nodeTypeName = getNodeType(moLineComment);
-        String label = moLineComment.toString();
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moLineComment, label);
         pushToStack(newNode);
 
@@ -688,7 +688,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoBlockComment(MoBlockComment moBlockComment) {
         String nodeTypeName = getNodeType(moBlockComment);
-        String label = moBlockComment.toString();
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moBlockComment, label);
         pushToStack(newNode);
 
@@ -718,7 +718,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoEnhancedForStatement(MoEnhancedForStatement moEnhancedForStatement) {
         String nodeTypeName = getNodeType(moEnhancedForStatement);
-        String label = "enhancedFor";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moEnhancedForStatement, label);
         pushToStack(newNode);
 
@@ -778,7 +778,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoWildcardType(MoWildcardType moWildcardType) {
         String nodeTypeName = getNodeType(moWildcardType);
-        String label = "?";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moWildcardType, label);
         pushToStack(newNode);
 
@@ -848,7 +848,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoDimension(MoDimension moDimension) {
         String nodeTypeName = getNodeType(moDimension);
-        String label = "[]";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moDimension, label);
         pushToStack(newNode);
 
@@ -858,7 +858,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoLambdaExpression(MoLambdaExpression moLambdaExpression) {
         String nodeTypeName = getNodeType(moLambdaExpression);
-        String label = "->";
+        String label = "";
         Tree newNode = createNode(nodeTypeName, moLambdaExpression, label);
         pushToStack(newNode);
 
@@ -928,7 +928,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoInfixOperator(MoInfixOperator moInfixOperator) {
         String nodeTypeName = getNodeType(moInfixOperator);
-        String label = "InfixOp" + moInfixOperator.getOperator().toString();
+        String label = moInfixOperator.getOperator().toString();
         Tree newNode = createNode(nodeTypeName, moInfixOperator, label);
         pushToStack(newNode);
 
@@ -938,7 +938,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoAssignmentOperator(MoAssignmentOperator moAssignmentOperator) {
         String nodeTypeName = getNodeType(moAssignmentOperator);
-        String label = "AssignOp" + moAssignmentOperator.getOperator().toString();
+        String label = moAssignmentOperator.getOperator().toString();
         Tree newNode = createNode(nodeTypeName, moAssignmentOperator, label);
         pushToStack(newNode);
 
@@ -948,7 +948,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoPostfixOperator(MoPostfixOperator moPostfixOperator) {
         String nodeTypeName = getNodeType(moPostfixOperator);
-        String label = "PostfixOp" + moPostfixOperator.getOperator().toString();
+        String label = moPostfixOperator.getOperator().toString();
         Tree newNode = createNode(nodeTypeName, moPostfixOperator, label);
         pushToStack(newNode);
 
@@ -958,7 +958,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoPrefixOperator(MoPrefixOperator moPrefixOperator) {
         String nodeTypeName = getNodeType(moPrefixOperator);
-        String label = "PrefixOP" + moPrefixOperator.getOperator().toString();
+        String label = moPrefixOperator.getOperator().toString();
         Tree newNode = createNode(nodeTypeName, moPrefixOperator, label);
         pushToStack(newNode);
 
@@ -967,7 +967,7 @@ public class MoGumtreeScanner extends DeepScanner {
 
     @Override
     public void visitMoMethodInvocationTarget(MoMethodInvocationTarget moMethodInvocationTarget) {
-        String MethodInvocationReceiverNodeTypeName = "MethodInvocationReceiver";
+        String MethodInvocationReceiverNodeTypeName = getNodeType(moMethodInvocationTarget);
         String methodInvocationReceiverLabel = "";
         Tree receiverNode = createNode(MethodInvocationReceiverNodeTypeName, moMethodInvocationTarget, methodInvocationReceiverLabel);
         pushToStack(receiverNode);
@@ -977,7 +977,7 @@ public class MoGumtreeScanner extends DeepScanner {
 
     @Override
     public void visitMoMethodInvocationArguments(MoMethodInvocationArguments moMethodInvocationArguments) {
-        String MethodInvocationArgumentsNodeTypeName = "MethodInvocationArguments";
+        String MethodInvocationArgumentsNodeTypeName = getNodeType(moMethodInvocationArguments);
         String methodInvocationArgumentsLabel = "";
         Tree argumentsNode = createNode(MethodInvocationArgumentsNodeTypeName, moMethodInvocationArguments, methodInvocationArgumentsLabel);
         pushToStack(argumentsNode);
@@ -989,12 +989,9 @@ public class MoGumtreeScanner extends DeepScanner {
     private String getNodeType(MoNode node) {
         String nodeTypeName = NOTYPE;
         if (node != null) {
-            nodeTypeName = node.getClass().getSimpleName();
+            nodeTypeName = node.getClass().getSimpleName().substring(2); // 去掉Mo？
         } else {
             logger.error("Node should not be null");
-        }
-        if (node instanceof MoBlock) {
-            nodeTypeName = node.getLocationInParent().role();
         }
         return nodeTypeName;
     }
@@ -1002,7 +999,7 @@ public class MoGumtreeScanner extends DeepScanner {
 
     private Tree createNode(String nodeTypeName, MoNode node, String label) {
         Tree newNode = createNode(nodeTypeName, label);
-        newNode.setPos(node.getStartColumn());
+        newNode.setPos(node.getElementPos());
         newNode.setLength(node.getElementLength());
         newNode.setMetadata(GumtreeMetaConstant.MO_NODE_KEY, node);
         return newNode;

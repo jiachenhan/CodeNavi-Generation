@@ -30,8 +30,8 @@ public class MoPostfixOperator extends MoVirtualChildNode {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "operator", mandatory = true)
     private OperatorKind operator;
 
-    public MoPostfixOperator(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        super(fileName, startLine, endLine, null);
+    public MoPostfixOperator(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEPostfixOperator;
     }
 
@@ -95,7 +95,7 @@ public class MoPostfixOperator extends MoVirtualChildNode {
 
     @Override
     public MoNode shallowClone() {
-        MoPostfixOperator clone = new MoPostfixOperator(getFileName(), getStartLine(), getEndLine(), null);
+        MoPostfixOperator clone = new MoPostfixOperator(getFileName(), getStartLine(), getEndLine(), getElementPos(), getElementLength(),null);
         clone.setStructuralProperty("operator", operator.toString());
         return clone;
     }

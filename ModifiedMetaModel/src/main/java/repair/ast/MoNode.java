@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import repair.ast.behavior.NodeComparator;
 import repair.ast.code.context.Context;
 import repair.ast.behavior.Visitable;
-import repair.ast.declaration.MoMethodDeclaration;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
 import repair.ast.visitor.CodePrinter;
@@ -16,7 +15,6 @@ import repair.ast.visitor.TokenizeScanner;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class MoNode implements Visitable, Serializable, NodeComparator {
@@ -30,31 +28,40 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
         counter.set(0);
     }
 
-    /**
-     * @param fileName  : source file name (with absolute path)
-     * @param startLine : start line number of the node in the original source file
-     * @param endLine   : end line number of the node in the original source file
-     * @param oriNode   : original abstract syntax tree node in the JDT model
-     */
-    public MoNode(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        this(fileName, startLine, endLine, oriNode, null);
-    }
 
     /**
      * @param fileName  : source file name (with absolute path)
      * @param startLine : start line number of the node in the original source file
      * @param endLine   : end line number of the node in the original source file
+     * @param elementPos : start position of the node in the original source file
+     * @param elementLength : length of the node in the original source file
      * @param oriNode   : original abstract syntax tree node in the JDT model
-     * @param parent    : parent node in the abstract syntax tree
      */
-    public MoNode(String fileName, int startLine, int endLine, ASTNode oriNode, MoNode parent) {
+    public MoNode(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        id = counter.incrementAndGet();
+
+        this.fileName = fileName;
+        this.startLine = startLine;
+        this.endLine = endLine;
+        this.elementPos = elementPos;
+        this.elementLength = elementLength;
+        this.oriNode = oriNode;
+    }
+
+    public MoNode(String fileName, int startLine, int endLine, ASTNode oriNode) {
         id = counter.incrementAndGet();
 
         this.fileName = fileName;
         this.startLine = startLine;
         this.endLine = endLine;
         this.oriNode = oriNode;
-        this.parent = parent;
+        if(oriNode != null) {
+            this.elementPos = oriNode.getStartPosition();
+            this.elementLength = oriNode.getLength();
+        } else {
+            this.elementPos = -1;
+            this.elementLength = -1;
+        }
     }
 
     /*
@@ -72,19 +79,13 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
 
     private final int startLine;
     private final int endLine;
-    private int startColumn = -1;
-    private int elementLength = -1;
-    public int getStartColumn() {
-        return startColumn;
+    private final int elementPos;
+    private final int elementLength;
+    public int getElementPos() {
+        return elementPos;
     }
     public int getElementLength() {
         return elementLength;
-    }
-    public void setStartColumn(int startColumn) {
-        this.startColumn = startColumn;
-    }
-    public void setElementLength(int elementLength) {
-        this.elementLength = elementLength;
     }
 
     /**

@@ -31,8 +31,8 @@ public class MoPrefixOperator extends MoVirtualChildNode {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "operator", mandatory = true)
     private OperatorKind operator;
 
-    public MoPrefixOperator(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        super(fileName, startLine, endLine, null);
+    public MoPrefixOperator(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEPrefixOperator;
     }
 
@@ -99,7 +99,7 @@ public class MoPrefixOperator extends MoVirtualChildNode {
 
     @Override
     public MoNode shallowClone() {
-        MoPrefixOperator clone = new MoPrefixOperator(getFileName(), getStartLine(), getEndLine(), null);
+        MoPrefixOperator clone = new MoPrefixOperator(getFileName(), getStartLine(), getEndLine(), getElementPos(), getElementLength(),null);
         clone.setStructuralProperty("operator", operator.toString());
         return clone;
     }

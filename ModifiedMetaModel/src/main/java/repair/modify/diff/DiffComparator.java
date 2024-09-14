@@ -1,9 +1,6 @@
 package repair.modify.diff;
 
-import com.github.gumtreediff.actions.ChawatheScriptGenerator;
-import com.github.gumtreediff.actions.EditScript;
-import com.github.gumtreediff.actions.EditScriptGenerator;
-import com.github.gumtreediff.actions.SimplifiedChawatheScriptGenerator;
+import com.github.gumtreediff.actions.*;
 import com.github.gumtreediff.actions.model.Action;
 import com.github.gumtreediff.actions.model.Delete;
 import com.github.gumtreediff.actions.model.TreeDelete;
@@ -23,16 +20,28 @@ import java.util.List;
 public class DiffComparator {
     private final List<Operation<? extends Action>> allOperations = new ArrayList<>();
 
+    private final Mode mode;
+
     private final Matcher defaultMatcher;
-    private final MoChawatheScriptGenerator editScriptGenerator;
+    private final EditScriptGenerator editScriptGenerator;
     private MappingStore mappings;
 
     private Tree beforeTree;
     private Tree afterTree;
 
-    public DiffComparator() {
-        defaultMatcher = new CompositeMatchers.SimpleGumtree();
-        editScriptGenerator = new MoChawatheScriptGenerator();
+    public enum Mode {
+        MOVE_MODE, NO_MOVE_MODE
+    }
+
+    public DiffComparator(Mode mode) {
+        this.mode = mode;
+        defaultMatcher = new CompositeMatchers.SimpleGumtreeStable();
+        if(mode == Mode.MOVE_MODE)
+            editScriptGenerator = new MoChawatheScriptGenerator();
+        else if(mode == Mode.NO_MOVE_MODE)
+            editScriptGenerator = new InsertDeleteChawatheScriptGenerator();
+        else
+            throw new IllegalArgumentException("Invalid mode");
     }
 
     private void buildTrees(MoNode beforeNode, MoNode afterNode) {
@@ -44,7 +53,11 @@ public class DiffComparator {
         buildTrees(beforeNode, afterNode);
         MappingStore oriMapping = defaultMatcher.match(beforeTree, afterTree); // computes the mappings between the trees
         EditScript actions = editScriptGenerator.computeActions(oriMapping); // computes the edit script
-        mappings = editScriptGenerator.getMappings();
+        if(this.mode == Mode.MOVE_MODE) {
+            mappings = ((MoChawatheScriptGenerator) editScriptGenerator).getMappings();
+        } else {
+            mappings = oriMapping;
+        }
 
         actions.asList().stream()
                 .map(action -> Operation.createOperation(action, mappings))

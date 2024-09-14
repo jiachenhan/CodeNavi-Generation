@@ -33,8 +33,8 @@ public class MoMethodInvocationArguments extends MoVirtualChildListNode {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "arguments", mandatory = true)
     private final MoNodeList<MoExpression> arguments;
 
-    public MoMethodInvocationArguments(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        super(fileName, startLine, endLine, oriNode);
+    public MoMethodInvocationArguments(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEMethodInvocationArguments;
         arguments = new MoNodeList<>(this, argumentsDescription);
     }
@@ -77,7 +77,7 @@ public class MoMethodInvocationArguments extends MoVirtualChildListNode {
 
     @Override
     public MoNode shallowClone() {
-        return new MoMethodInvocationArguments(getFileName(), getStartLine(), getEndLine(), null);
+        return new MoMethodInvocationArguments(getFileName(), getStartLine(), getEndLine(), getElementPos(), getElementLength(), null);
     }
 
     @Override

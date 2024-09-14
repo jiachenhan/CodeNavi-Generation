@@ -31,7 +31,7 @@ public class Pattern implements Serializable {
     public Pattern(MoNode patternBefore0, MoNode patternAfter0) {
         this.patternBefore0 = patternBefore0;
         this.patternAfter0 = patternAfter0;
-        diffComparator = new DiffComparator();
+        diffComparator = new DiffComparator(DiffComparator.Mode.MOVE_MODE);
         diffComparator.computeBeforeAfterMatch(patternBefore0, patternAfter0);
         this.allOperations = diffComparator.getAllOperations();
 

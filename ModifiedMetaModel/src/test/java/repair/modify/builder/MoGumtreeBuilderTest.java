@@ -52,7 +52,7 @@ public class MoGumtreeBuilderTest {
         MoNode moMethodBefore = beforeParser.process(methodBefore.get());
         MoNode moMethodAfter = afterParser.process(methodAfter.get());
 
-        DiffComparator diffComparator = new DiffComparator();
+        DiffComparator diffComparator = new DiffComparator(DiffComparator.Mode.MOVE_MODE);
         diffComparator.computeBeforeAfterMatch(moMethodBefore, moMethodAfter);
         System.out.println(diffComparator.getAllOperations());
 

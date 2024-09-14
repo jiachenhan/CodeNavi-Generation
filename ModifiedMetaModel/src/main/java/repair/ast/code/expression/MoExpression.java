@@ -12,7 +12,7 @@ public abstract class MoExpression extends MoNode {
     private static final long serialVersionUID = -2128799087068278887L;
 
     protected MoExpression(String fileName, int startLine, int endLine, Expression expression) {
-        super(fileName, startLine, endLine, expression, null);
+        super(fileName, startLine, endLine, expression);
     }
 
     // todo: typeBinding??

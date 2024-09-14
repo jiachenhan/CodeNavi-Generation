@@ -30,8 +30,8 @@ public class MoMethodInvocationTarget extends MoVirtualChildNode {
     @RoleDescriptor(type = ChildType.CHILD, role = "expression", mandatory = true)
     private MoExpression expression;
 
-    public MoMethodInvocationTarget(String fileName, int startLine, int endLine, ASTNode oriNode) {
-        super(fileName, startLine, endLine, null);
+    public MoMethodInvocationTarget(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+        super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEMethodInvocationTarget;
     }
 
@@ -71,7 +71,7 @@ public class MoMethodInvocationTarget extends MoVirtualChildNode {
 
     @Override
     public MoNode shallowClone() {
-        return new MoMethodInvocationTarget(getFileName(), getStartLine(), getEndLine(), null);
+        return new MoMethodInvocationTarget(getFileName(), getStartLine(), getEndLine(), getElementPos(), getElementLength(), null);
     }
 
     @Override

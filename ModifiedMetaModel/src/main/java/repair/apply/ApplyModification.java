@@ -166,7 +166,7 @@ public class ApplyModification {
                     MoNodeList<MoNode> children = (MoNodeList<MoNode>) insertParentInRight.getStructuralProperty(insertLocation.role());
                     int index = insertOperation.computeIndex();
                     if(index < 0 || index > children.size()) {
-                        logger.error("error when Insert because index is out of bound");
+                        logger.error("Insert index is out of bound");
                         return;
                     }
 
@@ -231,7 +231,7 @@ public class ApplyModification {
                     MoNodeList<MoNode> children = (MoNodeList<MoNode>) insertParentInRight.getStructuralProperty(insertLocation.role());
                     int index = treeInsertOperation.computeIndex();
                     if(index < 0 || index > children.size()) {
-                        logger.error("error when Insert because index is out of bound");
+                        logger.error("Insert index is out of bound");
                         return;
                     }
 
