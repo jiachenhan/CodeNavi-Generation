@@ -118,6 +118,10 @@ public class MoVariableDeclarationStatement extends MoStatement {
         }
     }
 
+    public static Map<String, Description<MoVariableDeclarationStatement, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

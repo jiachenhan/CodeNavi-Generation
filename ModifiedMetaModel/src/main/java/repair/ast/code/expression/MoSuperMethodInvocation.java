@@ -153,6 +153,10 @@ public class MoSuperMethodInvocation extends MoExpression {
         }
     }
 
+    public static Map<String, Description<MoSuperMethodInvocation, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

@@ -147,6 +147,10 @@ public class MoEnumConstantDeclaration extends MoBodyDeclaration {
         }
     }
 
+    public static Map<String, Description<MoEnumConstantDeclaration, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

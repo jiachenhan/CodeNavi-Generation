@@ -95,6 +95,10 @@ public class MoParameterizedType extends MoType {
         }
     }
 
+    public static Map<String, Description<MoParameterizedType, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

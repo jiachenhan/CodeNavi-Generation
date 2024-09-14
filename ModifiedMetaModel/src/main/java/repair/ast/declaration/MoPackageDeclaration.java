@@ -116,6 +116,10 @@ public class MoPackageDeclaration extends MoNode {
         }
     }
 
+    public static Map<String, Description<MoPackageDeclaration, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

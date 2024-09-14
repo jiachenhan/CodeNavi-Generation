@@ -78,6 +78,10 @@ public class MoDimension extends MoNode {
         }
     }
 
+    public static Map<String, Description<MoDimension, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

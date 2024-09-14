@@ -7,6 +7,8 @@ import repair.ast.MoNode;
 import repair.ast.MoNodeList;
 import repair.ast.MoNodeType;
 import repair.ast.code.type.MoType;
+import repair.ast.code.virtual.MoMethodInvocationArguments;
+import repair.ast.code.virtual.MoMethodInvocationTarget;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
 import repair.ast.role.RoleDescriptor;
@@ -22,8 +24,8 @@ public class MoMethodInvocation extends MoExpression {
     @Serial
     private static final long serialVersionUID = 3760050994706375419L;
 
-    private final static Description<MoMethodInvocation, MoExpression> expressionDescription =
-            new Description<>(ChildType.CHILD, MoMethodInvocation.class, MoExpression.class,
+    private final static Description<MoMethodInvocation, MoMethodInvocationTarget> expressionDescription =
+            new Description<>(ChildType.CHILD, MoMethodInvocation.class, MoMethodInvocationTarget.class,
                     "expression", false);
 
     private final static Description<MoMethodInvocation, MoType> typeArgumentsDescription =
@@ -34,8 +36,8 @@ public class MoMethodInvocation extends MoExpression {
             new Description<>(ChildType.CHILD, MoMethodInvocation.class, MoSimpleName.class,
                     "name", true);
 
-    private final static Description<MoMethodInvocation, MoExpression> argumentsDescription =
-            new Description<>(ChildType.CHILDLIST, MoMethodInvocation.class, MoExpression.class,
+    private final static Description<MoMethodInvocation, MoMethodInvocationArguments> argumentsDescription =
+            new Description<>(ChildType.CHILD, MoMethodInvocation.class, MoMethodInvocationArguments.class,
                     "arguments", true);
 
     private final static Map<String, Description<MoMethodInvocation, ?>> descriptionsMap = Map.ofEntries(
@@ -46,19 +48,18 @@ public class MoMethodInvocation extends MoExpression {
     );
 
     @RoleDescriptor(type = ChildType.CHILD, role = "expression", mandatory = false)
-    private MoExpression expression;
+    private MoMethodInvocationTarget target;
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "typeArguments", mandatory = true)
     private final MoNodeList<MoType> typeArguments;
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoSimpleName name;
-    @RoleDescriptor(type = ChildType.CHILDLIST, role = "arguments", mandatory = true)
-    private final MoNodeList<MoExpression> arguments;
+    @RoleDescriptor(type = ChildType.CHILD, role = "arguments", mandatory = true)
+    private MoMethodInvocationArguments arguments;
 
     public MoMethodInvocation(String fileName, int startLine, int endLine, MethodInvocation methodInvocation) {
         super(fileName, startLine, endLine, methodInvocation);
         moNodeType = MoNodeType.TYPEMethodInvocation;
         typeArguments = new MoNodeList<>(this, typeArgumentsDescription);
-        arguments = new MoNodeList<>(this, argumentsDescription);
     }
 
     /**
@@ -74,22 +75,14 @@ public class MoMethodInvocation extends MoExpression {
         this.isTypeInferred = typeInferred;
     }
 
-
-    public void setExpression(MoExpression expression) {
-        this.expression = expression;
-    }
     public void addTypeArgument(MoType typeArgument) {
         typeArguments.add(typeArgument);
     }
     public void setName(MoSimpleName name) {
         this.name = name;
     }
-    public void addArgument(MoExpression argument) {
-        arguments.add(argument);
-    }
-
-    public Optional<MoExpression> getExpression() {
-        return Optional.ofNullable(expression);
+    public Optional<MoMethodInvocationTarget> getTarget() {
+        return Optional.ofNullable(target);
     }
 
     public List<MoType> getTypeArguments() {
@@ -100,7 +93,7 @@ public class MoMethodInvocation extends MoExpression {
         return name;
     }
 
-    public List<MoExpression> getArguments() {
+    public MoMethodInvocationArguments getArguments() {
         return arguments;
     }
 
@@ -113,7 +106,7 @@ public class MoMethodInvocation extends MoExpression {
     public Object getStructuralProperty(String role) {
         Description<MoMethodInvocation, ?> description = descriptionsMap.get(role);
         if(description == expressionDescription) {
-            return expression;
+            return target;
         } else if(description == typeArgumentsDescription) {
             return typeArguments;
         } else if(description == nameDescription) {
@@ -131,18 +124,21 @@ public class MoMethodInvocation extends MoExpression {
     public void setStructuralProperty(String role, Object value) {
         Description<MoMethodInvocation, ?> description = descriptionsMap.get(role);
         if(description == expressionDescription) {
-            expression = (MoExpression) value;
+            target = (MoMethodInvocationTarget) value;
         } else if(description == typeArgumentsDescription) {
             typeArguments.clear();
             typeArguments.addAll((List<MoType>) value);
         } else if(description == nameDescription) {
             name = (MoSimpleName) value;
         } else if(description == argumentsDescription) {
-            arguments.clear();
-            arguments.addAll(((List<MoExpression>) value));
+            arguments = (MoMethodInvocationArguments) value;
         } else {
             logger.error("Role {} not found in MoMethodInvocation", role);
         }
+    }
+
+    public static Map<String, Description<MoMethodInvocation, ?>> getDescriptionsMap() {
+        return descriptionsMap;
     }
 
     @Override
@@ -161,14 +157,14 @@ public class MoMethodInvocation extends MoExpression {
     public boolean isSame(MoNode other) {
         if(other instanceof MoMethodInvocation otherMethodInvocation) {
             boolean match;
-            if(expression == null) {
-                match = otherMethodInvocation.expression == null;
+            if(target == null) {
+                match = otherMethodInvocation.target == null;
             } else {
-                match = expression.isSame(otherMethodInvocation.expression);
+                match = target.isSame(otherMethodInvocation.target);
             }
             match = match && MoNodeList.sameList(typeArguments, otherMethodInvocation.typeArguments);
             match = match && name.isSame(otherMethodInvocation.name);
-            match = match && MoNodeList.sameList(arguments, otherMethodInvocation.arguments);
+            match = match && arguments.isSame(otherMethodInvocation.arguments);
             return match;
         }
         return false;

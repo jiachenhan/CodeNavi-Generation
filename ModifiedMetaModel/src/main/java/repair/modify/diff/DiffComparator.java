@@ -24,7 +24,7 @@ public class DiffComparator {
     private final List<Operation<? extends Action>> allOperations = new ArrayList<>();
 
     private final Matcher defaultMatcher;
-    private final EditScriptGenerator editScriptGenerator;
+    private final MoChawatheScriptGenerator editScriptGenerator;
     private MappingStore mappings;
 
     private Tree beforeTree;
@@ -32,7 +32,7 @@ public class DiffComparator {
 
     public DiffComparator() {
         defaultMatcher = new CompositeMatchers.SimpleGumtree();
-        editScriptGenerator = new SimplifiedChawatheScriptGenerator();
+        editScriptGenerator = new MoChawatheScriptGenerator();
     }
 
     private void buildTrees(MoNode beforeNode, MoNode afterNode) {
@@ -42,21 +42,22 @@ public class DiffComparator {
 
     public void computeBeforeAfterMatch(MoNode beforeNode, MoNode afterNode) {
         buildTrees(beforeNode, afterNode);
-        mappings = defaultMatcher.match(beforeTree, afterTree); // computes the mappings between the trees
-        EditScript actions = editScriptGenerator.computeActions(mappings); // computes the edit script
+        MappingStore oriMapping = defaultMatcher.match(beforeTree, afterTree); // computes the mappings between the trees
+        EditScript actions = editScriptGenerator.computeActions(oriMapping); // computes the edit script
+        mappings = editScriptGenerator.getMappings();
 
         actions.asList().stream()
                 .map(action -> Operation.createOperation(action, mappings))
-                .sorted((a1, a2) -> {
-                    // 将 Delete 和 TreeDelete 类型排在前面
-                    if (a1 instanceof DeleteOperation || a1 instanceof TreeDeleteOperation) {
-                        return -1;
-                    } else if (a2 instanceof DeleteOperation || a2 instanceof TreeDeleteOperation) {
-                        return 1;
-                    } else {
-                        return 0; // 保持其他顺序不变
-                    }
-                })
+//                .sorted((a1, a2) -> {
+//                    // 将 Delete 和 TreeDelete 类型排在前面
+//                    if (a1 instanceof DeleteOperation || a1 instanceof TreeDeleteOperation) {
+//                        return -1;
+//                    } else if (a2 instanceof DeleteOperation || a2 instanceof TreeDeleteOperation) {
+//                        return 1;
+//                    } else {
+//                        return 0; // 保持其他顺序不变
+//                    }
+//                })
                 .forEach(allOperations::add);
     }
 

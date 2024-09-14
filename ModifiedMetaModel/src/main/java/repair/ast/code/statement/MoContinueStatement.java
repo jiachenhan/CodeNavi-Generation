@@ -72,6 +72,10 @@ public class MoContinueStatement extends MoStatement {
         }
     }
 
+    public static Map<String, Description<MoContinueStatement, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

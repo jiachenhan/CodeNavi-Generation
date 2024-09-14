@@ -88,6 +88,10 @@ public class MoNormalAnnotation extends MoAnnotation {
         }
     }
 
+    public static Map<String, Description<MoNormalAnnotation, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

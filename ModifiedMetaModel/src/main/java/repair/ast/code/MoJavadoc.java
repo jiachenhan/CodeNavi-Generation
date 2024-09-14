@@ -76,6 +76,10 @@ public class MoJavadoc extends MoComment {
         }
     }
 
+    public static Map<String, Description<MoJavadoc, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

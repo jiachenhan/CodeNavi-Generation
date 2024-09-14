@@ -9,10 +9,7 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
-import repair.ast.code.virtual.MoAssignmentOperator;
-import repair.ast.code.virtual.MoInfixOperator;
-import repair.ast.code.virtual.MoPostfixOperator;
-import repair.ast.code.virtual.MoPrefixOperator;
+import repair.ast.code.virtual.*;
 import repair.ast.declaration.*;
 
 import java.util.ArrayList;
@@ -378,8 +375,8 @@ public class TokenizeScanner implements Visitor {
 
     @Override
     public void visitMoMethodInvocation(MoMethodInvocation moMethodInvocation) {
-        moMethodInvocation.getExpression().ifPresent(expression -> {
-            scan("expression", expression);
+        moMethodInvocation.getTarget().ifPresent(target -> {
+            scan("expression", target);
             tokens.add(".");
         });
 
@@ -388,9 +385,8 @@ public class TokenizeScanner implements Visitor {
         });
         scan("name", moMethodInvocation.getName());
         tokens.add("(");
-        moMethodInvocation.getArguments().forEach(argument -> {
-            scan("argument", argument);
-        });
+        scan("arguments", moMethodInvocation.getArguments());
+
         tokens.add(")");
     }
 
@@ -969,6 +965,18 @@ public class TokenizeScanner implements Visitor {
     @Override
     public void visitMoPrefixOperator(MoPrefixOperator moPrefixOperator) {
         tokens.add(moPrefixOperator.getOperator().toString());
+    }
+
+    @Override
+    public void visitMoMethodInvocationTarget(MoMethodInvocationTarget moMethodInvocationTarget) {
+        scan("expression", moMethodInvocationTarget.getExpression());
+    }
+
+    @Override
+    public void visitMoMethodInvocationArguments(MoMethodInvocationArguments moMethodInvocationArguments) {
+        moMethodInvocationArguments.getArguments().forEach(argument -> {
+            scan("argument", argument);
+        });
     }
 
     private void tokenizeExtendedModifier(List<? extends MoExtendedModifier> extendedModifiers) {

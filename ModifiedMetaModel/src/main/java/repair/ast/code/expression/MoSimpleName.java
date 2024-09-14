@@ -64,6 +64,10 @@ public class MoSimpleName extends MoName {
         }
     }
 
+    public static Map<String, Description<MoSimpleName, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

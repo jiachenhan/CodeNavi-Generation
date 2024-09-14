@@ -118,6 +118,10 @@ public class MoPrimitiveType extends MoAnnotatableType {
         }
     }
 
+    public static Map<String, Description<MoPrimitiveType, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

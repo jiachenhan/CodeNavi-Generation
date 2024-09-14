@@ -103,6 +103,10 @@ public class MoSuperMethodReference extends MoMethodReference {
         }
     }
 
+    public static Map<String, Description<MoSuperMethodReference, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

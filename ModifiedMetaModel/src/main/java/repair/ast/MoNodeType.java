@@ -105,6 +105,9 @@ public enum MoNodeType {
     TYPEPrefixOperator("PrefixOperator", -1),
     TYPEPostfixOperator("PostfixOperator", -1),
 
+    TYPEMethodInvocationTarget("MethodInvocationTarget", -1),
+    TYPEMethodInvocationArguments("MethodInvocationArguments", -1),
+
     UNKNOWN("Unknown", -1);
 
     private final String nodeType;

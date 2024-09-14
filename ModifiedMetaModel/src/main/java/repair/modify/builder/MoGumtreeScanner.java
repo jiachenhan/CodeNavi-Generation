@@ -12,10 +12,7 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
-import repair.ast.code.virtual.MoAssignmentOperator;
-import repair.ast.code.virtual.MoInfixOperator;
-import repair.ast.code.virtual.MoPostfixOperator;
-import repair.ast.code.virtual.MoPrefixOperator;
+import repair.ast.code.virtual.*;
 import repair.ast.declaration.*;
 import repair.ast.visitor.DeepScanner;
 
@@ -368,38 +365,10 @@ public class MoGumtreeScanner extends DeepScanner {
 
     @Override
     public void visitMoMethodInvocation(MoMethodInvocation moMethodInvocation) {
-        // 参考gen.jdt的实现, 他们专门对targetExpression和arguments进行了处理
         String nodeTypeName = getNodeType(moMethodInvocation);
         String label = "";
         Tree newNode = createNode(nodeTypeName, moMethodInvocation, label);
         pushToStack(newNode);
-
-//        moMethodInvocation.getExpression().ifPresent(expression -> {
-//            String MethodInvocationReceiverNodeTypeName = "MethodInvocationReceiver";
-//            String methodInvocationReceiverLabel = "";
-//            Tree receiverNode = createVirtualNode(MethodInvocationReceiverNodeTypeName, methodInvocationReceiverLabel, expression.getStartColumn(), expression.getElementLength());
-//            pushToStack(receiverNode);
-//            expression.accept(this);
-//            stack.pop();
-//        });
-//
-//        moMethodInvocation.getArguments().forEach(argument -> {
-//            argument.accept(this);
-//        });
-//
-//        if (!moMethodInvocation.getArguments().isEmpty()) {
-//            int start = moMethodInvocation.getArguments().get(0).getStartColumn();
-//            int length = moMethodInvocation.getArguments().get(moMethodInvocation.getArguments().size() - 1).getStartColumn() +
-//                    moMethodInvocation.getArguments().get(moMethodInvocation.getArguments().size() - 1).getElementLength() - start;
-//
-//            Tree argumentsNode = createVirtualNode("MethodInvocationReceiverArguments", "", start, length);
-//            pushToStack(argumentsNode);
-//            moMethodInvocation.getArguments().forEach(argument -> {
-//                argument.accept(this);
-//            });
-//            stack.pop();
-//        }
-//        exit(moMethodInvocation);
 
         super.visitMoMethodInvocation(moMethodInvocation);
     }
@@ -498,7 +467,7 @@ public class MoGumtreeScanner extends DeepScanner {
     @Override
     public void visitMoSimpleName(MoSimpleName moSimpleName) {
         // 区分SimpleName的类型
-        String nodeTypeName = moSimpleName.getLocationInParent().role() + getNodeType(moSimpleName);
+        String nodeTypeName = getNodeType(moSimpleName);
         String label = moSimpleName.toString();
         Tree newNode = createNode(nodeTypeName, moSimpleName, label);
         pushToStack(newNode);
@@ -994,6 +963,26 @@ public class MoGumtreeScanner extends DeepScanner {
         pushToStack(newNode);
 
         super.visitMoPrefixOperator(moPrefixOperator);
+    }
+
+    @Override
+    public void visitMoMethodInvocationTarget(MoMethodInvocationTarget moMethodInvocationTarget) {
+        String MethodInvocationReceiverNodeTypeName = "MethodInvocationReceiver";
+        String methodInvocationReceiverLabel = "";
+        Tree receiverNode = createNode(MethodInvocationReceiverNodeTypeName, moMethodInvocationTarget, methodInvocationReceiverLabel);
+        pushToStack(receiverNode);
+
+        super.visitMoMethodInvocationTarget(moMethodInvocationTarget);
+    }
+
+    @Override
+    public void visitMoMethodInvocationArguments(MoMethodInvocationArguments moMethodInvocationArguments) {
+        String MethodInvocationArgumentsNodeTypeName = "MethodInvocationArguments";
+        String methodInvocationArgumentsLabel = "";
+        Tree argumentsNode = createNode(MethodInvocationArgumentsNodeTypeName, moMethodInvocationArguments, methodInvocationArgumentsLabel);
+        pushToStack(argumentsNode);
+
+        super.visitMoMethodInvocationArguments(moMethodInvocationArguments);
     }
 
 

@@ -119,6 +119,10 @@ public class MoTypeParameter extends MoNode {
         }
     }
 
+    public static Map<String, Description<MoTypeParameter, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

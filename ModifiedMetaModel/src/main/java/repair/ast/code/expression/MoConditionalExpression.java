@@ -109,6 +109,10 @@ public class MoConditionalExpression extends MoExpression {
         }
     }
 
+    public static Map<String, Description<MoConditionalExpression, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

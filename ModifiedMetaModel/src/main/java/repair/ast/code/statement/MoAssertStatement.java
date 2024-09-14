@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.MoNodeType;
 import repair.ast.code.expression.MoExpression;
+import repair.ast.code.type.MoArrayType;
 import repair.ast.declaration.MoAnonymousClassDeclaration;
 import repair.ast.declaration.MoBodyDeclaration;
 import repair.ast.role.ChildType;
@@ -92,6 +93,10 @@ public class MoAssertStatement extends MoStatement {
 		} else {
 			logger.error("Role {} not found in MoAssertStatement", role);
 		}
+	}
+
+	public Map<String, Description<MoAssertStatement, ?>> getDescriptionsMap() {
+		return descriptionsMap;
 	}
 
 	@Override

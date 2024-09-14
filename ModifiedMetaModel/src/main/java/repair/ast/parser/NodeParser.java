@@ -11,10 +11,7 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
-import repair.ast.code.virtual.MoAssignmentOperator;
-import repair.ast.code.virtual.MoInfixOperator;
-import repair.ast.code.virtual.MoPostfixOperator;
-import repair.ast.code.virtual.MoPrefixOperator;
+import repair.ast.code.virtual.*;
 import repair.ast.declaration.*;
 import repair.ast.role.Description;
 
@@ -1005,7 +1002,47 @@ public class NodeParser extends ASTVisitor {
         }
         nodeStack.push(methodInvocation);
 
-        return super.visit(node);
+
+        if (node.getExpression() == null) {
+            methodInvocation.setStructuralProperty("expression", null);
+        } else {
+            MoMethodInvocationTarget methodInvocationTarget = new MoMethodInvocationTarget(fileName, startLine, endLine, null);
+            methodInvocation.setStructuralProperty("expression", methodInvocationTarget);
+
+            methodInvocationTarget.setParent(methodInvocation, methodInvocation.getDescription("expression"));
+
+            nodeStack.push(methodInvocationTarget);
+            node.getExpression().accept(this);
+            nodeStack.pop();
+        }
+
+        node.getName().accept(this);
+
+        for (Object typeArgument : node.typeArguments()) {
+            if(typeArgument instanceof Type type) {
+                type.accept(this);
+            } else {
+                logger.error("MethodInvocation typeArgument is not Type.");
+            }
+        }
+
+        if(!node.arguments().isEmpty()){
+            MoMethodInvocationArguments methodInvocationArguments = new MoMethodInvocationArguments(fileName, startLine, endLine, null);
+            methodInvocation.setStructuralProperty("arguments", methodInvocationArguments);
+
+            methodInvocationArguments.setParent(methodInvocation, methodInvocation.getDescription("arguments"));
+
+            nodeStack.push(methodInvocationArguments);
+            for (Object argument : node.arguments()) {
+                if(argument instanceof Expression expression) {
+                    expression.accept(this);
+                } else {
+                    logger.error("MethodInvocation argument is not Expression.");
+                }
+            }
+            nodeStack.pop();
+        }
+        return false;
     }
 
     @Override

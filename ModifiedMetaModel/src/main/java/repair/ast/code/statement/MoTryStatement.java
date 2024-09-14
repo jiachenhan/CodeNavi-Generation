@@ -142,6 +142,10 @@ public class MoTryStatement extends MoStatement {
         }
     }
 
+    public static Map<String, Description<MoTryStatement, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

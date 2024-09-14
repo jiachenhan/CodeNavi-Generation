@@ -105,6 +105,10 @@ public class MoNameQualifiedType extends MoAnnotatableType {
         }
     }
 
+    public static Map<String, Description<MoNameQualifiedType, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

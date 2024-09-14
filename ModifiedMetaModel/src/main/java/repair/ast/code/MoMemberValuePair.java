@@ -89,6 +89,10 @@ public class MoMemberValuePair extends MoNode {
         }
     }
 
+    public static Map<String, Description<MoMemberValuePair, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

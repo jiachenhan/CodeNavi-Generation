@@ -134,6 +134,10 @@ public final class MoModifier extends MoNode implements MoExtendedModifier {
         }
     }
 
+    public static Map<String, Description<MoModifier, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

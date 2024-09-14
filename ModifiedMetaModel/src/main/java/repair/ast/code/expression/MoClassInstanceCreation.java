@@ -174,6 +174,10 @@ public class MoClassInstanceCreation extends MoExpression {
         }
     }
 
+    public static Map<String, Description<MoClassInstanceCreation, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

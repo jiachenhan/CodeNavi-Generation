@@ -9,6 +9,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.Map;
 
 public class MoBlockComment extends MoComment {
     private static final Logger logger = LoggerFactory.getLogger(MoBlockComment.class);
@@ -37,8 +38,13 @@ public class MoBlockComment extends MoComment {
         return;
     }
 
+    public static Map<String, Description<MoBlockComment, ?>> getDescriptionsMap() {
+        logger.error("BlockComment does not have any structural property");
+        return null;
+    }
+
     @Override
-    public Description<? extends MoNode, ?> getDescription(String role) {
+    public Description<MoBlockComment, ?> getDescription(String role) {
         logger.error("BlockComment does not have any description");
         return null;
     }

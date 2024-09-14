@@ -74,6 +74,10 @@ public class MoIntersectionType extends MoType{
         }
     }
 
+    public static Map<String, Description<MoIntersectionType, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

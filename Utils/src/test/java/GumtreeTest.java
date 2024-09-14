@@ -35,7 +35,7 @@ public class GumtreeTest {
         String projectName = "apex-core";
         String GroupName = "6";
         Path groupPath = datasetPath.resolve(projectName).resolve(GroupName);
-        String casePattern = "6349211c2e9644d889bbd1fad0536d4853947623--LogicalPlan-LogicalPlan--493-494_492-493";
+        String casePattern = "ac640c2923753f79adb6e4a3f7e8170996b7a99e--StramMiniClusterTest-StramMiniClusterTest--84-85_84-85";
 
         Path codeBeforePath = groupPath.resolve(casePattern).resolve("before.java");
         Path codeAfterPath = groupPath.resolve(casePattern).resolve("after.java");

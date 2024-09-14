@@ -99,6 +99,10 @@ public class MoPrefixExpression extends MoExpression {
         }
     }
 
+    public static Map<String, Description<MoPrefixExpression, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

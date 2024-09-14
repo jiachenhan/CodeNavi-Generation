@@ -10,6 +10,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.Map;
 
 public class MoEmptyStatement extends MoStatement {
     private static final Logger logger = LoggerFactory.getLogger(MoEmptyStatement.class);
@@ -35,6 +36,11 @@ public class MoEmptyStatement extends MoStatement {
     @Override
     public void setStructuralProperty(String role, Object value) {
         logger.error("MoEmptyStatement does not have any structural property.");
+    }
+
+    public static Map<String, Description<MoEmptyStatement, ?>> getDescriptionsMap() {
+        logger.error("MoEmptyStatement does not have any structural property.");
+        return null;
     }
 
     @Override

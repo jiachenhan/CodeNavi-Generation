@@ -69,6 +69,10 @@ public class MoTypeDeclarationStatement extends MoStatement {
         }
     }
 
+    public static Description<MoTypeDeclarationStatement, MoAbstractTypeDeclaration> getDeclarationDescription() {
+        return declarationDescription;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

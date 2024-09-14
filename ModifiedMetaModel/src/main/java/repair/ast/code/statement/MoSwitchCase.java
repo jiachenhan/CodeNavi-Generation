@@ -75,6 +75,10 @@ public class MoSwitchCase extends MoStatement {
         }
     }
 
+    public static Map<String, Description<MoSwitchCase, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

@@ -81,6 +81,10 @@ public class MoBooleanLiteral extends MoExpression {
         }
     }
 
+    public static Map<String, Description<MoBooleanLiteral, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

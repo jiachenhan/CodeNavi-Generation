@@ -88,6 +88,10 @@ public class MoArrayAccess extends MoExpression{
         }
     }
 
+    public Map<String, Description<MoArrayAccess, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

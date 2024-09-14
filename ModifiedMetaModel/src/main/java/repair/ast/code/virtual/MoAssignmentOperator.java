@@ -93,6 +93,10 @@ public class MoAssignmentOperator extends MoVirtualChildNode {
         }
     }
 
+    public static Map<String, Description<MoAssignmentOperator, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

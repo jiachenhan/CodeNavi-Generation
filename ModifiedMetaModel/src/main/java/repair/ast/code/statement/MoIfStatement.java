@@ -113,6 +113,10 @@ public class MoIfStatement extends MoStatement {
         }
     }
 
+    public static Map<String, Description<MoIfStatement, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

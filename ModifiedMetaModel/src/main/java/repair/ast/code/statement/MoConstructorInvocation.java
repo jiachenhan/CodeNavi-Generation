@@ -98,6 +98,10 @@ public class MoConstructorInvocation extends MoStatement {
         }
     }
 
+    public static Map<String, Description<MoConstructorInvocation, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

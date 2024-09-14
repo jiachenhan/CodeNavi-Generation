@@ -100,6 +100,10 @@ public class MoWildcardType extends MoAnnotatableType {
         }
     }
 
+    public static Map<String, Description<MoWildcardType, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

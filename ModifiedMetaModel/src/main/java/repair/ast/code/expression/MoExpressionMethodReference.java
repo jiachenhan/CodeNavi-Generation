@@ -101,6 +101,10 @@ public class MoExpressionMethodReference extends MoMethodReference {
         }
     }
 
+    public static Map<String, Description<MoExpressionMethodReference, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

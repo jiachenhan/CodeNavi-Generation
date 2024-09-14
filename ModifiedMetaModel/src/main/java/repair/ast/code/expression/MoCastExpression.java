@@ -91,6 +91,10 @@ public class MoCastExpression extends MoExpression {
         }
     }
 
+    public static Map<String, Description<MoCastExpression, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

@@ -177,6 +177,10 @@ public class MoTypeDeclaration extends MoAbstractTypeDeclaration{
         }
     }
 
+    public static Map<String, Description<MoTypeDeclaration, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

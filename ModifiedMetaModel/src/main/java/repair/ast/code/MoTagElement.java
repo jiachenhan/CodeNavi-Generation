@@ -88,6 +88,10 @@ public class MoTagElement extends MoNode implements MoDocElement {
         }
     }
 
+    public static Map<String, Description<MoTagElement, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

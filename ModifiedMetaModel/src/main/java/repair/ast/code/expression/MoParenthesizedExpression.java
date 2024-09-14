@@ -70,6 +70,10 @@ public class MoParenthesizedExpression extends MoExpression {
         }
     }
 
+    public static Map<String, Description<MoParenthesizedExpression, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

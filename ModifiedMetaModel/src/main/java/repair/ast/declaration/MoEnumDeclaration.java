@@ -143,6 +143,10 @@ public class MoEnumDeclaration extends MoAbstractTypeDeclaration{
         }
     }
 
+    public static Map<String, Description<MoEnumDeclaration, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

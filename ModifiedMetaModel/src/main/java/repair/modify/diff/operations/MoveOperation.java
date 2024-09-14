@@ -23,14 +23,15 @@ public class MoveOperation extends Operation<Move> implements AddOperator {
         super(action);
         moveParent = ((MoNode) action.getParent().getMetadata(GumtreeMetaConstant.MO_NODE_KEY));
         moveNode = ((MoNode) action.getNode().getMetadata(GumtreeMetaConstant.MO_NODE_KEY));
-        strategy = new NaiveIndexStrategy(this);
 
-        Tree moveDst = mappings.getSrcForDst(action.getNode());
+        Tree moveDst = mappings.getDstForSrc(action.getNode());
         if (moveDst != null) {
             MoNode moveDstNode = (MoNode) moveDst.getMetadata(GumtreeMetaConstant.MO_NODE_KEY);
             moveToLocation = moveDstNode.getLocationInParent();
             movePair = new Pair<>(moveNode, moveDstNode);
         }
+
+        strategy = new OriginGumtreeInsertStrategy(action.getPosition());
     }
 
     public MoNode getMoveNode() {
@@ -53,7 +54,7 @@ public class MoveOperation extends Operation<Move> implements AddOperator {
 
     @Override
     public Description<? extends MoNode, ?> getLocation() {
-        return movePair.second.getLocationInParent();
+        return moveToLocation;
     }
 
     @Override

@@ -11,10 +11,7 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
-import repair.ast.code.virtual.MoAssignmentOperator;
-import repair.ast.code.virtual.MoInfixOperator;
-import repair.ast.code.virtual.MoPostfixOperator;
-import repair.ast.code.virtual.MoPrefixOperator;
+import repair.ast.code.virtual.*;
 import repair.ast.declaration.*;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
@@ -1684,6 +1681,42 @@ public class DeepCopyScanner extends DeepScanner{
         nodeStack.push(moPrefixOperatorNew);
 
         super.visitMoPrefixOperator(moPrefixOperator);
+    }
+
+    @Override
+    public void visitMoMethodInvocationTarget(MoMethodInvocationTarget moMethodInvocationTarget) {
+        MoMethodInvocationTarget moMethodInvocationTargetNew = (MoMethodInvocationTarget) moMethodInvocationTarget.shallowClone();
+        copyMap.put(moMethodInvocationTarget, moMethodInvocationTargetNew);
+
+        if (!nodeStack.isEmpty()) {
+            MoNode moParent = nodeStack.peek();
+            // 设置parent父子关系
+            bindingParentChildRelation(moParent, moMethodInvocationTargetNew, moMethodInvocationTarget);
+        } else {
+            // 如果nodeStack为空，说明是根节点
+            rootNode = moMethodInvocationTargetNew;
+        }
+        nodeStack.push(moMethodInvocationTargetNew);
+
+        super.visitMoMethodInvocationTarget(moMethodInvocationTarget);
+    }
+
+    @Override
+    public void visitMoMethodInvocationArguments(MoMethodInvocationArguments moMethodInvocationArguments) {
+        MoMethodInvocationArguments moMethodInvocationArgumentsNew = (MoMethodInvocationArguments) moMethodInvocationArguments.shallowClone();
+        copyMap.put(moMethodInvocationArguments, moMethodInvocationArgumentsNew);
+
+        if (!nodeStack.isEmpty()) {
+            MoNode moParent = nodeStack.peek();
+            // 设置parent父子关系
+            bindingParentChildRelation(moParent, moMethodInvocationArgumentsNew, moMethodInvocationArguments);
+        } else {
+            // 如果nodeStack为空，说明是根节点
+            rootNode = moMethodInvocationArgumentsNew;
+        }
+        nodeStack.push(moMethodInvocationArgumentsNew);
+
+        super.visitMoMethodInvocationArguments(moMethodInvocationArguments);
     }
 
     private void bindingParentChildRelation(MoNode moParent, MoNode moChild, MoNode oriChild) {

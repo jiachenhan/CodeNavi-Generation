@@ -8,6 +8,7 @@ import repair.ast.MoNode;
 import repair.ast.MoNodeList;
 import repair.ast.MoNodeType;
 import repair.ast.code.MoDimension;
+import repair.ast.code.expression.MoArrayInitializer;
 import repair.ast.declaration.MoAnonymousClassDeclaration;
 import repair.ast.declaration.MoBodyDeclaration;
 import repair.ast.role.ChildType;
@@ -95,6 +96,10 @@ public class MoArrayType extends MoType {
         } else {
             logger.error("Role {} not found in MoArrayType", role);
         }
+    }
+
+    public Map<String, Description<MoArrayType, ?>> getDescriptionsMap() {
+        return descriptionsMap;
     }
 
     @Override

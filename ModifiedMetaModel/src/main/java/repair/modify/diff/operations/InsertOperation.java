@@ -20,7 +20,7 @@ public class InsertOperation extends Operation<Insert> implements AddOperator {
         insertNode = (MoNode) action.getNode().getMetadata(GumtreeMetaConstant.MO_NODE_KEY);
         insertLocation = insertNode.getLocationInParent();
 
-        strategy = new NaiveIndexStrategy(this);
+        strategy = new OriginGumtreeInsertStrategy(action.getPosition());
     }
 
     @Override

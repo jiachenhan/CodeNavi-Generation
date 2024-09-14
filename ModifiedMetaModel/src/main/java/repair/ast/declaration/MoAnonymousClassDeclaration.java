@@ -74,6 +74,11 @@ public class MoAnonymousClassDeclaration extends MoNode {
         }
     }
 
+    public Map<String, Description<MoAnonymousClassDeclaration, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

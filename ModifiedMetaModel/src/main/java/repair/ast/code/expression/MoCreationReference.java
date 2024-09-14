@@ -90,6 +90,10 @@ public class MoCreationReference extends MoMethodReference {
         }
     }
 
+    public static Map<String, Description<MoCreationReference, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

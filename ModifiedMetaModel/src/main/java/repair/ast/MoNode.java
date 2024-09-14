@@ -198,6 +198,7 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
         } else {
             logger.error("Unknown child type");
         }
+        this.setParent(null, null);
     }
 
     public void replaceWith(MoNode newNode) {

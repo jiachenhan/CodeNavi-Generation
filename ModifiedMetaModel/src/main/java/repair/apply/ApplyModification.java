@@ -19,6 +19,7 @@ import repair.ast.code.expression.literal.MoStringLiteral;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
 import repair.ast.visitor.DeepCopyScanner;
+import repair.ast.visitor.FlattenScanner;
 import repair.modify.builder.GumtreeMetaConstant;
 import repair.modify.diff.operations.*;
 import repair.pattern.Pattern;
@@ -40,7 +41,6 @@ public class ApplyModification {
     private final MoNode left;
     private MoNode right;
 
-
     /**
      * before <---> after mapping (based on mapping store)
      */
@@ -58,6 +58,7 @@ public class ApplyModification {
      * after <---> right mapping (based on applying Operation, from copy)
      */
     private final BidiMap<MoNode, MoNode> maintenanceMap = new DualHashBidiMap<>();
+
 
     public ApplyModification(Pattern pattern, MoNode left, MatchInstance matchInstance) {
         this.pattern = pattern;
@@ -92,6 +93,7 @@ public class ApplyModification {
                 MoNode deleteNodeInRight = this.leftToRightMap.get(deleteNodeInLeft);
                 assert deleteNodeInRight != null;
                 deleteNodeInRight.removeFromParent();
+
             } else if (operation instanceof TreeDeleteOperation treeDeleteOperation) {
                 MoNode deleteNodeInBefore = treeDeleteOperation.getDeleteNodeInBefore();
                 MoNode deleteNodeInLeft = this.matchInstance.getNodeMap().get(deleteNodeInBefore);
@@ -102,6 +104,7 @@ public class ApplyModification {
                 MoNode deleteNodeInRight = this.leftToRightMap.get(deleteNodeInLeft);
                 assert deleteNodeInRight != null;
                 deleteNodeInRight.removeFromParent();
+
             } else if(operation instanceof InsertOperation insertOperation) {
                 MoNode insertParent = insertOperation.getParent();
                 Description<? extends MoNode, ?> insertLocation = insertOperation.getLocation();
@@ -120,6 +123,7 @@ public class ApplyModification {
                         return;
                     }
                     insertParentInRight = this.leftToRightMap.get(insertParentType1Left);
+
                 } else {
                     MoNode insertParentType2Before = this.beforeToAfterMap.getKey(insertParent);
                     if(insertParentType2Before != null) {
@@ -141,6 +145,7 @@ public class ApplyModification {
                     }
                 }
                 assert insertParentInRight != null;
+                assert inRightTree(insertParentInRight);
 
 
                 // generate the insertee node in right
@@ -166,8 +171,10 @@ public class ApplyModification {
                     }
 
                     children.add(index, insertNodeInRight);
+                    insertNodeInRight.setParent(insertParentInRight, insertLocation);
                 } else if (insertLocation.classification() == ChildType.CHILD) {
                     insertParentInRight.setStructuralProperty(insertLocation.role(), insertNodeInRight);
+                    insertNodeInRight.setParent(insertParentInRight, insertLocation);
                 } else {
                     logger.error("error when Insert because insertLocation is single");
                 }
@@ -210,6 +217,7 @@ public class ApplyModification {
                     }
                 }
                 assert insertParentInRight != null;
+                assert inRightTree(insertParentInRight);
 
 
                 // generate the insertee node in right
@@ -228,8 +236,10 @@ public class ApplyModification {
                     }
 
                     children.add(index, insertNodeInRight);
+                    insertNodeInRight.setParent(insertParentInRight, insertLocation);
                 } else if (insertLocation.classification() == ChildType.CHILD) {
                     insertParentInRight.setStructuralProperty(insertLocation.role(), insertNodeInRight);
+                    insertNodeInRight.setParent(insertParentInRight, insertLocation);
                 } else {
                     logger.error("error when Insert because insertLocation is single");
                 }
@@ -273,6 +283,7 @@ public class ApplyModification {
                     }
                 }
                 assert moveParentInRight != null;
+                assert inRightTree(moveParentInRight);
 
 
                 // 尝试找到moveNode在right中的位置
@@ -282,13 +293,10 @@ public class ApplyModification {
                     return;
                 }
                 MoNode moveNodeInRight = this.leftToRightMap.get(moveNodeInLeft);
-                // 有可能移除失败，由于他被其他操作移除了（例如insert的顶替）
-                moveNodeInRight.removeFromParent();
-
-                // 复制moveNodeInLeft
-                DeepCopyScanner moveDeepCopyScanner = new DeepCopyScanner(moveNodeInLeft);
-                MoNode moveNodeInLeftDeepCopy = moveDeepCopyScanner.getCopy();
-                maintenanceMap.putAll(moveDeepCopyScanner.getCopyMap());
+                if(inRightTree(moveNodeInRight)) {
+                    // 如果还在right树上，那么把他从right树上移除，不然直接移动就可以
+                    moveNodeInRight.removeFromParent();
+                }
 
                 // insert the move node in right
                 if(moveToLocation.classification() == ChildType.CHILDLIST) {
@@ -299,12 +307,16 @@ public class ApplyModification {
                         return;
                     }
 
-                    children.add(index, moveNodeInLeftDeepCopy);
+                    children.add(index, moveNodeInRight);
+                    moveNodeInRight.setParent(moveParentInRight, moveToLocation);
                 } else if (moveToLocation.classification() == ChildType.CHILD) {
-                    moveParentInRight.setStructuralProperty(moveToLocation.role(), moveNodeInLeftDeepCopy);
+                    moveParentInRight.setStructuralProperty(moveToLocation.role(), moveNodeInRight);
+                    moveNodeInRight.setParent(moveParentInRight, moveToLocation);
                 } else {
                     logger.error("error when Insert because insertLocation is single");
                 }
+
+
 
             } else if (operation instanceof UpdateOperation updateOperation) {
                 MoNode updateNodeInBefore = updateOperation.getUpdateNode();
@@ -317,6 +329,7 @@ public class ApplyModification {
                 }
                 MoNode updateNodeInRight = this.leftToRightMap.get(updateNodeInLeft);
                 assert updateNodeInRight != null;
+                assert inRightTree(updateNodeInRight);
 
                 if(setValue(updateNodeInRight, updateValue)) {
                     logger.info("update success, node type: {}", updateNodeInRight.getClass().getName());
@@ -352,6 +365,31 @@ public class ApplyModification {
             return true;
         }
         return false;
+    }
+
+    private void removeAllNodeFromMaintenanceMap(MoNode node) {
+        FlattenScanner scanner = new FlattenScanner();
+        scanner.flatten(node).forEach(maintenanceMap::removeValue);
+    }
+
+    private boolean inRightTree(MoNode node) {
+        FlattenScanner scanner = new FlattenScanner();
+        return scanner.flatten(right).contains(node);
+    }
+
+    public String whichTree(MoNode node) {
+        FlattenScanner scanner = new FlattenScanner();
+        if (scanner.flatten(pattern.getPatternBefore0()).contains(node)) {
+            return "patternBefore0";
+        } else if (scanner.flatten(pattern.getPatternAfter0()).contains(node)) {
+            return "getPatternAfter0";
+        } else if (scanner.flatten(left).contains(node)) {
+            return "left";
+        } else if (scanner.flatten(right).contains(node)) {
+            return "right";
+        } else {
+            return "not found";
+        }
     }
 
 }

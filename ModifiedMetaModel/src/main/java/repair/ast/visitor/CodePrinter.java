@@ -9,10 +9,7 @@ import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
 import repair.ast.code.statement.*;
 import repair.ast.code.type.*;
-import repair.ast.code.virtual.MoAssignmentOperator;
-import repair.ast.code.virtual.MoInfixOperator;
-import repair.ast.code.virtual.MoPostfixOperator;
-import repair.ast.code.virtual.MoPrefixOperator;
+import repair.ast.code.virtual.*;
 import repair.ast.declaration.*;
 
 import java.util.List;
@@ -413,7 +410,7 @@ public class CodePrinter implements Visitor {
 
     @Override
     public void visitMoMethodInvocation(MoMethodInvocation moMethodInvocation) {
-        moMethodInvocation.getExpression().ifPresent(expression -> {
+        moMethodInvocation.getTarget().ifPresent(expression -> {
             scan("expression", expression);
             write(".");
         });
@@ -424,7 +421,7 @@ public class CodePrinter implements Visitor {
         }
         scan("name", moMethodInvocation.getName());
         write("(");
-        writeArguments(moMethodInvocation.getArguments());
+        scan("arguments", moMethodInvocation.getArguments());
         write(")");
     }
 
@@ -1033,6 +1030,16 @@ public class CodePrinter implements Visitor {
     @Override
     public void visitMoPrefixOperator(MoPrefixOperator moPrefixOperator) {
         write(moPrefixOperator.getOperator().toString());
+    }
+
+    @Override
+    public void visitMoMethodInvocationTarget(MoMethodInvocationTarget moMethodInvocationTarget) {
+        scan("expression", moMethodInvocationTarget.getExpression());
+    }
+
+    @Override
+    public void visitMoMethodInvocationArguments(MoMethodInvocationArguments moMethodInvocationArguments) {
+        writeArguments(moMethodInvocationArguments.getArguments());
     }
 
     private void writeJavadoc(MoJavadoc javadoc) {

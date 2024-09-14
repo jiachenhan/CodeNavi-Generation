@@ -89,6 +89,10 @@ public class MoFieldAccess extends MoExpression {
         }
     }
 
+    public static Map<String, Description<MoFieldAccess, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

@@ -112,6 +112,10 @@ public class MoCompilationUnit extends MoNode implements Serializable {
         }
     }
 
+    public static Map<String, Description<MoCompilationUnit, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

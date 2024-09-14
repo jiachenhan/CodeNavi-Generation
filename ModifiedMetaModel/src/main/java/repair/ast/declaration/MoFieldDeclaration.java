@@ -116,6 +116,10 @@ public class MoFieldDeclaration extends MoBodyDeclaration {
         }
     }
 
+    public static Map<String, Description<MoFieldDeclaration, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

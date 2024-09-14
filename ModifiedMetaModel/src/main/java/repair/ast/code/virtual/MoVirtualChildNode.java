@@ -10,7 +10,7 @@ import java.io.Serial;
  * <p>
  * future support for tagName, typeDeclaration, etc.
  */
-public abstract class MoVirtualChildNode extends MoNode {
+public abstract class MoVirtualChildNode extends MoVirtualNode {
     @Serial
     private static final long serialVersionUID = 474376386040701912L;
 

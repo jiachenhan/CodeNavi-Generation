@@ -77,6 +77,10 @@ public class MoSingleMemberAnnotation extends MoAnnotation {
         }
     }
 
+    public static Map<String, Description<MoSingleMemberAnnotation, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

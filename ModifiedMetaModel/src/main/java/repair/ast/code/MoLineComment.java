@@ -5,11 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.MoNodeType;
+import repair.ast.code.expression.MoInstanceofExpression;
 import repair.ast.code.statement.MoVariableDeclarationStatement;
 import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.Map;
 
 public class MoLineComment extends MoComment {
     private static final Logger logger = LoggerFactory.getLogger(MoLineComment.class);
@@ -37,8 +39,13 @@ public class MoLineComment extends MoComment {
         logger.error("LineComment does not have any structural property");
     }
 
+    public static Map<String, Description<MoLineComment, ?>> getDescriptionsMap() {
+        logger.error("LineComment does not have any structural property");
+        return null;
+    }
+
     @Override
-    public Description<? extends MoNode, ?> getDescription(String role) {
+    public Description<MoLineComment, ?> getDescription(String role) {
         logger.error("LineComment does not have any structural property");
         return null;
     }

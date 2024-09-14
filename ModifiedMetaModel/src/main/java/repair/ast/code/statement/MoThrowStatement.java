@@ -72,6 +72,10 @@ public class MoThrowStatement extends MoStatement {
         }
     }
 
+    public static Map<String, Description<MoThrowStatement, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

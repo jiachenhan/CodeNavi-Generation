@@ -92,6 +92,10 @@ public class MoQualifiedName extends MoName {
         }
     }
 
+    public static Map<String, Description<MoQualifiedName, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

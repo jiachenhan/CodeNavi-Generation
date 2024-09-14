@@ -59,6 +59,10 @@ public class MoMarkerAnnotation extends MoAnnotation {
         }
     }
 
+    public static Map<String, Description<MoMarkerAnnotation, ?>> getDescriptionsMap() {
+        return descriptionsMap;
+    }
+
     @Override
     public Description<? extends MoNode, ?> getDescription(String role) {
         return descriptionsMap.get(role);

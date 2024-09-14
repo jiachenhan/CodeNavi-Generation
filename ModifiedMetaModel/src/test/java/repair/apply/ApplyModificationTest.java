@@ -28,7 +28,7 @@ public class ApplyModificationTest {
 
     private final List<Path> excludedPaths = List.of(
             // over JLS8 limit (instanceof pattern)
-            Path.of("E:\\dataset\\api\\apache-API-cluster\\apex-core\\10\\e4d44e559376eb6203e19f186139334ad1b3f318--LaunchContainerRunnable-LaunchContainerRunnable--232-237_232-232\\before.java")
+//            Path.of("E:\\dataset\\api\\apache-API-cluster\\apex-core\\10\\e4d44e559376eb6203e19f186139334ad1b3f318--LaunchContainerRunnable-LaunchContainerRunnable--232-237_232-232\\before.java")
     );
 
     @Test
@@ -95,10 +95,9 @@ public class ApplyModificationTest {
     @Test
     public void debug() {
         Path base = Paths.get("E:/dataset/api/apache-API-cluster");
-        String projectName = "apex-core";
-        String groupName = "6";
-        String caseName = "6349211c2e9644d889bbd1fad0536d4853947623--LogicalPlan-LogicalPlan--493-494_492-493";
-
+        String projectName = "archiva";
+        String groupName = "15";
+        String caseName = "1e1f7cdacd0118a5fb9a707871c7b7100b7f09d2--DefaultRepositoryGroupService-DefaultRepositoryGroupService--101-103_102-105";
         Path patternBeforePath = base.resolve(projectName).resolve(groupName).resolve(caseName).resolve("before.java");
         Path patternAfterPath = patternBeforePath.resolveSibling("after.java");
 
