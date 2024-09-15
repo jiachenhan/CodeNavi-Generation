@@ -119,8 +119,8 @@ public class ApplyModificationTest {
     public void debug() {
         Path base = Paths.get("E:/dataset/api/apache-API-cluster");
         String projectName = "archiva";
-        String groupName = "2";
-        String caseName = "8146f7ea370f2d2010d331e2944e86f259d705ea--Maven2RepositoryMetadataResolverMRM1411Test-Maven2RepositoryMetadataResolverMRM1411Test--137-138_138-140";
+        String groupName = "23";
+        String caseName = "c30389bfe8feecf769293208990cfb3daba69c75--NexusIndexerConsumer-NexusIndexerConsumer--91-92_105-106";
         Path patternBeforePath = base.resolve(projectName).resolve(groupName).resolve(caseName).resolve("before.java");
         Path patternAfterPath = patternBeforePath.resolveSibling("after.java");
 

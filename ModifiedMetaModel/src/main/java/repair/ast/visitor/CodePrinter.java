@@ -470,6 +470,11 @@ public class CodePrinter implements Visitor {
 
     @Override
     public void visitMoQualifiedName(MoQualifiedName moQualifiedName) {
+        if(moQualifiedName.getIdentifier() != null) {
+            // 将identifier作为一个整体考虑
+            write(moQualifiedName.getIdentifier());
+            return;
+        }
         scan("qualifier", moQualifiedName.getQualifier());
         write(".");
         scan("name", moQualifiedName.getName());

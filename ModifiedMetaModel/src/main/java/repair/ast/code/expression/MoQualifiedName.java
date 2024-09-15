@@ -11,6 +11,7 @@ import repair.ast.declaration.MoVariableDeclarationFragment;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
 import repair.ast.role.RoleDescriptor;
+import repair.ast.visitor.CodePrinter;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
@@ -39,16 +40,16 @@ public class MoQualifiedName extends MoName {
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoSimpleName name;
 
+
+
     public MoQualifiedName(String fileName, int startLine, int endLine, QualifiedName qualifiedName) {
         super(fileName, startLine, endLine, qualifiedName);
         moNodeType = MoNodeType.TYPEQualifiedName;
     }
 
-    // 识别行号后再设置
     public void setQualifier(MoName qualifier) {
         this.qualifier = qualifier;
     }
-
 
     public void setName(MoSimpleName name) {
         this.name = name;
@@ -61,6 +62,7 @@ public class MoQualifiedName extends MoName {
     public MoSimpleName getName() {
         return name;
     }
+
 
     @Override
     public void accept(Visitor visitor) {
@@ -101,6 +103,8 @@ public class MoQualifiedName extends MoName {
         return descriptionsMap.get(role);
     }
 
+
+
     @Override
     public MoNode shallowClone() {
         return new MoQualifiedName(getFileName(), getStartLine(), getEndLine(), null);
@@ -114,4 +118,29 @@ public class MoQualifiedName extends MoName {
         }
         return false;
     }
+
+    /*
+    * 在apply中，对于QualifiedName是按照整体进行匹配的，因此修改时只能直接修改identifier
+    * */
+
+    private String identifier;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public String toSrcString() {
+        if(identifier != null) {
+            // 说明直接被修改了
+            return identifier;
+        }
+        CodePrinter codePrinter = new CodePrinter();
+        codePrinter.scan(this);
+        identifier = codePrinter.getCode();
+        return identifier;
+    }
+
 }

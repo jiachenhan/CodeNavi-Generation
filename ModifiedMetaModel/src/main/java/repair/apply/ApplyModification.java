@@ -351,6 +351,9 @@ public class ApplyModification {
         if(node instanceof MoSimpleName simpleName) {
             simpleName.setStructuralProperty("identifier", value);
             return true;
+        } else if (node instanceof MoQualifiedName qualifiedName) {
+            qualifiedName.setIdentifier(value);
+            return true;
         } else if (node instanceof MoBooleanLiteral booleanLiteral) {
             booleanLiteral.setStructuralProperty("booleanValue", Boolean.parseBoolean(value));
             return true;
