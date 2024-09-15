@@ -10,6 +10,7 @@ import repair.apply.match.Matcher;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
 import repair.ast.visitor.DeepCopyScanner;
+import repair.modify.diff.DiffComparator;
 import repair.pattern.Pattern;
 
 import java.nio.file.Path;
@@ -76,7 +77,7 @@ public class MatchTest {
         MoNode moMethodBefore = beforeParser.process(methodBefore.get());
         MoNode moMethodAfter = afterParser.process(methodAfter.get());
 
-        pattern = new Pattern(moMethodBefore, moMethodAfter);
+        pattern = new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
         DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moMethodBefore);
         moNode = deepCopyScanner.getCopy();
     }

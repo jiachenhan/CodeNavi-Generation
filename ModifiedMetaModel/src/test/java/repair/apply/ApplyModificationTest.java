@@ -8,12 +8,14 @@ import repair.apply.match.MatchMock;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
 import repair.ast.visitor.DeepCopyScanner;
+import repair.modify.diff.DiffComparator;
 import repair.pattern.Pattern;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +38,7 @@ public class ApplyModificationTest {
     public void clusterDatasetAllTest() {
         AtomicInteger count = new AtomicInteger();
         AtomicInteger success = new AtomicInteger();
+        List<Path> failedPaths = new ArrayList<>();
         try(Stream<Path> javaStream = Files.walk(datasetPath)
                 .filter(Files::isRegularFile)
                 .filter(path -> path.getFileName().toString().equals("before.java"))) {
@@ -66,7 +69,7 @@ public class ApplyModificationTest {
                     MoNode moMethodBefore = beforeParser.process(methodBefore.get());
                     MoNode moMethodAfter = afterParser.process(methodAfter.get());
 
-                    Pattern pattern = new Pattern(moMethodBefore, moMethodAfter);
+                    Pattern pattern = new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
                     DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moMethodBefore);
                     MoNode copyBefore = deepCopyScanner.getCopy();
 
@@ -93,14 +96,18 @@ public class ApplyModificationTest {
                         count.getAndIncrement();
                     } else {
                         System.out.println("Error in " + patternBeforePath.toString());
+                        failedPaths.add(patternBeforePath);
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
+                    failedPaths.add(patternBeforePath);
                 }
-
 //                assertEquals("Code not equal in " + patternBeforePath.toString(), oracle, afterCopyCode);
             });
-
+            if(!failedPaths.isEmpty()) {
+                System.out.println("Failed paths: ");
+                failedPaths.forEach(System.out::println);
+            }
             System.out.println("Success: " + success.get() + ", Correct: " + count.get());
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,8 +119,8 @@ public class ApplyModificationTest {
     public void debug() {
         Path base = Paths.get("E:/dataset/api/apache-API-cluster");
         String projectName = "archiva";
-        String groupName = "18";
-        String caseName = "89fedaf3db3c31a4603d0750d4ee8635588c1e7a--RepositoryAccess-RepositoryAccess--159-159_161-171";
+        String groupName = "2";
+        String caseName = "8146f7ea370f2d2010d331e2944e86f259d705ea--Maven2RepositoryMetadataResolverMRM1411Test-Maven2RepositoryMetadataResolverMRM1411Test--137-138_138-140";
         Path patternBeforePath = base.resolve(projectName).resolve(groupName).resolve(caseName).resolve("before.java");
         Path patternAfterPath = patternBeforePath.resolveSibling("after.java");
 
@@ -133,7 +140,7 @@ public class ApplyModificationTest {
         MoNode moMethodBefore = beforeParser.process(methodBefore.get());
         MoNode moMethodAfter = afterParser.process(methodAfter.get());
 
-        Pattern pattern = new Pattern(moMethodBefore, moMethodAfter);
+        Pattern pattern = new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
         DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moMethodBefore);
         MoNode copyBefore = deepCopyScanner.getCopy();
 

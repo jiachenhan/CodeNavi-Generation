@@ -56,7 +56,7 @@ public class GumtreeTest {
             Tree afterTree = generator.generateFrom().file(codeAfterPath).getRoot();
 
             // 使用 GumTree 匹配器匹配两个树
-            Matcher defaultMatcher = Matchers.getInstance().getMatcher(); // retrieves the default matcher
+            Matcher defaultMatcher = Matchers.getInstance().getMatcher("gumtree-simple"); // retrieves the default matcher
             MappingStore mappings = defaultMatcher.match(beforeTree, afterTree); // computes the mappings between the trees
 
             EditScriptGenerator editScriptGenerator = new SimplifiedChawatheScriptGenerator(); // instantiates the simplified Chawathe script generator

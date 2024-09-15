@@ -28,10 +28,10 @@ public class Pattern implements Serializable {
     private List<Operation<? extends Action>> allOperations;
     private final BidiMap<MoNode, MoNode> beforeToAfterMap = new DualHashBidiMap<>();
 
-    public Pattern(MoNode patternBefore0, MoNode patternAfter0) {
+    public Pattern(MoNode patternBefore0, MoNode patternAfter0, DiffComparator.Mode mode) {
         this.patternBefore0 = patternBefore0;
         this.patternAfter0 = patternAfter0;
-        diffComparator = new DiffComparator(DiffComparator.Mode.MOVE_MODE);
+        diffComparator = new DiffComparator(mode);
         diffComparator.computeBeforeAfterMatch(patternBefore0, patternAfter0);
         this.allOperations = diffComparator.getAllOperations();
 

@@ -51,6 +51,12 @@ public class MoChawatheScriptGenerator implements EditScriptGenerator {
         initWith(ms);
         generate();
 
+        // add mappings manually
+        for (Mapping m: cpyMappings) {
+            if(m.first instanceof FakeTree) continue;
+            assert copyToOrig.get(m.first) != null;
+            mappings.addMapping(copyToOrig.get(m.first), m.second);
+        }
         return simplify(actions);
     }
 
@@ -74,8 +80,6 @@ public class MoChawatheScriptGenerator implements EditScriptGenerator {
             cpyMappings.addMapping(origToCopy.get(m.first), m.second);
 
         mappings = new MappingStore(ms.src, ms.dst);
-        for (Mapping m: origMappings)
-            mappings.addMapping(m.first, m.second);
     }
 
     public EditScript generate() {
@@ -120,9 +124,26 @@ public class MoChawatheScriptGenerator implements EditScriptGenerator {
                         Action mv = new Move(copyToOrig.get(w), copyToOrig.get(z), k);
                         actions.add(mv);
 
+                        // update mapping
+                        // add move before <-> after in mapping
+                        mappings.addMapping(copyToOrig.get(v), copyToOrig.get(z)); // move parent mapping
+
                         int oldk = w.positionInParent();
+                        Tree oldMoveChild = copyToOrig.get(v.getChild(oldk)); // old child
                         w.getParent().getChildren().remove(oldk);
                         z.insertChild(w, k);
+                        Tree newMoveChild = copyToOrig.get(z.getChild(k)); // new child
+
+                        mappings.addMapping(oldMoveChild, newMoveChild);
+
+                        /*
+                        *
+                        *     oriDST         cpy            new
+                        *       y             v              z
+                        *      / \           / \            / \ (k)
+                        *     _   x         _   w          _  z.getChild(k)
+                        *
+                        * */
                     }
                 }
             }
