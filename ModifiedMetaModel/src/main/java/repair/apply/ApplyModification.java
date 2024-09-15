@@ -120,9 +120,7 @@ public class ApplyModification {
                 // 2. insertParent在After中，但是在before中有对应的节点 ，这种情况出现于插入元素对原本位置元素的替换
                 // 3. insertParent在before中没有对应的节点，但是在之前的操作中已经插入到right中，这种情况需要从maintenanceMap中找到对应的节点
 
-                // insert 的时候，对应节点还没有删去，insert里还是有原来的节点
-                // 这种情况下，不能shallowClone，因为这样insertParent找不到对应的节点，需要再matchInstance中找到对应的节点
-                // TODO: 可能需要修改找到parent的逻辑
+                // insert 的时候，对应节点还没有删去，insert里还是有原来的节点, 需要先对maintenanceMap中的节点进行匹配
                 // TODO: 如果是将pattern应用到right上，那么新插入的节点也先暂时不能改名，而是在全部操作完成后，再分析上下文进行改名
                 MoNode insertParentInRight = null;
                 if(maintenanceMap.containsKey(insertParent)) {
@@ -156,9 +154,15 @@ public class ApplyModification {
                 // generate the insertee node in right
                 MoNode insertNodeTemplate = insertOperation.getAddNode();
                 MoNode insertNodeInRight = null;
-                DeepCopyScanner copyScanner = new DeepCopyScanner(insertNodeTemplate);
-                insertNodeInRight = copyScanner.getCopy();
-                maintenanceMap.putAll(copyScanner.getCopyMap());
+                if(insertNodeTemplate instanceof MoQualifiedName moQualifiedName) {
+                    DeepCopyScanner copyScanner = new DeepCopyScanner(moQualifiedName);
+                    insertNodeInRight = copyScanner.getCopy();
+                } else {
+                    insertNodeInRight = insertNodeTemplate.shallowClone();
+                }
+
+                maintenanceMap.put(insertNodeTemplate, insertNodeInRight);
+
 
                 // insert the insertee node in right
                 if(insertLocation.classification() == ChildType.CHILDLIST) {
