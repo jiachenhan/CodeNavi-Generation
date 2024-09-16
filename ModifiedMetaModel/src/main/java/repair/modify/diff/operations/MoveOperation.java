@@ -32,6 +32,8 @@ public class MoveOperation extends Operation<Move> implements AddOperator {
         }
 
         strategy = new OriginGumtreeInsertStrategy(action.getPosition());
+//        strategy = new NaiveIndexStrategy(this);
+
     }
 
     public MoNode getMoveNode() {

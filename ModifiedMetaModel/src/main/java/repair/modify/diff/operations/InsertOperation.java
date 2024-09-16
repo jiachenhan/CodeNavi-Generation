@@ -21,6 +21,7 @@ public class InsertOperation extends Operation<Insert> implements AddOperator {
         insertLocation = insertNode.getLocationInParent();
 
         strategy = new OriginGumtreeInsertStrategy(action.getPosition());
+//        strategy = new NaiveIndexStrategy(this);
     }
 
     @Override

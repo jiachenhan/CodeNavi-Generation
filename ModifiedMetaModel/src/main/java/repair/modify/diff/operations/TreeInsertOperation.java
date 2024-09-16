@@ -18,6 +18,7 @@ public class TreeInsertOperation extends Operation<TreeInsert> implements AddOpe
         insertParent = (MoNode) action.getParent().getMetadata(GumtreeMetaConstant.MO_NODE_KEY);
 
         strategy = new OriginGumtreeInsertStrategy(action.getPosition());
+//        strategy = new NaiveIndexStrategy(this);
     }
 
     @Override

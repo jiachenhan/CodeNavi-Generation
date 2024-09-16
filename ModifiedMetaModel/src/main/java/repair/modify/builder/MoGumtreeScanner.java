@@ -122,11 +122,6 @@ public class MoGumtreeScanner extends DeepScanner {
     public void visitMoBlock(MoBlock moBlock) {
         String nodeTypeName = getNodeType(moBlock);
         String label = "{";
-        if("thenStatement".equals(moBlock.getLocationInParent().role())) {
-            label = "then";
-        } else if("elseStatement".equals(moBlock.getLocationInParent().role())) {
-            label = "else";
-        }
         Tree newNode = createNode(nodeTypeName, moBlock, label);
         pushToStack(newNode);
 

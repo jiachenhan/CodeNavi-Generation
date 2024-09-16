@@ -901,6 +901,7 @@ public class NodeParser extends ASTVisitor {
 
     @Override
     public boolean visit(MethodInvocation node) {
+        // todo: 修改methodInvocation的结构，以适应链式调用这类情况
         int startLine = getStartLine(node);
         int endLine = getEndLine(node);
         MoMethodInvocation methodInvocation = new MoMethodInvocation(fileName, startLine, endLine, node);

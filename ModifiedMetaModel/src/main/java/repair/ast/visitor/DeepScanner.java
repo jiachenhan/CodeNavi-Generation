@@ -27,7 +27,7 @@ public class DeepScanner implements Visitor{
     }
 
     public void scan(String role, Collection<? extends MoNode> nodes) {
-        if(nodes == null) return;
+        if(nodes == null || nodes.isEmpty()) return;
         for (MoNode moNode : nodes) {
             scan(role, moNode);
         }

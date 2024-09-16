@@ -5,7 +5,6 @@ import com.github.gumtreediff.actions.EditScriptGenerator;
 import com.github.gumtreediff.actions.model.*;
 import com.github.gumtreediff.matchers.Mapping;
 import com.github.gumtreediff.matchers.MappingStore;
-import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.FakeTree;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeUtils;
@@ -29,8 +28,6 @@ public class MoChawatheScriptGenerator implements EditScriptGenerator {
 
     private MappingStore cpyMappings;
 
-
-
     private Set<Tree> dstInOrder;
 
     private Set<Tree> srcInOrder;
@@ -40,8 +37,8 @@ public class MoChawatheScriptGenerator implements EditScriptGenerator {
     private Map<Tree, Tree> origToCopy;
 
     private Map<Tree, Tree> copyToOrig;
-    private MappingStore mappings;
 
+    private MappingStore mappings;
     public MappingStore getMappings() {
         return mappings;
     }
@@ -124,17 +121,9 @@ public class MoChawatheScriptGenerator implements EditScriptGenerator {
                         Action mv = new Move(copyToOrig.get(w), copyToOrig.get(z), k);
                         actions.add(mv);
 
-                        // update mapping
-                        // add move before <-> after in mapping
-                        mappings.addMapping(copyToOrig.get(v), copyToOrig.get(z)); // move parent mapping
-
                         int oldk = w.positionInParent();
-                        Tree oldMoveChild = copyToOrig.get(v.getChild(oldk)); // old child
                         w.getParent().getChildren().remove(oldk);
                         z.insertChild(w, k);
-                        Tree newMoveChild = copyToOrig.get(z.getChild(k)); // new child
-
-                        mappings.addMapping(oldMoveChild, newMoveChild);
 
                         /*
                         *
@@ -158,6 +147,10 @@ public class MoChawatheScriptGenerator implements EditScriptGenerator {
                 actions.add(new Delete(copyToOrig.get(w)));
 
         return actions;
+    }
+
+    public void addMapping(Tree src, Tree dst) {
+        mappings.addMapping(src, dst);
     }
 
     private void alignChildren(Tree w, Tree x) {

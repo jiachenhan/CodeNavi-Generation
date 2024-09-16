@@ -19,6 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Method invocation expression AST node type.
+ *   MethodInvocation:
+ *       [ Expression . ]
+ *           [ < Type { , Type } > ]
+ *           Identifier ( [ Expression { , Expression } ] )
+ */
 public class MoMethodInvocation extends MoExpression {
     private static final Logger logger = LoggerFactory.getLogger(MoMethodInvocation.class);
     @Serial
