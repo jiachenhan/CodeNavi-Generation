@@ -1,15 +1,19 @@
-package repair.apply;
+package repair.modify.apply;
 
 import com.github.gumtreediff.actions.model.Action;
+import com.sun.jdi.InternalException;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repair.apply.match.MatchInstance;
+import repair.ast.code.type.MoPrimitiveType;
+import repair.ast.code.virtual.MoInfixOperator;
+import repair.ast.code.virtual.MoPostfixOperator;
+import repair.ast.code.virtual.MoPrefixOperator;
+import repair.modify.apply.match.MatchInstance;
 import repair.ast.MoNode;
 import repair.ast.MoNodeList;
 import repair.ast.code.MoModifier;
-import repair.ast.code.expression.MoMethodInvocation;
 import repair.ast.code.expression.MoQualifiedName;
 import repair.ast.code.expression.MoSimpleName;
 import repair.ast.code.expression.literal.MoBooleanLiteral;
@@ -24,11 +28,14 @@ import repair.modify.builder.GumtreeMetaConstant;
 import repair.modify.diff.operations.*;
 import repair.pattern.Pattern;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
+ *  directly apply the modification to MoMetaModel
+ *
  *  the big picture of applying modification process
  *
  *  maintain two couple of trees
@@ -252,6 +259,7 @@ public class ApplyModification {
                     logger.info("moveParent type 3");
                     moveParentInRight = maintenanceMap.get(moveParent);
                 } else if(this.beforeToAfterMap.containsKey(moveParent)) {
+                    // 这种是内部调整位置
                     logger.info("moveParent type 1");
                     MoNode moveParentType1Left = matchInstance.getNodeMap().get(moveParent);
                     if(moveParentType1Left == null) {
@@ -285,6 +293,11 @@ public class ApplyModification {
                 if(inRightTree(moveNodeInRight)) {
                     // 如果还在right树上，那么把他从right树上移除，不然直接移动就可以
                     moveNodeInRight.removeFromParent();
+                }
+
+                // 检查是否有循环风险, 移动的节点可能是父节点的祖先节点（由于匹配阶段的错误）
+                if(hasCycleRisk(moveParentInRight, moveNodeInRight)) {
+                    throw new InternalException("Multiple moves may cause cycle risk");
                 }
 
                 // insert the move node in right
@@ -356,6 +369,9 @@ public class ApplyModification {
         } else if (node instanceof MoQualifiedName qualifiedName) {
             qualifiedName.setIdentifier(value);
             return true;
+        } else if (node instanceof MoPrimitiveType primitiveType) {
+            primitiveType.setStructuralProperty("primitiveTypeCode", value);
+            return true;
         } else if (node instanceof MoBooleanLiteral booleanLiteral) {
             booleanLiteral.setStructuralProperty("booleanValue", Boolean.parseBoolean(value));
             return true;
@@ -371,8 +387,20 @@ public class ApplyModification {
         } else if (node instanceof MoModifier modifier) {
             modifier.setStructuralProperty("keyword", value);
             return true;
+        } else if (node instanceof MoInfixOperator infixOperator) {
+            infixOperator.setStructuralProperty("operator", value);
+            return true;
+        } else if (node instanceof MoPrefixOperator prefixOperator) {
+            prefixOperator.setStructuralProperty("operator", value);
+            return true;
+        } else if (node instanceof MoPostfixOperator postfixOperator) {
+            postfixOperator.setStructuralProperty("operator", value);
+            return true;
+        } else {
+            logger.error("node type {} is not supported", node.getClass().getName());
         }
         return false;
+
     }
 
     private void removeAllNodeFromMaintenanceMap(MoNode node) {
@@ -385,15 +413,26 @@ public class ApplyModification {
         return scanner.flatten(right).contains(node);
     }
 
+    private boolean hasCycleRisk(MoNode parent, MoNode node) {
+        List<MoNode> ancestors = new ArrayList<>();
+        ancestors.add(parent);
+        MoNode current = parent;
+        while(current.getParent() != null) {
+            ancestors.add(current.getParent());
+            current = current.getParent();
+        }
+        // 如果有被插入节点的孩子出现在祖先节点中，那么就有循环风险
+        return new FlattenScanner().flatten(node).stream().anyMatch(ancestors::contains);
+    }
+
     public String whichTree(MoNode node) {
-        FlattenScanner scanner = new FlattenScanner();
-        if (scanner.flatten(pattern.getPatternBefore0()).contains(node)) {
+        if (new FlattenScanner().flatten(pattern.getPatternBefore0()).contains(node)) {
             return "patternBefore0";
-        } else if (scanner.flatten(pattern.getPatternAfter0()).contains(node)) {
+        } else if (new FlattenScanner().flatten(pattern.getPatternAfter0()).contains(node)) {
             return "getPatternAfter0";
-        } else if (scanner.flatten(left).contains(node)) {
+        } else if (new FlattenScanner().flatten(left).contains(node)) {
             return "left";
-        } else if (scanner.flatten(right).contains(node)) {
+        } else if (new FlattenScanner().flatten(right).contains(node)) {
             return "right";
         } else {
             return "not found";

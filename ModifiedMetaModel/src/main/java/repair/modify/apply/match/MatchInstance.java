@@ -1,12 +1,10 @@
-package repair.apply.match;
+package repair.modify.apply.match;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
-
-import java.util.Map;
 
 public class MatchInstance {
     private final static Logger logger = LoggerFactory.getLogger(MatchInstance.class);

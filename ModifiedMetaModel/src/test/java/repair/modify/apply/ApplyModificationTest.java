@@ -1,10 +1,12 @@
-package repair.apply;
+package repair.modify.apply;
 
+import com.sun.jdi.InternalException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
-import repair.apply.match.MatchInstance;
-import repair.apply.match.MatchMock;
+import repair.modify.apply.ApplyModification;
+import repair.modify.apply.match.MatchInstance;
+import repair.modify.apply.match.MatchMock;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
 import repair.ast.visitor.DeepCopyScanner;
@@ -39,6 +41,8 @@ public class ApplyModificationTest {
         AtomicInteger count = new AtomicInteger();
         AtomicInteger success = new AtomicInteger();
         List<Path> failedPaths = new ArrayList<>();
+        List<Path> wrongMatchPaths = new ArrayList<>();
+        List<Path> mayIndexErrPaths = new ArrayList<>();
         try(Stream<Path> javaStream = Files.walk(datasetPath)
                 .filter(Files::isRegularFile)
                 .filter(path -> path.getFileName().toString().equals("before.java"))) {
@@ -69,7 +73,7 @@ public class ApplyModificationTest {
                     MoNode moMethodBefore = beforeParser.process(methodBefore.get());
                     MoNode moMethodAfter = afterParser.process(methodAfter.get());
 
-                    Pattern pattern = new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.NO_MOVE_MODE);
+                    Pattern pattern = new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
                     DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moMethodBefore);
                     MoNode copyBefore = deepCopyScanner.getCopy();
 
@@ -95,19 +99,37 @@ public class ApplyModificationTest {
                     if(oracle.equals(afterCopyCode)) {
                         count.getAndIncrement();
                     } else {
+                        if(oracle.length() == afterCopyCode.length()) {
+                            mayIndexErrPaths.add(patternBeforePath);
+                        }
                         System.out.println("Error in " + patternBeforePath.toString());
                         failedPaths.add(patternBeforePath);
                     }
+                } catch (InternalException e) {
+                    e.printStackTrace();
+                    wrongMatchPaths.add(patternBeforePath);
                 } catch (Throwable e) {
                     e.printStackTrace();
                     failedPaths.add(patternBeforePath);
                 }
 //                assertEquals("Code not equal in " + patternBeforePath.toString(), oracle, afterCopyCode);
             });
+
             if(!failedPaths.isEmpty()) {
                 System.out.println("Failed paths: ");
                 failedPaths.forEach(System.out::println);
             }
+            System.out.println("Cycle Risks: " + wrongMatchPaths.size());
+            if(!wrongMatchPaths.isEmpty()) {
+                System.out.println("Cycle Risk paths: ");
+                wrongMatchPaths.forEach(System.out::println);
+            }
+            System.out.println("May Index Error: " + mayIndexErrPaths.size());
+            if(!mayIndexErrPaths.isEmpty()) {
+                System.out.println("May Index Error paths: ");
+                mayIndexErrPaths.forEach(System.out::println);
+            }
+
             System.out.println("Success: " + success.get() + ", Correct: " + count.get());
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,9 +140,9 @@ public class ApplyModificationTest {
     @Test
     public void debug() {
         Path base = Paths.get("E:/dataset/api/apache-API-cluster");
-        String projectName = "incubator-doris";
-        String groupName = "35";
-        String caseName = "e7b070c9ec441a0ad3f2fbd977374fad276ba74a--ListQuery-ListQuery--46-47_47-48";
+        String projectName = "zookeeper";
+        String groupName = "2";
+        String caseName = "190a227aa9d4655ebfe6ba9f5c2da426da8c5d98--DataTree-DataTree--623-624_598-599";
 //        String groupName = "24";
 //        String caseName = "03036e9b3dcaada18a8e39c8f03dc4dbb0090777--SchedulerThriftInterface-SchedulerThriftInterface--492-493_495-496";
         Path patternBeforePath = base.resolve(projectName).resolve(groupName).resolve(caseName).resolve("before.java");

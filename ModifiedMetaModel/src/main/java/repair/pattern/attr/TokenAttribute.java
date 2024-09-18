@@ -2,7 +2,7 @@ package repair.pattern.attr;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repair.apply.match.MatchAlgorithm;
+import repair.modify.apply.match.MatchAlgorithm;
 import repair.ast.MoNode;
 
 import java.util.List;
