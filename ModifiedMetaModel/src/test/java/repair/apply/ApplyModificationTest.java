@@ -69,7 +69,7 @@ public class ApplyModificationTest {
                     MoNode moMethodBefore = beforeParser.process(methodBefore.get());
                     MoNode moMethodAfter = afterParser.process(methodAfter.get());
 
-                    Pattern pattern = new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
+                    Pattern pattern = new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.NO_MOVE_MODE);
                     DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moMethodBefore);
                     MoNode copyBefore = deepCopyScanner.getCopy();
 
@@ -118,11 +118,11 @@ public class ApplyModificationTest {
     @Test
     public void debug() {
         Path base = Paths.get("E:/dataset/api/apache-API-cluster");
-        String projectName = "attic-aurora";
-//        String groupName = "6";
-//        String caseName = "5069f93be36c0a8720415c073e662fe430ca06f1--DbJobUpdateStoreTest-DbJobUpdateStoreTest--1001-1002_1021-1023";
-        String groupName = "24";
-        String caseName = "03036e9b3dcaada18a8e39c8f03dc4dbb0090777--SchedulerThriftInterface-SchedulerThriftInterface--492-493_495-496";
+        String projectName = "incubator-doris";
+        String groupName = "35";
+        String caseName = "e7b070c9ec441a0ad3f2fbd977374fad276ba74a--ListQuery-ListQuery--46-47_47-48";
+//        String groupName = "24";
+//        String caseName = "03036e9b3dcaada18a8e39c8f03dc4dbb0090777--SchedulerThriftInterface-SchedulerThriftInterface--492-493_495-496";
         Path patternBeforePath = base.resolve(projectName).resolve(groupName).resolve(caseName).resolve("before.java");
         Path patternAfterPath = patternBeforePath.resolveSibling("after.java");
 

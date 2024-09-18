@@ -25,6 +25,7 @@ import repair.modify.diff.operations.*;
 import repair.pattern.Pattern;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -338,7 +339,8 @@ public class ApplyModification {
      */
     private void makeSureInsertIndex(int index, MoNodeList<MoNode> children, MoNode insertNodeInList) {
         if(index < 0 || index > children.size()) {
-            for (int i = 0; i < index - children.size(); i++) {
+            int size = children.size();
+            for (int i = 0; i < index - size; i++) {
                 MoNode placeholder = insertNodeInList.shallowClone();
                 placeholderNodesToBeRemoved.add(placeholder);
                 children.add(placeholder);
@@ -397,5 +399,6 @@ public class ApplyModification {
             return "not found";
         }
     }
+
 
 }
