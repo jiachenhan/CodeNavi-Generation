@@ -8,6 +8,7 @@ import repair.ast.MoNodeList;
 import repair.ast.MoNodeType;
 import repair.ast.code.MoExtendedModifier;
 import repair.ast.code.MoJavadoc;
+import repair.ast.code.MoModifier;
 import repair.ast.code.type.MoType;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
@@ -15,6 +16,8 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +81,23 @@ public class MoFieldDeclaration extends MoBodyDeclaration {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoFieldDeclaration(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        if(super.javadoc != null) {
+            children.add(super.javadoc);
+        }
+        super.modifiers.forEach(modifier -> children.add(((MoNode) modifier)));
+        children.add(type);
+        children.addAll(fragments);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

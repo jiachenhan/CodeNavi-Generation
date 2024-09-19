@@ -9,6 +9,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoBlockComment extends MoComment {
@@ -24,6 +25,16 @@ public class MoBlockComment extends MoComment {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoBlockComment(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
     }
 
     @Override

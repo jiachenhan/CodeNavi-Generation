@@ -15,9 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MoArrayCreation extends MoExpression {
     private static final Logger logger = LoggerFactory.getLogger(MoArrayCreation.class);
@@ -85,6 +83,22 @@ public class MoArrayCreation extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoArrayCreation(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        children.add(type);
+        children.addAll(dimensionExpressions);
+        if(initializer != null) {
+            children.add(initializer);
+        }
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

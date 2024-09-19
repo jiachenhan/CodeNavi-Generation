@@ -12,9 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MoAnonymousClassDeclaration extends MoNode {
     private static final Logger logger = LoggerFactory.getLogger(MoAnonymousClassDeclaration.class);
@@ -49,6 +47,16 @@ public class MoAnonymousClassDeclaration extends MoNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoAnonymousClassDeclaration(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return Collections.unmodifiableList(bodyDeclarations);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return bodyDeclarations.isEmpty();
     }
 
     @Override

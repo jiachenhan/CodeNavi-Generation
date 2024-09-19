@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoCatchClause extends MoNode {
@@ -65,6 +66,16 @@ public class MoCatchClause extends MoNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoCatchClause(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(exception, body);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

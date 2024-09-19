@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoInstanceofExpression extends MoExpression {
@@ -65,6 +66,16 @@ public class MoInstanceofExpression extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoInstanceofExpression(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(leftOperand, rightOperand);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

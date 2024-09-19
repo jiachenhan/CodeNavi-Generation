@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoThrowStatement extends MoStatement {
@@ -49,6 +50,16 @@ public class MoThrowStatement extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoThrowStatement(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(expression);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

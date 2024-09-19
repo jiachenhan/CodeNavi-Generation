@@ -15,6 +15,7 @@ import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,16 @@ public class MoUnionType extends MoType {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoUnionType(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return Collections.unmodifiableList(types);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return types.isEmpty();
     }
 
     @Override

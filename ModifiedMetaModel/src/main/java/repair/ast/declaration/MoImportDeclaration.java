@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoImportDeclaration extends MoNode {
@@ -72,6 +73,16 @@ public class MoImportDeclaration extends MoNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoImportDeclaration(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(name);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

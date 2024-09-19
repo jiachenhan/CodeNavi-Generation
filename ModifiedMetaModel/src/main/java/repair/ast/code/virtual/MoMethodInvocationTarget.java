@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoMethodInvocationTarget extends MoVirtualChildNode {
@@ -33,6 +34,16 @@ public class MoMethodInvocationTarget extends MoVirtualChildNode {
     public MoMethodInvocationTarget(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
         super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEMethodInvocationTarget;
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(expression);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     public MoExpression getExpression() {

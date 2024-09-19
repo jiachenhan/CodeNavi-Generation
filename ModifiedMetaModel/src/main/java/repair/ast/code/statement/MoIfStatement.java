@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -82,6 +83,19 @@ public class MoIfStatement extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoIfStatement(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        if(elseStatement != null) {
+            return List.of(condition, thenStatement, elseStatement);
+        }
+        return List.of(condition, thenStatement);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

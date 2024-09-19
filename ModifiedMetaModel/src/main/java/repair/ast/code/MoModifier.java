@@ -114,6 +114,16 @@ public final class MoModifier extends MoNode implements MoExtendedModifier {
     }
 
     @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
+
+    @Override
     public Object getStructuralProperty(String role) {
         Description<MoModifier, ?> description = descriptionsMap.get(role);
         if(description == keywordDescription) {

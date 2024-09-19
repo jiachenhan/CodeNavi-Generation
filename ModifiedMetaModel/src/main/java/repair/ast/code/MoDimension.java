@@ -16,6 +16,7 @@ import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,16 @@ public class MoDimension extends MoNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoDimension(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return Collections.unmodifiableList(annotations);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return annotations.isEmpty();
     }
 
     @Override

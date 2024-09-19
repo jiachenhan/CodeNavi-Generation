@@ -17,6 +17,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoPrefixExpression extends MoExpression {
@@ -72,6 +73,16 @@ public class MoPrefixExpression extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoPrefixExpression(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(operator, operand);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

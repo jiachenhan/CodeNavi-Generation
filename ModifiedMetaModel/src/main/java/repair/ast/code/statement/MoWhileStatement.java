@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoWhileStatement extends MoStatement {
@@ -64,6 +65,16 @@ public class MoWhileStatement extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoWhileStatement(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(condition, body);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

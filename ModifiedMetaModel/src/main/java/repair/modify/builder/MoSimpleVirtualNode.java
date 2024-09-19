@@ -6,6 +6,7 @@ import repair.ast.role.Description;
 import java.io.Serial;
 import java.io.Serializable;
 
+@Deprecated
 public class MoSimpleVirtualNode<T> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1930742776005621544L;

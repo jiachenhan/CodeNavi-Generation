@@ -12,6 +12,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoMarkerAnnotation extends MoAnnotation {
@@ -36,6 +37,16 @@ public class MoMarkerAnnotation extends MoAnnotation {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoMarkerAnnotation(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(typeName);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

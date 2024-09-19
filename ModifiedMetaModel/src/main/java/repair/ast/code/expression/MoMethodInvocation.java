@@ -15,9 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Method invocation expression AST node type.
@@ -107,6 +105,23 @@ public class MoMethodInvocation extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoMethodInvocation(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        if(target != null) {
+            children.add(target);
+        }
+        children.addAll(typeArguments);
+        children.add(name);
+        children.add(arguments);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

@@ -8,6 +8,7 @@ import repair.ast.MoNodeList;
 import repair.ast.MoNodeType;
 import repair.ast.code.MoExtendedModifier;
 import repair.ast.code.MoJavadoc;
+import repair.ast.code.MoModifier;
 import repair.ast.code.MoTypeParameter;
 import repair.ast.code.expression.MoSimpleName;
 import repair.ast.code.type.MoType;
@@ -17,9 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MoTypeDeclaration extends MoAbstractTypeDeclaration{
     private static final Logger logger = LoggerFactory.getLogger(MoTypeDeclaration.class);
@@ -121,6 +120,28 @@ public class MoTypeDeclaration extends MoAbstractTypeDeclaration{
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoTypeDeclaration(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        if(javadoc != null) {
+            children.add(javadoc);
+        }
+        modifiers.forEach(modifier -> children.add(((MoNode) modifier)));
+        children.add(name);
+        children.addAll(bodyDeclarations);
+        if(superclassType != null) {
+            children.add(superclassType);
+        }
+        children.addAll(superInterfaceTypes);
+        children.addAll(typeParameters);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

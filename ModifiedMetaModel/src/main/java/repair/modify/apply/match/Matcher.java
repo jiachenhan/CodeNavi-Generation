@@ -6,32 +6,16 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
-import repair.ast.visitor.FlattenScanner;
-import repair.pattern.AttributeFactory;
 import repair.pattern.Pattern;
 import repair.pattern.attr.*;
 
 import java.util.*;
 
+import static repair.pattern.AttributeFactory.attrToWeight;
+
 public class Matcher {
     private final static Logger logger = LoggerFactory.getLogger(Matcher.class);
 
-    private static final Map<Class<? extends Attribute<?>>, Double> attrToWeight = new HashMap<>();
-    static {
-        attrToWeight.put(LocationSubTypeAttribute.class, 1.0); // weight is not used for hard constraints
-
-        attrToWeight.put(MoTypeAttribute.class, 0.5);
-        attrToWeight.put(TokenAttribute.class, 0.5);
-    }
-
-    public static Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> computeAttributes(MoNode left) {
-        Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> nodeToAttributes = new HashMap<>();
-        for (MoNode leftNode : new FlattenScanner().flatten(left)) {
-            Map<Class<? extends Attribute<?>>, Attribute<?>> attributes = AttributeFactory.createAttributes(leftNode);
-            nodeToAttributes.put(leftNode, attributes);
-        }
-        return nodeToAttributes;
-    }
 
     public static List<MatchInstance> match(Pattern pattern, MoNode left) {
         RoughMapping roughMapping = roughMatch(pattern, left, 0.5);
@@ -92,7 +76,7 @@ public class Matcher {
 
     public static RoughMapping roughMatch(Pattern pattern, MoNode left, double threshold) {
         RoughMapping roughMapping = new RoughMapping();
-        Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> leftToAttributes = computeAttributes(left);
+        Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> leftToAttributes = Attribute.computeAttributes(left);
         Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> patternBeforeToAttributes = pattern.getNodeToAttributes();
 
         for (Map.Entry<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> beforeEntry : patternBeforeToAttributes.entrySet()) {

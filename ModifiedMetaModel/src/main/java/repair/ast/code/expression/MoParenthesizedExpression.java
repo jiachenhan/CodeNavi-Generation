@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoParenthesizedExpression extends MoExpression {
@@ -47,6 +48,16 @@ public class MoParenthesizedExpression extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoParenthesizedExpression(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(expression);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

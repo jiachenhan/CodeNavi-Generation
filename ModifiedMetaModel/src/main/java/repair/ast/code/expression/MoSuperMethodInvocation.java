@@ -18,10 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MoSuperMethodInvocation extends MoExpression {
     private static final Logger logger = LoggerFactory.getLogger(MoSuperMethodInvocation.class);
@@ -115,6 +112,23 @@ public class MoSuperMethodInvocation extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoSuperMethodInvocation(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        if(qualifier != null) {
+            children.add(qualifier);
+        }
+        children.addAll(typeArguments);
+        children.add(name);
+        children.addAll(arguments);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

@@ -15,6 +15,9 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class MoVariableDeclarationFragment extends MoVariableDeclaration {
@@ -25,7 +28,7 @@ public class MoVariableDeclarationFragment extends MoVariableDeclaration {
 
     private final static Description<MoVariableDeclarationFragment, MoSimpleName> nameDescription =
             new Description<>(ChildType.CHILD, MoVariableDeclarationFragment.class, MoSimpleName.class,
-                    "name", false);
+                    "name", true);
 
     private final static Description<MoVariableDeclarationFragment, MoDimension> extraDimensionsDescription =
             new Description<>(ChildType.CHILDLIST, MoVariableDeclarationFragment.class, MoDimension.class,
@@ -33,7 +36,7 @@ public class MoVariableDeclarationFragment extends MoVariableDeclaration {
 
     private final static Description<MoVariableDeclarationFragment, MoExpression> initializerDescription =
             new Description<>(ChildType.CHILD, MoVariableDeclarationFragment.class, MoExpression.class,
-                    "initializer", true);
+                    "initializer", false);
 
     private final static Map<String, Description<MoVariableDeclarationFragment, ?>> descriptionsMap = Map.ofEntries(
             Map.entry("name", nameDescription),
@@ -51,6 +54,22 @@ public class MoVariableDeclarationFragment extends MoVariableDeclaration {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoVariableDeclarationFragment(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        children.add(name);
+        children.addAll(CStyleArrayDimensions);
+        if(initializer != null) {
+            children.add(initializer);
+        }
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

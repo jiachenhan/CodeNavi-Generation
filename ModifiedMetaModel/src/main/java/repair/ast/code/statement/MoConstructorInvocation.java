@@ -14,6 +14,8 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +69,19 @@ public class MoConstructorInvocation extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoConstructorInvocation(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        children.addAll(typeArguments);
+        children.addAll(arguments);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return typeArguments.isEmpty() && arguments.isEmpty();
     }
 
     @Override

@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoPrimitiveType extends MoAnnotatableType {
@@ -89,6 +90,16 @@ public class MoPrimitiveType extends MoAnnotatableType {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoPrimitiveType(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
     }
 
     @Override

@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoMemberValuePair extends MoNode {
@@ -62,6 +63,16 @@ public class MoMemberValuePair extends MoNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoMemberValuePair(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(name, value);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

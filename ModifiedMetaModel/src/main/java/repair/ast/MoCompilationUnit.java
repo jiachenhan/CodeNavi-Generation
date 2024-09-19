@@ -11,9 +11,7 @@ import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MoCompilationUnit extends MoNode implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(MoCompilationUnit.class);
@@ -78,6 +76,22 @@ public class MoCompilationUnit extends MoNode implements Serializable {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoCompilationUnit(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        if(packageDeclaration != null) {
+            children.add(packageDeclaration);
+        }
+        children.addAll(imports);
+        children.addAll(types);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return packageDeclaration == null && imports.isEmpty() && types.isEmpty();
     }
 
     @Override

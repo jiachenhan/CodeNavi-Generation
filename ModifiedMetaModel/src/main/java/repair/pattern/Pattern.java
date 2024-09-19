@@ -3,11 +3,16 @@ package repair.pattern;
 import com.github.gumtreediff.actions.model.Action;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.visitor.FlattenScanner;
 import repair.modify.builder.GumtreeMetaConstant;
 import repair.modify.diff.DiffComparator;
 import repair.modify.diff.operations.Operation;
+import repair.pattern.abstraction.AbstractionMode;
+import repair.pattern.abstraction.Abstractor;
+import repair.pattern.abstraction.TermFrequencyAbstractor;
 import repair.pattern.attr.Attribute;
 
 import java.io.Serial;
@@ -17,21 +22,25 @@ import java.util.List;
 import java.util.Map;
 
 public class Pattern implements Serializable {
+    private final static Logger logger = LoggerFactory.getLogger(Pattern.class);
     @Serial
     private static final long serialVersionUID = -5977154810927770357L;
     /**
      * patternBefore0 -> patternAfter0 作为最开始初始化的pattern，需要有其他的before -> after树与之匹配
      */
+
+    private final DiffComparator.Mode actionMode;
     private final MoNode patternBefore0;
     private final MoNode patternAfter0;
     private final DiffComparator diffComparator;
     private List<Operation<? extends Action>> allOperations;
     private final BidiMap<MoNode, MoNode> beforeToAfterMap = new DualHashBidiMap<>();
 
-    public Pattern(MoNode patternBefore0, MoNode patternAfter0, DiffComparator.Mode mode) {
+    public Pattern(MoNode patternBefore0, MoNode patternAfter0, DiffComparator.Mode actionMode) {
+        this.actionMode = actionMode;
         this.patternBefore0 = patternBefore0;
         this.patternAfter0 = patternAfter0;
-        diffComparator = new DiffComparator(mode);
+        diffComparator = new DiffComparator(actionMode);
         diffComparator.computeBeforeAfterMatch(patternBefore0, patternAfter0);
         this.allOperations = diffComparator.getAllOperations();
 
@@ -44,6 +53,7 @@ public class Pattern implements Serializable {
         initAttributes();
     }
 
+    private final Map<MoNode, Boolean> nodeToConsidered = new HashMap<>();
     private final Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> nodeToAttributes = new HashMap<>();
 
     /**
@@ -51,9 +61,22 @@ public class Pattern implements Serializable {
      */
     public void initAttributes() {
         for (MoNode beforeNode : new FlattenScanner().flatten(patternBefore0)) {
+            nodeToConsidered.put(beforeNode, true);
             Map<Class<? extends Attribute<?>>, Attribute<?>> attributes = AttributeFactory.createAttributes(beforeNode);
             nodeToAttributes.put(beforeNode, attributes);
         }
+    }
+
+    public Map<MoNode, Boolean> getNodeToConsidered() {
+        return nodeToConsidered;
+    }
+
+
+    /**
+     * @return nodes that are considered in the pattern
+     */
+    public List<MoNode> getConsideredNodes() {
+        return nodeToConsidered.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).toList();
     }
 
     public Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> getNodeToAttributes() {
@@ -91,5 +114,9 @@ public class Pattern implements Serializable {
 
     public MoNode getPatternAfter0() {
         return patternAfter0;
+    }
+
+    public BidiMap<MoNode, MoNode> getBeforeToAfterMap() {
+        return beforeToAfterMap;
     }
 }

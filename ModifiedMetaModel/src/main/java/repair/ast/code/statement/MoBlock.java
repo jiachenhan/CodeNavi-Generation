@@ -54,6 +54,16 @@ public class MoBlock extends MoStatement {
     }
 
     @Override
+    public List<MoNode> getChildren() {
+        return Collections.unmodifiableList(statements);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return statements.isEmpty();
+    }
+
+    @Override
     public Object getStructuralProperty(String role) {
         Description<MoBlock, ?> description = descriptionsMap.get(role);
         if(description == statementsDescription) {

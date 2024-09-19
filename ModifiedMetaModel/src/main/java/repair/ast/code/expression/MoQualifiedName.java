@@ -15,8 +15,12 @@ import repair.ast.visitor.CodePrinter;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * 不再将其子节点展开，而是直接返回其identifier
+ */
 public class MoQualifiedName extends MoName {
     private static final Logger logger = LoggerFactory.getLogger(MoQualifiedName.class);
     @Serial
@@ -67,6 +71,16 @@ public class MoQualifiedName extends MoName {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoQualifiedName(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
     }
 
     @Override

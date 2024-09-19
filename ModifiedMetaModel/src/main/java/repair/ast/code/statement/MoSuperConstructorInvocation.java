@@ -18,10 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MoSuperConstructorInvocation extends MoStatement {
     private static final Logger logger = LoggerFactory.getLogger(MoSuperConstructorInvocation.class);
@@ -88,6 +85,22 @@ public class MoSuperConstructorInvocation extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoSuperConstructorInvocation(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        if(expression != null) {
+            children.add(expression);
+        }
+        children.addAll(typeArguments);
+        children.addAll(arguments);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return expression == null && typeArguments.isEmpty() && arguments.isEmpty();
     }
 
     @Override

@@ -8,6 +8,7 @@ import repair.ast.MoNodeList;
 import repair.ast.MoNodeType;
 import repair.ast.code.MoExtendedModifier;
 import repair.ast.code.MoJavadoc;
+import repair.ast.code.MoModifier;
 import repair.ast.code.statement.MoBlock;
 import repair.ast.role.ChildType;
 import repair.ast.role.Description;
@@ -15,7 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.Map;
+import java.util.*;
 
 public class MoInitializer extends MoBodyDeclaration {
     private static final Logger logger = LoggerFactory.getLogger(MoInitializer.class);
@@ -60,6 +61,22 @@ public class MoInitializer extends MoBodyDeclaration {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoInitializer(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        if(super.javadoc != null) {
+            children.add(super.javadoc);
+        }
+        super.modifiers.forEach(modifier -> children.add(((MoNode) modifier)));
+        children.add(body);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

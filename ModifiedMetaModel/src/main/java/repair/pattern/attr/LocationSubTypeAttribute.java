@@ -4,6 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 
+/**
+ * 标识孩子节点的父类型硬约束能否满足
+ */
+@RegisterAttr
 public class LocationSubTypeAttribute extends Attribute<Class<?>> implements HardConstraint {
     private static final Logger logger = LoggerFactory.getLogger(LocationSubTypeAttribute.class);
     public LocationSubTypeAttribute(MoNode node) {
@@ -20,9 +24,9 @@ public class LocationSubTypeAttribute extends Attribute<Class<?>> implements Har
     public double similarity(Attribute<?> other) {
         if (other instanceof LocationSubTypeAttribute locationSubTypeAttribute) {
             if(this.value == null || locationSubTypeAttribute.value == null) {
-                return 0;
+                return -1;
             }
-            return this.value.isAssignableFrom(node.getClass()) ? 1 : 0;
+            return this.value.isAssignableFrom(node.getClass()) ? 1 : -1;
         }
         logger.error("Cannot compare LocationSubTypeAttribute with " + other.getClass());
         return -1;

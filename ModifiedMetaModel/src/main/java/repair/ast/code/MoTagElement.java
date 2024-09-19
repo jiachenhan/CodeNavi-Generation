@@ -62,6 +62,18 @@ public class MoTagElement extends MoNode implements MoDocElement {
     }
 
     @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        docFragments.forEach(docFragment -> children.add(((MoNode) docFragment)));
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return docFragments.isEmpty();
+    }
+
+    @Override
     public Object getStructuralProperty(String role) {
         Description<MoTagElement, ?> description = descriptionsMap.get(role);
         if(description == tagNameDescription) {

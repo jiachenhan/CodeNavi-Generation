@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,16 @@ public class MoMethodInvocationArguments extends MoVirtualChildListNode {
         super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEMethodInvocationArguments;
         arguments = new MoNodeList<>(this, argumentsDescription);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return Collections.unmodifiableList(arguments);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return arguments.isEmpty();
     }
 
     public MoNodeList<MoExpression> getArguments() {

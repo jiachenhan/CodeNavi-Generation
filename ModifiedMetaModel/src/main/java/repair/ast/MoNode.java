@@ -104,6 +104,8 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
     public final Description<? extends MoNode, ?> getLocationInParent() {
         return location;
     }
+    public abstract List<MoNode> getChildren(); // 获取直接子节点，如果没有子节点，返回空列表
+    public abstract boolean isLeaf(); // 是否是叶子节点
 
     // 通过一个节点的role，获取对应的属性值（子节点）
     public abstract Object getStructuralProperty(String role);
@@ -200,28 +202,6 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
             logger.error("Unknown child type");
         }
         this.setParent(null, null);
-    }
-
-    public void replaceWith(MoNode newNode) {
-        if(parent == null) {
-            logger.error("Parent is null");
-            return;
-        }
-        if (parent.getLocationInParent().classification() == ChildType.CHILDLIST) {
-            MoNodeList<MoNode> structuralProperty = (MoNodeList<MoNode>) parent.getStructuralProperty(location.role());
-            int index = structuralProperty.indexOf(this);
-            structuralProperty.replace(index, newNode);
-            logger.debug("Replace child list successfully");
-        } else if(parent.getLocationInParent().classification() == ChildType.CHILD) {
-            if (parent.getStructuralProperty(location.role()) == this) {
-                parent.setStructuralProperty(location.role(), newNode);
-                logger.debug("Replace child successfully");
-            } else {
-                logger.error("Replace failed");
-            }
-        } else {
-            logger.error("Unknown child type");
-        }
     }
 
     public abstract MoNode shallowClone();

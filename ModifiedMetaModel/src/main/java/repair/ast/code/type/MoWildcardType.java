@@ -15,8 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MoWildcardType extends MoAnnotatableType {
     private static final Logger logger = LoggerFactory.getLogger(MoWildcardType.class);
@@ -67,6 +66,20 @@ public class MoWildcardType extends MoAnnotatableType {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoWildcardType(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>(annotations);
+        if(bound != null) {
+            children.add(bound);
+        }
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return annotations.isEmpty() && bound == null;
     }
 
     @Override

@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,6 +52,20 @@ public class MoBreakStatement extends MoStatement{
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoBreakStatement(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        if(breakLabel != null) {
+            return List.of(breakLabel);
+        } else {
+            return List.of();
+        }
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return breakLabel == null;
     }
 
     @Override

@@ -18,9 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MoMethodDeclaration extends MoBodyDeclaration {
     private static final Logger logger = LoggerFactory.getLogger(MoMethodDeclaration.class);
@@ -162,6 +160,31 @@ public class MoMethodDeclaration extends MoBodyDeclaration {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoMethodDeclaration(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        if(super.javadoc != null) {
+            children.add(super.javadoc);
+        }
+        super.modifiers.forEach(modifier -> children.add(((MoNode) modifier)));
+        children.add(name);
+        if(returnType != null) {
+            children.add(returnType);
+        }
+        children.addAll(typeParameters);
+        children.addAll(parameters);
+        children.addAll(thrownExceptionTypes);
+        if(body != null) {
+            children.add(body);
+        }
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

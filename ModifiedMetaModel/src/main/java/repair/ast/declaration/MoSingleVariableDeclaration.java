@@ -7,6 +7,7 @@ import repair.ast.MoNode;
 import repair.ast.MoNodeList;
 import repair.ast.MoNodeType;
 import repair.ast.code.MoDimension;
+import repair.ast.code.MoModifier;
 import repair.ast.code.expression.MoAnnotation;
 import repair.ast.code.MoExtendedModifier;
 import repair.ast.code.expression.MoExpression;
@@ -18,6 +19,8 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +121,25 @@ public class MoSingleVariableDeclaration extends MoVariableDeclaration {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoSingleVariableDeclaration(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        children.add(name);
+        modifiers.forEach(modifier -> children.add(((MoNode) modifier)));
+        children.add(type);
+        children.addAll(varargsAnnotations);
+        children.addAll(CStyleArrayDimensions);
+        if(initializer != null) {
+            children.add(initializer);
+        }
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

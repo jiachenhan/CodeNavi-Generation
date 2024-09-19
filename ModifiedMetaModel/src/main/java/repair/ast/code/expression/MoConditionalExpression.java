@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoConditionalExpression extends MoExpression {
@@ -77,6 +78,16 @@ public class MoConditionalExpression extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoConditionalExpression(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(condition, thenExpression, elseExpression);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

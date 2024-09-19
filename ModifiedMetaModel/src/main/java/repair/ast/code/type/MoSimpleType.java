@@ -15,6 +15,9 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class MoSimpleType extends MoAnnotatableType {
@@ -54,6 +57,18 @@ public class MoSimpleType extends MoAnnotatableType {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoSimpleType(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>(annotations);
+        children.add(name);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

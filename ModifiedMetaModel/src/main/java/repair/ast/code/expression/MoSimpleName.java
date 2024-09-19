@@ -11,6 +11,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoSimpleName extends MoName {
@@ -41,6 +42,16 @@ public class MoSimpleName extends MoName {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoSimpleName(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
     }
 
     @Override

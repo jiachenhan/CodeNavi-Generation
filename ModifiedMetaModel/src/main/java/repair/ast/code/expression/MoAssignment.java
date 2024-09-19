@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoAssignment extends MoExpression {
@@ -75,6 +76,16 @@ public class MoAssignment extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoAssignment(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(left, operator, right);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

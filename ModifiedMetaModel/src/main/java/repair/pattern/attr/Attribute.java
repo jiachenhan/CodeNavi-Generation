@@ -1,6 +1,11 @@
 package repair.pattern.attr;
 
 import repair.ast.MoNode;
+import repair.ast.visitor.FlattenScanner;
+import repair.pattern.AttributeFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 描述某个节点的某种属性
@@ -32,5 +37,14 @@ public abstract class Attribute<T> {
 
     // for hard constraint, if the attribute is unMatched, return -1
     public abstract double similarity(Attribute<?> other);
+
+    public static Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> computeAttributes(MoNode left) {
+        Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> nodeToAttributes = new HashMap<>();
+        for (MoNode leftNode : new FlattenScanner().flatten(left)) {
+            Map<Class<? extends Attribute<?>>, Attribute<?>> attributes = AttributeFactory.createAttributes(leftNode);
+            nodeToAttributes.put(leftNode, attributes);
+        }
+        return nodeToAttributes;
+    }
 
 }

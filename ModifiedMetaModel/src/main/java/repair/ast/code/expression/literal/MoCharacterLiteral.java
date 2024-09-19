@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoCharacterLiteral extends MoExpression {
@@ -44,6 +45,16 @@ public class MoCharacterLiteral extends MoExpression {
         visitor.visitMoCharacterLiteral(this);
     }
 
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
 
     @Override
     public Object getStructuralProperty(String role) {

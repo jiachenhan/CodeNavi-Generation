@@ -13,9 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MoForStatement extends MoStatement {
     private static final Logger logger = LoggerFactory.getLogger(MoForStatement.class);
@@ -100,6 +98,22 @@ public class MoForStatement extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoForStatement(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>(initializers);
+        if(condition != null) {
+            children.add(condition);
+        }
+        children.addAll(updaters);
+        children.add(body);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

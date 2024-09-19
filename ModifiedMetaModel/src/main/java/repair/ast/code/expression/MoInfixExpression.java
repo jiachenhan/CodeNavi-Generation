@@ -110,6 +110,21 @@ public class MoInfixExpression extends MoExpression {
     }
 
     @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        children.add(left);
+        children.add(operator);
+        children.add(right);
+        children.addAll(extendedOperands);
+        return children;
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
+    }
+
+    @Override
     public Object getStructuralProperty(String role) {
         Description<MoInfixExpression, ?> description = descriptionsMap.get(role);
         if(description == leftOperandDescription) {

@@ -18,6 +18,7 @@ import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,19 @@ public class MoNormalAnnotation extends MoAnnotation {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoNormalAnnotation(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        children.add(typeName);
+        children.addAll(memberValuePairs);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

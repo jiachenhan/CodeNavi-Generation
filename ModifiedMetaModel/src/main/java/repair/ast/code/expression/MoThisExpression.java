@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,6 +49,19 @@ public class MoThisExpression extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoThisExpression(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        if(qualifier != null) {
+            return List.of(qualifier);
+        }
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return qualifier == null;
     }
 
     @Override

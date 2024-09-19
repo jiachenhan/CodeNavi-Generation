@@ -15,6 +15,7 @@ import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,16 @@ public class MoJavadoc extends MoComment {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoJavadoc(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return Collections.unmodifiableList(tagElements);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return tagElements.isEmpty();
     }
 
     @Override

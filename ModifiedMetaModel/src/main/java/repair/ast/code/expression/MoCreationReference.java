@@ -16,6 +16,9 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,6 +65,18 @@ public class MoCreationReference extends MoMethodReference {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoCreationReference(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>(typeArguments);
+        children.add(type);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

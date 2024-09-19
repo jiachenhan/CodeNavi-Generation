@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoPostfixOperator extends MoVirtualChildNode {
@@ -33,6 +34,16 @@ public class MoPostfixOperator extends MoVirtualChildNode {
     public MoPostfixOperator(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
         super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEPostfixOperator;
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
     }
 
     public enum OperatorKind{

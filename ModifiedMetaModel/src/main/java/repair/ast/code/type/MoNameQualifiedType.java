@@ -16,6 +16,9 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class MoNameQualifiedType extends MoAnnotatableType {
@@ -72,6 +75,19 @@ public class MoNameQualifiedType extends MoAnnotatableType {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoNameQualifiedType(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>(annotations);
+        children.add(qualifier);
+        children.add(simpleName);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

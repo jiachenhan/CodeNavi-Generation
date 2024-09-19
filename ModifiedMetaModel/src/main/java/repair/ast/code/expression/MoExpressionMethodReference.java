@@ -13,6 +13,9 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class MoExpressionMethodReference extends MoMethodReference {
@@ -68,6 +71,19 @@ public class MoExpressionMethodReference extends MoMethodReference {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoExpressionMethodReference(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>(typeArguments);
+        children.add(expression);
+        children.add(simpleName);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

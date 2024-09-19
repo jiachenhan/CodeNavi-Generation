@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,6 +49,19 @@ public class MoReturnStatement extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoReturnStatement(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        if(expression != null) {
+            return List.of(expression);
+        }
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return expression == null;
     }
 
     @Override

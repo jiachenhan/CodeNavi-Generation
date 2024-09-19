@@ -21,6 +21,14 @@ public class AttributeFactory {
     private final static Logger logger = LoggerFactory.getLogger(AttributeFactory.class);
     private static final Map<String, Class<? extends Attribute<?>>> registeredAttrs = new HashMap<>();
     private static final Map<String, Function<MoNode, Attribute<?>>> registeredAttrConstructors = new HashMap<>();
+    public static final Map<Class<? extends Attribute<?>>, Double> attrToWeight = new HashMap<>();
+
+    static {
+        attrToWeight.put(LocationSubTypeAttribute.class, 1.0); // weight is not used for hard constraints
+
+        attrToWeight.put(MoTypeAttribute.class, 0.5);
+        attrToWeight.put(TokenAttribute.class, 0.5);
+    }
 
     static {
         // hard constraints

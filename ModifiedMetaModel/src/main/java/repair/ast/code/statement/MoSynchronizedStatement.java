@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoSynchronizedStatement extends MoStatement {
@@ -45,6 +46,7 @@ public class MoSynchronizedStatement extends MoStatement {
         moNodeType = MoNodeType.TYPESynchronizedStatement;
     }
 
+
     public void setExpression(MoExpression expression) {
         this.expression = expression;
     }
@@ -64,6 +66,16 @@ public class MoSynchronizedStatement extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoSynchronizedStatement(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(expression, block);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

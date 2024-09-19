@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoInfixOperator extends MoVirtualChildNode {
@@ -34,6 +35,16 @@ public class MoInfixOperator extends MoVirtualChildNode {
     public MoInfixOperator(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
         super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEInfixOperator;
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
     }
 
     public enum OperatorKind{

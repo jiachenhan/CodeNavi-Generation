@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoTypeLiteral extends MoExpression {
@@ -48,6 +49,16 @@ public class MoTypeLiteral extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoTypeLiteral(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of(type);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -65,6 +66,19 @@ public class MoSuperFieldAccess extends MoExpression {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoSuperFieldAccess(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        if(qualifier != null) {
+            return List.of(qualifier, name);
+        }
+        return List.of(name);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

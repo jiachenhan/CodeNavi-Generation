@@ -10,6 +10,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 public class MoEmptyStatement extends MoStatement {
@@ -25,6 +26,16 @@ public class MoEmptyStatement extends MoStatement {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoEmptyStatement(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
     }
 
     @Override

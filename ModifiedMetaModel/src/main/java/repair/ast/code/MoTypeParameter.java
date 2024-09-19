@@ -14,6 +14,8 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +87,20 @@ public class MoTypeParameter extends MoNode {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitMoTypeParameter(this);
+    }
+
+    @Override
+    public List<MoNode> getChildren() {
+        List<MoNode> children = new ArrayList<>();
+        modifiers.forEach(modifier -> children.add(((MoNode) modifier)));
+        children.add(name);
+        children.addAll(typeBounds);
+        return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

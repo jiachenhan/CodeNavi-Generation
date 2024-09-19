@@ -16,6 +16,7 @@ import repair.ast.visitor.Visitor;
 
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -67,6 +68,20 @@ public class MoAssertStatement extends MoStatement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitMoAssertStatement(this);
+	}
+
+	@Override
+	public List<MoNode> getChildren() {
+		if(message != null) {
+			return List.of(expression, message);
+		} else {
+			return List.of(expression);
+		}
+	}
+
+	@Override
+	public boolean isLeaf() {
+		return false;
 	}
 
 	@Override

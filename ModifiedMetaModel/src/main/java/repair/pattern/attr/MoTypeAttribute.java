@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 
+@RegisterAttr
 public class MoTypeAttribute extends Attribute<Class<? extends MoNode>>{
     private static final Logger logger = LoggerFactory.getLogger(MoTypeAttribute.class);
 
