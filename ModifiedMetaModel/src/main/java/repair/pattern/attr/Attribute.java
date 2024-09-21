@@ -31,6 +31,9 @@ public abstract class Attribute<T> {
     public boolean isConsidered(){
         return considered;
     }
+    public MoNode getNode() {
+        return node;
+    }
     public T getValue(){
         return value;
     }

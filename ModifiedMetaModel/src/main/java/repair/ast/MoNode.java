@@ -186,17 +186,10 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
         }
         if (getLocationInParent().classification() == ChildType.CHILDLIST) {
             MoNodeList<?> structuralProperty = (MoNodeList<?>) parent.getStructuralProperty(location.role());
-            if(structuralProperty.remove(this)) {
-                logger.debug("Remove child list successfully");
-            } else {
-                logger.error("Remove failed");
-            }
+            structuralProperty.remove(this);
         } else if(getLocationInParent().classification() == ChildType.CHILD) {
             if (parent.getStructuralProperty(location.role()) == this) {
                 parent.setStructuralProperty(location.role(), null);
-                logger.debug("Remove child successfully");
-            } else {
-                logger.error("Remove failed");
             }
         } else {
             logger.error("Unknown child type");

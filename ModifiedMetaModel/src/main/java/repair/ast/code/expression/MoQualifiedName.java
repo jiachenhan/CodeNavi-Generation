@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 不再将其子节点展开，而是直接返回其identifier
+ * 不再将其子节点展开，而是直接作为整体考虑identifier
  */
 public class MoQualifiedName extends MoName {
     private static final Logger logger = LoggerFactory.getLogger(MoQualifiedName.class);
@@ -121,14 +121,15 @@ public class MoQualifiedName extends MoName {
 
     @Override
     public MoNode shallowClone() {
-        return new MoQualifiedName(getFileName(), getStartLine(), getEndLine(), null);
+        MoQualifiedName moQualifiedName = new MoQualifiedName(getFileName(), getStartLine(), getEndLine(), null);
+        moQualifiedName.setIdentifier(toSrcString());
+        return moQualifiedName;
     }
 
     @Override
     public boolean isSame(MoNode other) {
         if(other instanceof MoQualifiedName otherQualifiedName) {
-            return this.qualifier.isSame(otherQualifiedName.qualifier) &&
-                    this.name.isSame(otherQualifiedName.name);
+            return toSrcString().equals(otherQualifiedName.toSrcString());
         }
         return false;
     }

@@ -437,6 +437,10 @@ public class TokenizeScanner implements Visitor {
 
     @Override
     public void visitMoQualifiedName(MoQualifiedName moQualifiedName) {
+        if(moQualifiedName.getIdentifier() != null) {
+            tokens.add(moQualifiedName.getIdentifier());
+            return;
+        }
         scan("qualifier", moQualifiedName.getQualifier());
         tokens.add(".");
         scan("name", moQualifiedName.getName());

@@ -4,10 +4,8 @@ import com.github.gumtreediff.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
-import repair.pattern.attr.Attribute;
-import repair.pattern.attr.LocationSubTypeAttribute;
-import repair.pattern.attr.MoTypeAttribute;
-import repair.pattern.attr.TokenAttribute;
+import repair.pattern.abstraction.TermFrequencyAbstractor;
+import repair.pattern.attr.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -21,28 +19,17 @@ public class AttributeFactory {
     private final static Logger logger = LoggerFactory.getLogger(AttributeFactory.class);
     private static final Map<String, Class<? extends Attribute<?>>> registeredAttrs = new HashMap<>();
     private static final Map<String, Function<MoNode, Attribute<?>>> registeredAttrConstructors = new HashMap<>();
+
+    // 属性权重，相加为1， 每个属性range [-1] [0, 1]
     public static final Map<Class<? extends Attribute<?>>, Double> attrToWeight = new HashMap<>();
 
-    static {
-        attrToWeight.put(LocationSubTypeAttribute.class, 1.0); // weight is not used for hard constraints
-
-        attrToWeight.put(MoTypeAttribute.class, 0.5);
-        attrToWeight.put(TokenAttribute.class, 0.5);
-    }
+    // 抽象器属性配置
+    private static final AttributeConfig config = TermFrequencyAbstractor.getAttrConfig();
 
     static {
-        // hard constraints
-        registeredAttrs.put("LocationSubTypeAttr", LocationSubTypeAttribute.class);
-
-        registeredAttrs.put("TokenAttr", TokenAttribute.class);
-        registeredAttrs.put("MoTypeAttr", MoTypeAttribute.class);
-    }
-
-    static {
-        registeredAttrConstructors.put("LocationSubTypeAttr", LocationSubTypeAttribute::new);
-
-        registeredAttrConstructors.put("TokenAttr", TokenAttribute::new);
-        registeredAttrConstructors.put("MoTypeAttr", MoTypeAttribute::new);
+        attrToWeight.putAll(config.getAttrToWeight());
+        registeredAttrs.putAll(config.getRegisteredAttrs());
+        registeredAttrConstructors.putAll(config.getRegisteredAttrConstructors());
     }
 
     public static Attribute<?> createAttr(String key, MoNode initArg) throws IllegalAccessException, InstantiationException {

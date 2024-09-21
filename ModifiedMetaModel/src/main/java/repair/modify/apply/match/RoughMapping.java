@@ -6,7 +6,16 @@ import repair.ast.MoNode;
 import java.util.*;
 
 public class RoughMapping {
+    private int buggyNodeSize = 0;
     private Map<MoNode, List<Pair<MoNode, Double>>> roughMapping = new LinkedHashMap<>();
+
+    public void setBuggyNodeSize(int buggyNodeSize) {
+        this.buggyNodeSize = buggyNodeSize;
+    }
+
+    public int getBuggyNodeSize() {
+        return buggyNodeSize;
+    }
 
     public void addMapping(MoNode patternNode, MoNode leftNode, double similarity) {
         if (!roughMapping.containsKey(patternNode)) {

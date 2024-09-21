@@ -1,6 +1,7 @@
 package repair;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Hashtable;
@@ -30,4 +31,5 @@ public class FileUtils {
         br.close();
         return map;
     }
+
 }

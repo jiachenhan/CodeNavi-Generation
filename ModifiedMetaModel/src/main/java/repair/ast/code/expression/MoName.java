@@ -14,6 +14,7 @@ public abstract class MoName extends MoExpression implements MoDocElement {
         super(fileName, startLine, endLine, name);
     }
 
+    public abstract String getIdentifier();
 
     // todo: nameBinding?
 }

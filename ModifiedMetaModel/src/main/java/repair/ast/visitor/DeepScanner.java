@@ -375,8 +375,9 @@ public class DeepScanner implements Visitor{
     @Override
     public void visitMoQualifiedName(MoQualifiedName moQualifiedName) {
         enter(moQualifiedName);
-        scan("qualifier", moQualifiedName.getQualifier());
-        scan("name", moQualifiedName.getName());
+//        scan("qualifier", moQualifiedName.getQualifier());
+//        scan("name", moQualifiedName.getName());
+        // 忽略下面的子节点
         exit(moQualifiedName);
     }
 
