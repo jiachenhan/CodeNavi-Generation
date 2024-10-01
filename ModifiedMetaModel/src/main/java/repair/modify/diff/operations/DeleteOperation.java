@@ -4,7 +4,11 @@ import com.github.gumtreediff.actions.model.Delete;
 import repair.ast.MoNode;
 import repair.modify.builder.GumtreeMetaConstant;
 
+import java.io.Serial;
+
 public class DeleteOperation extends Operation<Delete> {
+    @Serial
+    private static final long serialVersionUID = -4140232363719773973L;
     // in before tree
     private final MoNode deleteNode;
 

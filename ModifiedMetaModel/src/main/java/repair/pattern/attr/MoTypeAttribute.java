@@ -4,9 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 
+import java.io.Serial;
+
 @RegisterAttr
 public class MoTypeAttribute extends Attribute<Class<? extends MoNode>>{
     private static final Logger logger = LoggerFactory.getLogger(MoTypeAttribute.class);
+    @Serial
+    private static final long serialVersionUID = 5941431981993620207L;
 
     public MoTypeAttribute(MoNode node) {
         super(node);

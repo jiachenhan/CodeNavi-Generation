@@ -6,10 +6,12 @@ import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repair.ast.analysis.VariableDef;
 import repair.ast.code.type.MoPrimitiveType;
 import repair.ast.code.virtual.MoInfixOperator;
 import repair.ast.code.virtual.MoPostfixOperator;
 import repair.ast.code.virtual.MoPrefixOperator;
+import repair.ast.declaration.MoVariableDeclaration;
 import repair.modify.apply.match.MatchInstance;
 import repair.ast.MoNode;
 import repair.ast.MoNodeList;
@@ -28,10 +30,8 @@ import repair.modify.builder.GumtreeMetaConstant;
 import repair.modify.diff.operations.*;
 import repair.pattern.Pattern;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.Bidi;
+import java.util.*;
 
 /**
  *  directly apply the modification to MoMetaModel
@@ -71,6 +71,7 @@ public class ApplyModification {
     private final BidiMap<MoNode, MoNode> maintenanceMap = new DualHashBidiMap<>();
 
     private final Set<MoNode> placeholderNodesToBeRemoved = new HashSet<>();
+    private final BidiMap<MoNode, String> nodesToBeRenamed = new DualHashBidiMap<>();
 
 
     public ApplyModification(Pattern pattern, MoNode left, MatchInstance matchInstance) {
@@ -100,8 +101,7 @@ public class ApplyModification {
                 MoNode deleteNodeInBefore = deleteOperation.getDeleteNode();
                 MoNode deleteNodeInLeft = this.matchInstance.getNodeMap().get(deleteNodeInBefore);
                 if(deleteNodeInLeft == null) {
-                    logger.error("can not find the delete node in left tree, matching error");
-                    return;
+                    throw new ModificationException("can not find the delete node in left tree, matching error");
                 }
                 MoNode deleteNodeInRight = this.leftToRightMap.get(deleteNodeInLeft);
                 assert deleteNodeInRight != null;
@@ -111,8 +111,7 @@ public class ApplyModification {
                 MoNode deleteNodeInBefore = treeDeleteOperation.getDeleteNodeInBefore();
                 MoNode deleteNodeInLeft = this.matchInstance.getNodeMap().get(deleteNodeInBefore);
                 if(deleteNodeInLeft == null) {
-                    logger.error("can not find the delete node in left tree, matching error");
-                    return;
+                    throw new ModificationException("can not find the delete node in left tree, matching error");
                 }
                 MoNode deleteNodeInRight = this.leftToRightMap.get(deleteNodeInLeft);
                 assert deleteNodeInRight != null;
@@ -139,8 +138,7 @@ public class ApplyModification {
                     logger.info("insertParent type 1");
                     MoNode insertParentType1Left = matchInstance.getNodeMap().get(insertParent);
                     if(insertParentType1Left == null) {
-                        logger.error("error when Insert because insertParentType1Left is null, matching error");
-                        return;
+                        throw new ModificationException("error when Insert because insertParentType1Left is null, matching error");
                     }
                     insertParentInRight = this.leftToRightMap.get(insertParentType1Left);
                 } else if(this.beforeToAfterMap.containsValue(insertParent)){
@@ -148,13 +146,11 @@ public class ApplyModification {
                     logger.info("insertParent type 2");
                     MoNode insertParentType2Left = this.matchInstance.getNodeMap().get(insertParentType2Before);
                     if(insertParentType2Left == null) {
-                        logger.error("error when Insert because insertParentType2Left is null, matching error");
-                        return;
+                        throw new ModificationException("error when Insert because insertParentType2Left is null, matching error");
                     }
                     insertParentInRight = this.leftToRightMap.get(insertParentType2Left);
-                    logger.error("error when Insert because insertParent is not in before tree and maintenanceMap");
                 } else {
-                    logger.error("error when Insert because insertParent is not in before tree and maintenanceMap");
+                    throw new ModificationException("error when Insert because insertParent is not in before tree and maintenanceMap");
                 }
                 assert insertParentInRight != null;
                 assert inRightTree(insertParentInRight);
@@ -183,7 +179,7 @@ public class ApplyModification {
                     insertParentInRight.setStructuralProperty(insertLocation.role(), insertNodeInRight);
                     insertNodeInRight.setParent(insertParentInRight, insertLocation);
                 } else {
-                    logger.error("error when Insert because insertLocation is single");
+                    throw new ModificationException("error when Insert because insertLocation is single");
                 }
             } else if (operation instanceof TreeInsertOperation treeInsertOperation) {
                 MoNode insertParent = treeInsertOperation.getParent();
@@ -204,8 +200,7 @@ public class ApplyModification {
                     logger.info("insertParent type 1");
                     MoNode insertParentType1Left = matchInstance.getNodeMap().get(insertParent);
                     if(insertParentType1Left == null) {
-                        logger.error("error when Insert because insertParentType1Left is null, matching error");
-                        return;
+                        throw new ModificationException("error when Insert because insertParentType1Left is null, matching error");
                     }
                     insertParentInRight = this.leftToRightMap.get(insertParentType1Left);
                 } else if(this.beforeToAfterMap.containsValue(insertParent)) {
@@ -213,12 +208,11 @@ public class ApplyModification {
                     logger.info("insertParent type 2");
                     MoNode insertParentType2Left = this.matchInstance.getNodeMap().get(insertParentType2Before);
                     if(insertParentType2Left == null) {
-                        logger.error("error when Insert because insertParentType2Left is null, matching error");
-                        return;
+                        throw new ModificationException("error when Insert because insertParentType2Left is null, matching error");
                     }
                     insertParentInRight = this.leftToRightMap.get(insertParentType2Left);
                 } else {
-                    logger.error("error when Insert because insertParent is not in before tree and maintenanceMap");
+                    throw new ModificationException("error when Insert because insertParent is not in before tree and maintenanceMap");
                 }
                 assert insertParentInRight != null;
                 assert inRightTree(insertParentInRight);
@@ -241,7 +235,7 @@ public class ApplyModification {
                     insertParentInRight.setStructuralProperty(insertLocation.role(), insertNodeInRight);
                     insertNodeInRight.setParent(insertParentInRight, insertLocation);
                 } else {
-                    logger.error("error when Insert because insertLocation is single");
+                    throw new ModificationException("error when Insert because insertLocation is single");
                 }
             } else if(operation instanceof MoveOperation moveOperation) {
                 MoNode moveNodeInBefore = moveOperation.getMoveNode();
@@ -263,8 +257,7 @@ public class ApplyModification {
                     logger.info("moveParent type 1");
                     MoNode moveParentType1Left = matchInstance.getNodeMap().get(moveParent);
                     if(moveParentType1Left == null) {
-                        logger.error("error when Move because moveParentType1Left is null, matching error");
-                        return;
+                        throw new ModificationException("error when Move because moveParentType1Left is null, matching error");
                     }
                     moveParentInRight = this.leftToRightMap.get(moveParentType1Left);
                 } else if (this.beforeToAfterMap.containsValue(moveParent)){
@@ -272,12 +265,11 @@ public class ApplyModification {
                     logger.info("moveParent type 2");
                     MoNode moveParentType2Left = this.matchInstance.getNodeMap().get(moveParentType2Before);
                     if(moveParentType2Left == null) {
-                        logger.error("error when Move because moveParentType2Left is null, matching error");
-                        return;
+                        throw new ModificationException("error when Move because moveParentType2Left is null, matching error");
                     }
                     moveParentInRight = this.leftToRightMap.get(moveParentType2Left);
                 } else {
-                    logger.error("error when Move because moveParent is not in before tree and maintenanceMap");
+                    throw new ModificationException("error when Move because moveParent is not in before tree and maintenanceMap");
                 }
                 assert moveParentInRight != null;
                 assert inRightTree(moveParentInRight);
@@ -286,8 +278,7 @@ public class ApplyModification {
                 // 尝试找到moveNode在right中的位置
                 MoNode moveNodeInLeft = this.matchInstance.getNodeMap().get(moveNodeInBefore);
                 if(moveNodeInLeft == null) {
-                    logger.error("error when move because moveNodeInLeft is null, matching error");
-                    return;
+                    throw new ModificationException("error when move because moveNodeInLeft is null, matching error");
                 }
                 MoNode moveNodeInRight = this.leftToRightMap.get(moveNodeInLeft);
                 if(inRightTree(moveNodeInRight)) {
@@ -297,7 +288,7 @@ public class ApplyModification {
 
                 // 检查是否有循环风险, 移动的节点可能是父节点的祖先节点（由于匹配阶段的错误）
                 if(hasCycleRisk(moveParentInRight, moveNodeInRight)) {
-                    throw new InternalException("Multiple moves may cause cycle risk");
+                    throw new ModificationException("Multiple moves may cause cycle risk");
                 }
 
                 // insert the move node in right
@@ -311,7 +302,7 @@ public class ApplyModification {
                     moveParentInRight.setStructuralProperty(moveToLocation.role(), moveNodeInRight);
                     moveNodeInRight.setParent(moveParentInRight, moveToLocation);
                 } else {
-                    logger.error("error when Insert because insertLocation is single");
+                    throw new ModificationException("error when Insert because insertLocation is single");
                 }
 
 
@@ -322,26 +313,53 @@ public class ApplyModification {
 
                 MoNode updateNodeInLeft = this.matchInstance.getNodeMap().get(updateNodeInBefore);
                 if(updateNodeInLeft == null) {
-                    logger.error("error when update because updateNodeInLeft is null, matching error");
-                    return;
+                    throw new ModificationException("error when update because updateNodeInLeft is null, matching error");
                 }
                 MoNode updateNodeInRight = this.leftToRightMap.get(updateNodeInLeft);
                 assert updateNodeInRight != null;
                 assert inRightTree(updateNodeInRight);
 
+                // 使用可能的上下文变量进行替换
+                if(pattern.getBeforeIdentifierManager() != null) {
+                    String replaceValue = "";
+                    // 如果updateValue出现在before图中的其他位置，那么可能就使用的是相应是数据依赖
+                    // 先找local vars declaration中能不能找到
+                    Optional<VariableDef> variableDefOptional = pattern.getBeforeIdentifierManager().getLocalVars().stream()
+                            .filter(localVar -> localVar.variable().getName().getIdentifier().equals(updateValue))
+                            .filter(localVar -> localVar.scopeStart() < updateNodeInRight.getStartLine() &&
+                                    localVar.scopeEnd() > updateNodeInRight.getEndLine())
+                            .findFirst();
+                    if(variableDefOptional.isPresent()) {
+                        MoVariableDeclaration variableInBefore = variableDefOptional.get().variable();
+                        if(matchInstance.getNodeMap().get(variableInBefore) instanceof MoVariableDeclaration variableDeclInLeft) {
+                            replaceValue = variableDeclInLeft.getName().getIdentifier();
+                            logger.info("updateValue {} is a local variable", updateValue);
+                        }
+                    }
+
+                    // 如果updateValue出现在before图中的其他位置，那么可能就使用的是相应是数据依赖
+                    if (! "".equals(replaceValue)) {
+                        nodesToBeRenamed.put(updateNodeInRight, replaceValue);
+                    }
+                }
+
+                /* todo: 这里检查updateValue是不是修改成对应的变量，从value -> 找到可能对应的元素 -> 找到和pattern中匹配的变量，找到名字
+                    需要check不同类型的名称部分 */
                 if(setValue(updateNodeInRight, updateValue)) {
                     logger.info("update success, node type: {}", updateNodeInRight.getClass().getName());
                 } else {
                     logger.error("error when update, node type {} is not supported", updateNodeInRight.getClass().getName());
+                    throw new ModificationException("update error! node type is not supported");
                 }
 
             } else {
-                logger.error("Unknown operation type");
+                throw new ModificationException("Unknown operation type");
             }
         }
 
         // remove all placeholder nodes
         placeholderNodesToBeRemoved.forEach(MoNode::removeFromParent);
+        nodesToBeRenamed.forEach(this::setValue);
     }
 
     /**
@@ -361,8 +379,10 @@ public class ApplyModification {
         }
     }
 
+    /**
+     *  from gumtree scanner label changed
+     */
     private boolean setValue(MoNode node, String value) {
-        // todo: set value in different node type
         if(node instanceof MoSimpleName simpleName) {
             simpleName.setStructuralProperty("identifier", value);
             return true;
@@ -400,7 +420,6 @@ public class ApplyModification {
             logger.error("node type {} is not supported", node.getClass().getName());
         }
         return false;
-
     }
 
     private void removeAllNodeFromMaintenanceMap(MoNode node) {
@@ -425,6 +444,11 @@ public class ApplyModification {
         return new FlattenScanner().flatten(node).stream().anyMatch(ancestors::contains);
     }
 
+    /**
+     * for debug
+     * @param node the node to be checked
+     * @return the tree that the node belongs to
+     */
     public String whichTree(MoNode node) {
         if (new FlattenScanner().flatten(pattern.getPatternBefore0()).contains(node)) {
             return "patternBefore0";

@@ -8,6 +8,7 @@ import repair.FileUtils;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
 import repair.modify.apply.ApplyModification;
+import repair.modify.apply.ModificationException;
 import repair.modify.apply.match.MatchInstance;
 import repair.modify.apply.match.Matcher;
 import repair.modify.diff.DiffComparator;
@@ -65,7 +66,12 @@ public class GenPat {
                     continue;
                 }
                 ApplyModification applyModification = new ApplyModification(pattern, moMethodBefore, matchInstance);
-                applyModification.apply();
+
+                try {
+                    applyModification.apply();
+                } catch (ModificationException e) {
+                    logger.warn("apply error: {}", e.getMessage());
+                }
 
                 String afterCopyCode = "class PlaceHold {" + applyModification.getRight().toString() + "}";
 

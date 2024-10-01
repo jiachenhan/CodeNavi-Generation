@@ -5,12 +5,16 @@ import org.slf4j.LoggerFactory;
 import repair.modify.apply.match.MatchAlgorithm;
 import repair.ast.MoNode;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
 @RegisterAttr
 public class TokenAttribute extends Attribute<List<String>> {
     private static final Logger logger = LoggerFactory.getLogger(TokenAttribute.class);
+    @Serial
+    private static final long serialVersionUID = -2750203356772598719L;
+
     public TokenAttribute(MoNode node) {
         super(node);
         this.value = node.tokens();

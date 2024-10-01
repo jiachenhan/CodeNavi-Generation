@@ -5,8 +5,13 @@ import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.code.expression.MoExpression;
 
+import java.io.Serial;
+
 public class ExprTypeAttribute extends Attribute<String> implements HardConstraint {
     private static final Logger logger = LoggerFactory.getLogger(ExprTypeAttribute.class);
+    @Serial
+    private static final long serialVersionUID = -1586388608688461868L;
+
     // 用?表示不确定的类型,这种类型都可以适配
     public ExprTypeAttribute(MoNode node) {
         super(node);

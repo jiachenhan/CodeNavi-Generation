@@ -5,8 +5,13 @@ import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.MoNodeList;
 
-public class NaiveIndexStrategy implements InsertListStrategy {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class NaiveIndexStrategy implements InsertListStrategy, Serializable {
     private static final Logger logger = LoggerFactory.getLogger(NaiveIndexStrategy.class);
+    @Serial
+    private static final long serialVersionUID = -4298303104345366983L;
     private final AddOperator addOperator;
 
     public NaiveIndexStrategy(AddOperator addOperator) {

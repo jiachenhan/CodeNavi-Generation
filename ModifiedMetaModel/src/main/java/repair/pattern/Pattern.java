@@ -6,13 +6,11 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
+import repair.ast.analysis.IdentifierManager;
 import repair.ast.visitor.FlattenScanner;
 import repair.modify.builder.GumtreeMetaConstant;
 import repair.modify.diff.DiffComparator;
 import repair.modify.diff.operations.Operation;
-import repair.pattern.abstraction.AbstractionMode;
-import repair.pattern.abstraction.Abstractor;
-import repair.pattern.abstraction.TermFrequencyAbstractor;
 import repair.pattern.attr.Attribute;
 
 import java.io.Serial;
@@ -32,7 +30,7 @@ public class Pattern implements Serializable {
     private final DiffComparator.Mode actionMode;
     private final MoNode patternBefore0;
     private final MoNode patternAfter0;
-    private final DiffComparator diffComparator;
+    private final transient DiffComparator diffComparator;
     private List<Operation<? extends Action>> allOperations;
     private final BidiMap<MoNode, MoNode> beforeToAfterMap = new DualHashBidiMap<>();
 
@@ -81,6 +79,28 @@ public class Pattern implements Serializable {
 
     public Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> getNodeToAttributes() {
         return nodeToAttributes;
+    }
+
+
+    /**
+     * this field is used to manage the global vars and local identifier used in the code.
+     * before tree identifier
+     */
+    private IdentifierManager beforeIdentifierManager;
+    private IdentifierManager afterIdentifierManager;
+    public Pattern(MoNode patternBefore0, MoNode patternAfter0, DiffComparator.Mode actionMode,
+                   IdentifierManager beforeIdentifierManager, IdentifierManager afterIdentifierManager) {
+        this(patternBefore0, patternAfter0, actionMode);
+        this.beforeIdentifierManager = beforeIdentifierManager;
+        this.afterIdentifierManager = afterIdentifierManager;
+    }
+
+    public IdentifierManager getBeforeIdentifierManager() {
+        return beforeIdentifierManager;
+    }
+
+    public IdentifierManager getAfterIdentifierManager() {
+        return afterIdentifierManager;
     }
 
     /*

@@ -5,7 +5,11 @@ import repair.ast.MoNode;
 import repair.ast.role.Description;
 import repair.modify.builder.GumtreeMetaConstant;
 
+import java.io.Serial;
+
 public class TreeInsertOperation extends Operation<TreeInsert> implements AddOperator {
+    @Serial
+    private static final long serialVersionUID = 5013163995056290045L;
     private final MoNode insertParent;
     private final Description<? extends MoNode, ?> insertLocation;
     private final MoNode inserteeNodeInAfter;

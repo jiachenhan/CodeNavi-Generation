@@ -4,6 +4,8 @@ import repair.ast.MoNode;
 import repair.ast.visitor.FlattenScanner;
 import repair.pattern.AttributeFactory;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +13,9 @@ import java.util.Map;
  * 描述某个节点的某种属性
  * @param <T> 属性值的类型
  */
-public abstract class Attribute<T> {
+public abstract class Attribute<T> implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -610853452371704367L;
     /**
      * 只在pattern中考虑
      */

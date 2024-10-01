@@ -111,7 +111,19 @@ public class TermFrequencyAbstractor implements Abstractor {
             if(!node.isLeaf()) {
                 considerNodeCandidates.addAll(node.getChildren());
             }
-            // todo: other expansion
+
+            // data flow
+            if (node.context.getDataDependency() != null) {
+                considerNodeCandidates.add(node.context.getDataDependency());
+            }
+            MoNode nodeAfter = pattern.getBeforeToAfterMap().get(node);
+            if(nodeAfter != null) {
+                if (nodeAfter.context.getDataDependency() != null) {
+                    MoNode dataDepBefore = pattern.getBeforeToAfterMap().getKey(nodeAfter.context.getDataDependency());
+                    considerNodeCandidates.add(dataDepBefore);
+                }
+            }
+
         });
 
 

@@ -4,14 +4,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.code.expression.MoName;
+import repair.ast.code.expression.MoQualifiedName;
+import repair.ast.code.expression.MoSimpleName;
+
+import java.io.Serial;
 
 public class NameAttribute extends Attribute<String> implements HardConstraint {
     private static final Logger logger = LoggerFactory.getLogger(NameAttribute.class);
+    @Serial
+    private static final long serialVersionUID = -7311698286502605500L;
 
     public NameAttribute(MoNode node) {
         super(node);
-        if(node instanceof MoName name) {
-            this.value = name.getIdentifier();
+        if(node instanceof MoSimpleName simpleName) {
+            this.value = simpleName.getIdentifier();
+        } else if (node instanceof MoQualifiedName qualifiedName) {
+            this.value = qualifiedName.toSrcString();
         } else {
             this.value = "<UNCompatible>";
         }

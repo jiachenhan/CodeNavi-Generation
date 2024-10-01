@@ -8,7 +8,11 @@ import repair.ast.MoNode;
 import repair.ast.role.Description;
 import repair.modify.builder.GumtreeMetaConstant;
 
+import java.io.Serial;
+
 public class MoveOperation extends Operation<Move> implements AddOperator {
+    @Serial
+    private static final long serialVersionUID = 3101752334446767272L;
     // in before tree
     private final MoNode moveNode;
     // in after tree

@@ -51,3 +51,15 @@ def java_genpat_repair(timeout_sec: float,
     cmd = ["java", "-jar", java_program, "genpat",
            str(pattern_pair_path), str(buggy_pair_path), str(patch_path)]
     start_process(cmd, work_dir, timeout_sec)
+
+
+def java_gain_oracle(timeout_sec: float,
+                       # 解析oracle，写入temp文件
+                       oracle_path: Path,
+                       method_signature: str,
+                       temp_path: Path,
+                       java_program: str):
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java", "-jar", java_program, "oracle",
+           str(oracle_path), str(method_signature), str(temp_path)]
+    start_process(cmd, work_dir, timeout_sec)

@@ -2,7 +2,12 @@ package repair.ast.code.context;
 
 import repair.ast.MoNode;
 
-public class Context {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Context implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -1115551854536480984L;
     private MoNode dataDependency;
     public void setDataDependency(MoNode dependency) {
         this.dataDependency = dependency;

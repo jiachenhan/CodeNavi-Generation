@@ -3,8 +3,14 @@ package repair.modify.diff.operations;
 import com.github.gumtreediff.actions.model.*;
 import com.github.gumtreediff.matchers.MappingStore;
 
-public abstract class Operation<T extends Action> {
-    protected final T action;
+import java.io.Serial;
+import java.io.Serializable;
+
+public abstract class Operation<T extends Action> implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 7343073059754275135L;
+
+    protected transient final T action;
     public Operation(T action) {
         this.action = action;
     }

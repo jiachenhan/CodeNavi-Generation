@@ -5,7 +5,11 @@ import repair.ast.MoNode;
 import repair.ast.role.Description;
 import repair.modify.builder.GumtreeMetaConstant;
 
+import java.io.Serial;
+
 public class InsertOperation extends Operation<Insert> implements AddOperator {
+    @Serial
+    private static final long serialVersionUID = -4752124810495063795L;
     private final Description<? extends MoNode, ?> insertLocation;
     // 可能在两个树中存在
     private final MoNode insertParent;

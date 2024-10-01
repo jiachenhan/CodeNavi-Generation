@@ -1,11 +1,12 @@
 package repair.ast.parser;
 
-import org.eclipse.jdt.core.compiler.IScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoCompilationUnit;
 import repair.ast.MoNode;
 import org.eclipse.jdt.core.dom.*;
+import repair.ast.analysis.IdentifierManager;
+import repair.ast.analysis.VariableDef;
 import repair.ast.code.*;
 import repair.ast.code.expression.*;
 import repair.ast.code.expression.literal.*;
@@ -16,6 +17,7 @@ import repair.ast.declaration.*;
 import repair.ast.role.Description;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class NodeParser extends ASTVisitor {
@@ -30,6 +32,15 @@ public class NodeParser extends ASTVisitor {
 
     private final Deque<MoNode> nodeStack = new ArrayDeque<>();
     private MoNode rootNode = null;
+
+    /**
+     * register identifier(vars, methods, classes, etc.) and variable declaration while parsing
+     */
+    private final IdentifierManager identifierManager = new IdentifierManager();
+
+    public IdentifierManager getIdentifierManager() {
+        return identifierManager;
+    }
 
     public MoNode process(ASTNode node) {
         node.accept(this);
@@ -1238,13 +1249,65 @@ public class NodeParser extends ASTVisitor {
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
             bindingParentChildRelation(moParent, simpleName, node);
+
+            // handle local variable decl
+            if(moParent instanceof MoSingleVariableDeclaration moSingleVariableDeclaration) {
+                int scopeStart = moSingleVariableDeclaration.getStartLine();
+                int scopeEnd = moSingleVariableDeclaration.getParent().getEndLine();
+                VariableDef variableDef = new VariableDef(moSingleVariableDeclaration,
+                        moSingleVariableDeclaration.getType(),
+                        scopeStart, scopeEnd);
+                identifierManager.addLocalVar(variableDef);
+            } else if (moParent instanceof MoVariableDeclarationFragment moVariableDeclarationFragment) {
+                int scopeStart = moVariableDeclarationFragment.getStartLine();
+                int scopeEnd = moVariableDeclarationFragment.getParent().getParent().getEndLine();
+                if(moVariableDeclarationFragment.getParent() instanceof MoFieldDeclaration moFieldDeclaration) {
+                    MoType type = moFieldDeclaration.getType();
+                    VariableDef variableDef = new VariableDef(moVariableDeclarationFragment, type, -1, -1);
+                    identifierManager.addGlobalVar(variableDef);
+                } else if (moVariableDeclarationFragment.getParent() instanceof MoVariableDeclarationStatement moVariableDeclarationStatement) {
+                    MoType type = moVariableDeclarationStatement.getType();
+                    VariableDef variableDef = new VariableDef(moVariableDeclarationFragment, type, scopeStart, scopeEnd);
+                    identifierManager.addLocalVar(variableDef);
+                }
+            }
+
+            // handle identifier use
+            if(isIdentifierUse(simpleName)) {
+                identifierManager.addIdentifierUse(simpleName.getIdentifier(), simpleName);
+
+                // set data dependency
+                AtomicBoolean hasDataDependency = new AtomicBoolean(false);
+                identifierManager.getLocalVars().stream()
+                        .filter(localVar -> simpleName.getIdentifier().equals(localVar.variable().getName().getIdentifier()))
+                        .filter(localVar -> localVar.scopeStart() <= simpleName.getStartLine() && localVar.scopeEnd() >= simpleName.getEndLine())
+                        .findFirst().ifPresent(variableDef -> {
+                            simpleName.context.setDataDependency(variableDef.variable());
+                            hasDataDependency.set(true);
+                        });
+
+                if(!hasDataDependency.get()) {
+                    identifierManager.getGlobalVars().stream()
+                            .filter(globalVar -> simpleName.getIdentifier().equals(globalVar.variable().getName().getIdentifier()))
+                            .findFirst().ifPresent(variableDef -> {
+                                simpleName.context.setDataDependency(variableDef.variable());
+                                hasDataDependency.set(true);
+                            });
+                }
+            }
+
+
         } else {
             rootNode = simpleName;
         }
         nodeStack.push(simpleName);
 
+
+
         return super.visit(node);
     }
+
+
 
     @Override
     public boolean visit(SimpleType node) {
@@ -2304,6 +2367,61 @@ public class NodeParser extends ASTVisitor {
 
     private int getEndLine(ASTNode node) {
         return cunit.getLineNumber(node.getStartPosition() + node.getLength());
+    }
+
+    /**
+     * judge whether the SimpleName is an identifier use
+     * @param simpleName the SimpleName node
+     * @return true if it is an identifier use, false otherwise
+     */
+    private boolean isIdentifierUse(MoSimpleName simpleName) {
+        if(simpleName.getParent() instanceof MoArrayAccess) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoAssignment) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoCastExpression) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoClassInstanceCreation) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoPostfixExpression) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoPrefixExpression) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoConditionalExpression) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoConstructorInvocation) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoDoStatement) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoFieldAccess) {
+            return true;
+        } else if(simpleName.getParent() instanceof MoIfStatement) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoMethodInvocationArguments) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoReturnStatement) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoSuperConstructorInvocation) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoSuperFieldAccess) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoSuperMethodInvocation) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoSynchronizedStatement) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoThisExpression) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoInstanceofExpression) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoExpressionMethodReference) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoSuperMethodReference) {
+            return true;
+        } else if (simpleName.getParent() instanceof MoTypeMethodReference) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

@@ -64,6 +64,10 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
     /*
      * original File info
      */

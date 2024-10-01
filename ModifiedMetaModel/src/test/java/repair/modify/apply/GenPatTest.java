@@ -30,7 +30,8 @@ import static repair.common.JDTUtils.getOnlyMethodDeclaration;
 
 public class GenPatTest {
 
-    private final Path datasetPath = Paths.get("E:/dataset/api/apache-API-cluster");
+//    private final Path datasetPath = Paths.get("E:/dataset/api/apache-API-cluster");
+    private final Path datasetPath = Paths.get("E:/dataset/c3/drjava1");
 
     static class Result {
         int totalCount;
@@ -85,7 +86,7 @@ public class GenPatTest {
 
     @Test
     public void debug() {
-        Path groupPath = datasetPath.resolve("velocity-engine").resolve("4");
+        Path groupPath = datasetPath.resolve("14");
         Path patternCasePath = null;
         List<Path> otherCasesPath = null;
 
@@ -138,11 +139,17 @@ public class GenPatTest {
                 }
                 adapted.set(true);
                 ApplyModification applyModification = new ApplyModification(pattern, moMethodBefore, matchInstance);
-                applyModification.apply();
+                try {
+                    applyModification.apply();
+                } catch (ModificationException e) {
+                    e.printStackTrace();
+                }
 
                 String afterCopyCode = "class PlaceHold {" + applyModification.getRight().toString() + "}";
                 afterCopyCode = clearAllSpaces(afterCopyCode);
 
+                System.out.println("Oracle: " + oracle);
+                System.out.println("After: " + afterCopyCode);
 
                 if(oracle.equals(afterCopyCode)) {
                     success.set(true);
@@ -296,7 +303,8 @@ public class GenPatTest {
         MoNode moMethodBefore = beforeParser.process(methodBefore.get());
         MoNode moMethodAfter = afterParser.process(methodAfter.get());
 
-        return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
+        return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE,
+                beforeParser.getIdentifierManager(), afterParser.getIdentifierManager());
     }
 
 

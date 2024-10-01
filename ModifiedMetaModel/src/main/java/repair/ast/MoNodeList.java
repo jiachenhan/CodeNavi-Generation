@@ -3,13 +3,17 @@ package repair.ast;
 import repair.ast.code.MoDocElement;
 import repair.ast.role.Description;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @param <V> is a subclass of MoNode
  */
-public class MoNodeList<V> extends AbstractList<V>{
+public class MoNodeList<V> extends AbstractList<V> implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 5759016222425629792L;
     ArrayList<V> store = new ArrayList<>(0);
     private MoNode parent;
     // 将相同的父子关系引入兄弟节点

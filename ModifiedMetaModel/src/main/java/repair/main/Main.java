@@ -17,6 +17,9 @@ public class Main {
             case "genpat":
                 GenPat.main(args);
                 break;
+            case "oracle":
+                GainOracle.main(args);
+                break;
             case "abstract":
                 break;
             default:
