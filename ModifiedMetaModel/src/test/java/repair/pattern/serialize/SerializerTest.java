@@ -10,12 +10,14 @@ import repair.pattern.Pattern;
 import repair.pattern.abstraction.Abstractor;
 import repair.pattern.abstraction.TermFrequencyAbstractor;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -26,6 +28,7 @@ import static repair.common.JDTUtils.getOnlyMethodDeclaration;
 public class SerializerTest {
     private final Path datasetPath = Paths.get("E:/dataset/c3/drjava1");
     private final Path serializePath = Paths.get("01pattern");
+    private final Path jsonSerializePath = Paths.get("02pattern-info");
 
     @Test
     public void serializeTest() {
@@ -53,6 +56,34 @@ public class SerializerTest {
         abstractor.doAbstraction(pattern);
 
         Serializer.serializeToDisk(pattern, serializePath.resolve("abs").resolve("pattern_abstracted.ser"));
+    }
+
+    @Test
+    public void jsonSerializeTest() {
+        Path groupPath = datasetPath.resolve("14");
+        Path patternCasePath = null;
+        List<Path> otherCasesPath = null;
+
+        // 处理第三级：case
+        try (Stream<Path> caseStream = Files.list(groupPath)) {
+            List<Path> caseList = caseStream.toList();
+            if (caseList.size() < 2) {
+                System.out.println("Case less than 2, skip");
+            }
+            patternCasePath = caseList.get(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert patternCasePath != null;
+        Pattern pattern = generatePattern(patternCasePath);
+
+        String json = JsonSerializer.serializeToJSON(pattern);
+        try(FileWriter file = new FileWriter(jsonSerializePath.resolve("pattern.json").toFile())) {
+            file.write(Objects.requireNonNull(json));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

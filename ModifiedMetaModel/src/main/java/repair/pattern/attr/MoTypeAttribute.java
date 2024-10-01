@@ -1,12 +1,15 @@
 package repair.pattern.attr;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
+import repair.pattern.serialize.rules.MoTypeAttrSerializer;
 
 import java.io.Serial;
 
 @RegisterAttr
+@JsonSerialize(using = MoTypeAttrSerializer.class)
 public class MoTypeAttribute extends Attribute<Class<? extends MoNode>>{
     private static final Logger logger = LoggerFactory.getLogger(MoTypeAttribute.class);
     @Serial

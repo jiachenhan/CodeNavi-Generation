@@ -1,5 +1,6 @@
 package repair.ast;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import repair.ast.role.ChildType;
 import repair.ast.role.Description;
 import repair.ast.visitor.CodePrinter;
 import repair.ast.visitor.TokenizeScanner;
+import repair.pattern.serialize.rules.MoNodeSerializer;
 
 
 import java.io.Serial;
@@ -17,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@JsonSerialize(using = MoNodeSerializer.class)
 public abstract class MoNode implements Visitable, Serializable, NodeComparator {
     private static final Logger logger = LoggerFactory.getLogger(MoNode.class);
     @Serial

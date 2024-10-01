@@ -1,14 +1,18 @@
 package repair.pattern.attr;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.code.expression.MoName;
 import repair.ast.code.expression.MoQualifiedName;
 import repair.ast.code.expression.MoSimpleName;
+import repair.pattern.serialize.rules.NameAttrSerializer;
 
 import java.io.Serial;
 
+@RegisterAttr
+@JsonSerialize(using = NameAttrSerializer.class)
 public class NameAttribute extends Attribute<String> implements HardConstraint {
     private static final Logger logger = LoggerFactory.getLogger(NameAttribute.class);
     @Serial

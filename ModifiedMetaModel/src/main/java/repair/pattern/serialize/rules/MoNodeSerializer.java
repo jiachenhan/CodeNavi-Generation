@@ -11,7 +11,8 @@ public class MoNodeSerializer extends JsonSerializer<MoNode> {
     @Override
     public void serialize(MoNode moNode, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
-
+        jsonGenerator.writeNumberField("id", moNode.getId());
+        jsonGenerator.writeStringField("element", moNode.toString());
         jsonGenerator.writeEndObject();
     }
 }

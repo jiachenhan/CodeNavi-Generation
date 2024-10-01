@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import repair.ast.MoNode;
 import repair.ast.code.statement.MoStatement;
 import repair.pattern.Pattern;
+import repair.pattern.attr.Attribute;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,14 +21,12 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
                 .map(node -> (MoStatement) node)
                 .toList();
 
-        generateStmts(statements, jsonGenerator); // module 1: stmts
-        generateNodes(pattern.getNodeToConsidered().keySet(), jsonGenerator, serializerProvider); // module 2: nodes
-
-        // todo: pattern
-        JsonSerializer<Object> patternNodeSerializer = serializerProvider.findValueSerializer(MoNode.class);
-        patternNodeSerializer.serialize(pattern.getPatternBefore0(), jsonGenerator, serializerProvider);
+        generateStmts(statements, jsonGenerator); // part 1: stmts
+        generateNodes(pattern.getNodeToConsidered().keySet(), jsonGenerator, serializerProvider); // part 2: nodes
+        generateAttrs(pattern.getNodeToAttributes(), jsonGenerator, serializerProvider); // part 3: attrs
         jsonGenerator.writeEndObject();
     }
+
 
     private Optional<MoStatement> findBelongStmts(MoNode node) {
         if(node instanceof MoStatement) {
@@ -85,6 +84,30 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
             jsonGenerator.writeEndObject();
         }
         jsonGenerator.writeEndArray();
+    }
 
+    private void generateAttrs(Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> nodeToAttributes,
+                               JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        jsonGenerator.writeFieldName("Attrs");
+        jsonGenerator.writeStartArray();
+        for (Map.Entry<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> entry : nodeToAttributes.entrySet()) {
+            MoNode node = entry.getKey();
+            Map<Class<? extends Attribute<?>>, Attribute<?>> attrs = entry.getValue();
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeNumberField("nodeId", node.getId());
+            jsonGenerator.writeFieldName("attrs");
+            jsonGenerator.writeStartArray();
+            for (Map.Entry<Class<? extends Attribute<?>>, Attribute<?>> attrEntry : attrs.entrySet()) {
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeStringField("attrType", attrEntry.getKey().getName());
+                jsonGenerator.writeFieldName("attr");
+                JsonSerializer<Object> attrSerializer = serializerProvider.findValueSerializer(attrEntry.getKey());
+                attrSerializer.serialize(attrEntry.getValue(), jsonGenerator, serializerProvider);
+                jsonGenerator.writeEndObject();
+            }
+            jsonGenerator.writeEndArray();
+            jsonGenerator.writeEndObject();
+        }
+        jsonGenerator.writeEndArray();
     }
 }

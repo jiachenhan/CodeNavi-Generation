@@ -1,12 +1,16 @@
 package repair.pattern.attr;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.code.expression.MoExpression;
+import repair.pattern.serialize.rules.ExprTypeAttrSerializer;
 
 import java.io.Serial;
 
+@RegisterAttr
+@JsonSerialize(using = ExprTypeAttrSerializer.class)
 public class ExprTypeAttribute extends Attribute<String> implements HardConstraint {
     private static final Logger logger = LoggerFactory.getLogger(ExprTypeAttribute.class);
     @Serial

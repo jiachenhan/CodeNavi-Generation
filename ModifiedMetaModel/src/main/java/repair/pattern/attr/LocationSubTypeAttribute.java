@@ -1,8 +1,10 @@
 package repair.pattern.attr;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
+import repair.pattern.serialize.rules.LocationSubTypeAtrSerializer;
 
 import java.io.Serial;
 
@@ -10,6 +12,7 @@ import java.io.Serial;
  * 标识孩子节点的父类型硬约束能否满足
  */
 @RegisterAttr
+@JsonSerialize(using = LocationSubTypeAtrSerializer.class)
 public class LocationSubTypeAttribute extends Attribute<Class<?>> implements HardConstraint {
     private static final Logger logger = LoggerFactory.getLogger(LocationSubTypeAttribute.class);
     @Serial

@@ -1,5 +1,6 @@
 package repair.pattern;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.gumtreediff.actions.model.Action;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -12,6 +13,7 @@ import repair.modify.builder.GumtreeMetaConstant;
 import repair.modify.diff.DiffComparator;
 import repair.modify.diff.operations.Operation;
 import repair.pattern.attr.Attribute;
+import repair.pattern.serialize.rules.PatternSerializer;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@JsonSerialize(using = PatternSerializer.class)
 public class Pattern implements Serializable {
     private final static Logger logger = LoggerFactory.getLogger(Pattern.class);
     @Serial

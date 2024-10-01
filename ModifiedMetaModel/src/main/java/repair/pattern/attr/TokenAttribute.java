@@ -1,15 +1,18 @@
 package repair.pattern.attr;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.modify.apply.match.MatchAlgorithm;
 import repair.ast.MoNode;
+import repair.pattern.serialize.rules.TokenAttrSerializer;
 
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
 @RegisterAttr
+@JsonSerialize(using = TokenAttrSerializer.class)
 public class TokenAttribute extends Attribute<List<String>> {
     private static final Logger logger = LoggerFactory.getLogger(TokenAttribute.class);
     @Serial
