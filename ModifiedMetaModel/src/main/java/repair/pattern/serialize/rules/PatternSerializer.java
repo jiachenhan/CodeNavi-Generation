@@ -3,12 +3,18 @@ package repair.pattern.serialize.rules;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Patch;
+import repair.FileUtils;
 import repair.ast.MoNode;
 import repair.ast.code.statement.MoStatement;
 import repair.pattern.Pattern;
 import repair.pattern.attr.Attribute;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,10 +27,52 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
                 .map(node -> (MoStatement) node)
                 .toList();
 
-        generateStmts(statements, jsonGenerator); // part 1: stmts
-        generateNodes(pattern.getNodeToConsidered().keySet(), jsonGenerator, serializerProvider); // part 2: nodes
-        generateAttrs(pattern.getNodeToAttributes(), jsonGenerator, serializerProvider); // part 3: attrs
+        generateBeforeCode(pattern.getPatternBefore0().getFileName(), jsonGenerator); // part 1: before code
+        generateDiff(pattern.getPatternBefore0().getFileName(), pattern.getPatternAfter0().getFileName(), jsonGenerator); // part 2: diff
+        generateStmts(statements, jsonGenerator); // part 3: stmts
+        generateNodes(pattern.getNodeToConsidered().keySet(), jsonGenerator, serializerProvider); // part 4: nodes
+        generateAttrs(pattern.getNodeToAttributes(), jsonGenerator, serializerProvider); // part 5: attrs
         jsonGenerator.writeEndObject();
+    }
+
+    private void generateBeforeCode(Path fileName, JsonGenerator jsonGenerator) throws IOException {
+        jsonGenerator.writeStringField("FileName", fileName.toString());
+        List<String> codes = Files.readAllLines(fileName);
+        jsonGenerator.writeFieldName("BeforeCode");
+        jsonGenerator.writeStartArray();
+        for (String code : codes) {
+            jsonGenerator.writeString(code);
+        }
+        jsonGenerator.writeEndArray();
+    }
+
+    private void generateDiff(Path beforeFileName, Path afterFileName, JsonGenerator jsonGenerator) throws IOException {
+        List<String> original = Files.readAllLines(beforeFileName);
+        List<String> revised = Files.readAllLines(afterFileName);
+        jsonGenerator.writeFieldName("Diff");
+
+        Patch<String> patch = DiffUtils.diff(original, revised);
+        jsonGenerator.writeStartArray();
+        for (AbstractDelta<String> delta : patch.getDeltas()) {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeStringField("Type", delta.getType().toString());
+            jsonGenerator.writeNumberField("LineStart", delta.getSource().getPosition() + 1);
+            jsonGenerator.writeFieldName("Original");
+            jsonGenerator.writeStartArray();
+            for (String line : delta.getSource().getLines()) {
+                jsonGenerator.writeString(line);
+            }
+            jsonGenerator.writeEndArray();
+            jsonGenerator.writeFieldName("Revised");
+            jsonGenerator.writeStartArray();
+            for (String line : delta.getTarget().getLines()) {
+                jsonGenerator.writeString(line);
+            }
+            jsonGenerator.writeEndArray();
+
+            jsonGenerator.writeEndObject();
+        }
+        jsonGenerator.writeEndArray();
     }
 
 

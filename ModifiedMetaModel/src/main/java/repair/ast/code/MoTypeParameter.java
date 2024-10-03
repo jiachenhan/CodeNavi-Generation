@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +54,7 @@ public class MoTypeParameter extends MoNode {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "typeBounds", mandatory = true)
     private final MoNodeList<MoType> typeBounds;
 
-    public MoTypeParameter(String fileName, int startLine, int endLine, TypeParameter typeParameter) {
+    public MoTypeParameter(Path fileName, int startLine, int endLine, TypeParameter typeParameter) {
         super(fileName, startLine, endLine, typeParameter);
         moNodeType = MoNodeType.TYPETypeParameter;
         modifiers = new MoNodeList<>(this, modifiersDescription);

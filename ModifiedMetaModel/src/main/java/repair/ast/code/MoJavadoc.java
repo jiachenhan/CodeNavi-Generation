@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,7 @@ public class MoJavadoc extends MoComment {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "tags", mandatory = true)
     private final MoNodeList<MoTagElement> tagElements;
 
-    public MoJavadoc(String fileName, int startLine, int endLine, Javadoc javadoc) {
+    public MoJavadoc(Path fileName, int startLine, int endLine, Javadoc javadoc) {
         super(fileName, startLine, endLine, javadoc);
         moNodeType = MoNodeType.TYPEJavadoc;
         tagElements = new MoNodeList<>(this, tagsDescription);

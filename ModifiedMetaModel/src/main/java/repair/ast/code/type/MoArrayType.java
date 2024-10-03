@@ -17,6 +17,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +46,7 @@ public class MoArrayType extends MoType {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "dimensions", mandatory = true)
     private final MoNodeList<MoDimension> dimensions;
 
-    public MoArrayType(String fileName, int startLine, int endLine, ArrayType arrayType) {
+    public MoArrayType(Path fileName, int startLine, int endLine, ArrayType arrayType) {
         super(fileName, startLine, endLine, arrayType);
         moNodeType = MoNodeType.TYPEArrayType;
         dimensions = new MoNodeList<>(this, dimensionsDescription);

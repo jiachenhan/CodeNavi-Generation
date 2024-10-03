@@ -11,6 +11,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public abstract class MoBodyDeclaration extends MoNode {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "modifiers", mandatory = true)
     protected MoNodeList<MoExtendedModifier> modifiers;
 
-    public MoBodyDeclaration(String fileName, int startLine, int endLine, BodyDeclaration bodyDeclaration) {
+    public MoBodyDeclaration(Path fileName, int startLine, int endLine, BodyDeclaration bodyDeclaration) {
         super(fileName, startLine, endLine, bodyDeclaration);
     }
 

@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class MoImportDeclaration extends MoNode {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "onDemand", mandatory = true)
     private boolean isOnDemand;
 
-    public MoImportDeclaration(String fileName, int startLine, int endLine, ImportDeclaration importDeclaration) {
+    public MoImportDeclaration(Path fileName, int startLine, int endLine, ImportDeclaration importDeclaration) {
         super(fileName, startLine, endLine, importDeclaration);
         moNodeType = MoNodeType.TYPEImportDeclaration;
     }

@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoForStatement extends MoStatement {
@@ -56,7 +57,7 @@ public class MoForStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "body", mandatory = true)
     private MoStatement body;
 
-    public MoForStatement(String fileName, int startLine, int endLine, ForStatement forStatement) {
+    public MoForStatement(Path fileName, int startLine, int endLine, ForStatement forStatement) {
         super(fileName, startLine, endLine, forStatement);
         moNodeType = MoNodeType.TYPEForStatement;
         initializers = new MoNodeList<>(this, initializersDescription);

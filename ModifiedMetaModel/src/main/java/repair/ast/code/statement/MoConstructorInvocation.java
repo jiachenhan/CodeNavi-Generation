@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,7 @@ public class MoConstructorInvocation extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "arguments", mandatory = true)
     private final MoNodeList<MoExpression> arguments;
 
-    public MoConstructorInvocation(String fileName, int startLine, int endLine, ConstructorInvocation constructorInvocation) {
+    public MoConstructorInvocation(Path fileName, int startLine, int endLine, ConstructorInvocation constructorInvocation) {
         super(fileName, startLine, endLine, constructorInvocation);
         moNodeType = MoNodeType.TYPEConstructorInvocation;
         typeArguments = new MoNodeList<>(this, typeArgumentsDescription);

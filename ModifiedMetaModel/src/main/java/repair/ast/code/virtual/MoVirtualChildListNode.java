@@ -4,6 +4,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import repair.ast.MoNode;
 
 import java.io.Serial;
+import java.nio.file.Path;
 
 /**
  * Virtual nodes for MethodInvocationArguments
@@ -14,7 +15,7 @@ public abstract class MoVirtualChildListNode extends MoVirtualNode {
     @Serial
     private static final long serialVersionUID = 8960049876625630159L;
 
-    public MoVirtualChildListNode(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+    public MoVirtualChildListNode(Path fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
         super(fileName, startLine, endLine, elementPos, elementLength, null);
     }
 }

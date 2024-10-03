@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import repair.ast.MoNode;
 
 import java.io.Serial;
+import java.nio.file.Path;
 
 
 public abstract class MoExpression extends MoNode {
@@ -13,7 +14,7 @@ public abstract class MoExpression extends MoNode {
 
     private String ExprTypeStr;
     public static final String UnknownType = "<UNKNOWN>";
-    protected MoExpression(String fileName, int startLine, int endLine, Expression expression) {
+    protected MoExpression(Path fileName, int startLine, int endLine, Expression expression) {
         super(fileName, startLine, endLine, expression);
         if(expression == null) {
             // 说明是clone出来的，没有expression，可以先设置为unknown

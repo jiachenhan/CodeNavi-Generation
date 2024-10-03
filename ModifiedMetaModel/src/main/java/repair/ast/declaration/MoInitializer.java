@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoInitializer extends MoBodyDeclaration {
@@ -44,7 +45,7 @@ public class MoInitializer extends MoBodyDeclaration {
     @RoleDescriptor(type = ChildType.CHILD, role = "body", mandatory = true)
     private MoBlock body;
 
-    public MoInitializer(String fileName, int startLine, int endLine, Initializer initializer) {
+    public MoInitializer(Path fileName, int startLine, int endLine, Initializer initializer) {
         super(fileName, startLine, endLine, initializer);
         moNodeType = MoNodeType.TYPEInitializer;
         super.modifiers = new MoNodeList<>(this, modifiersDescription);

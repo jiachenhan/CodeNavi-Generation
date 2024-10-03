@@ -60,7 +60,7 @@ public class SerializerTest {
 
     @Test
     public void jsonSerializeTest() {
-        Path groupPath = datasetPath.resolve("14");
+        Path groupPath = datasetPath.resolve("15");
         Path patternCasePath = null;
         List<Path> otherCasesPath = null;
 
@@ -110,8 +110,8 @@ public class SerializerTest {
             fail("MethodDeclaration is not present");
         }
 
-        NodeParser beforeParser = new NodeParser(patternBeforePath.toString(), beforeCompilationUnit);
-        NodeParser afterParser = new NodeParser(patternAfterPath.toString(), afterCompilationUnit);
+        NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
+        NodeParser afterParser = new NodeParser(patternAfterPath, afterCompilationUnit);
 
         MoNode moMethodBefore = beforeParser.process(methodBefore.get());
         MoNode moMethodAfter = afterParser.process(methodAfter.get());

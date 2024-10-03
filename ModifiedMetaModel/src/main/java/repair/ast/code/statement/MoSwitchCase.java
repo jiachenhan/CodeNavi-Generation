@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class MoSwitchCase extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "expression", mandatory = false)
     private MoExpression expression;
 
-    public MoSwitchCase(String fileName, int startLine, int endLine, SwitchCase switchCase) {
+    public MoSwitchCase(Path fileName, int startLine, int endLine, SwitchCase switchCase) {
         super(fileName, startLine, endLine, switchCase);
         moNodeType = MoNodeType.TYPESwitchCase;
     }

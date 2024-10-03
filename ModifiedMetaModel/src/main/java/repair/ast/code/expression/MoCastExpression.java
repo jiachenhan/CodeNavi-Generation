@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class MoCastExpression extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "expression", mandatory = true)
     private MoExpression expression = null;
 
-    public MoCastExpression(String fileName, int startLine, int endLine, CastExpression node) {
+    public MoCastExpression(Path fileName, int startLine, int endLine, CastExpression node) {
         super(fileName, startLine, endLine, node);
         moNodeType = MoNodeType.TYPECastExpression;
     }

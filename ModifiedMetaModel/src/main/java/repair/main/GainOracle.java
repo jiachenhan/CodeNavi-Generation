@@ -44,7 +44,7 @@ public class GainOracle {
             return;
         }
 
-        NodeParser parser = new NodeParser(fixedPath.toString(), beforeCompilationUnit);
+        NodeParser parser = new NodeParser(fixedPath, beforeCompilationUnit);
         MoNode oracle = parser.process(method.get());
 
         System.out.println(oracle.toString());

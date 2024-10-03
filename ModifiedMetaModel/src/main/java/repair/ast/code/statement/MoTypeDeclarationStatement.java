@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class MoTypeDeclarationStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "declaration", mandatory = true)
     private MoAbstractTypeDeclaration typeDeclaration;
 
-    public MoTypeDeclarationStatement(String fileName, int startLine, int endLine, TypeDeclarationStatement typeDeclarationStatement) {
+    public MoTypeDeclarationStatement(Path fileName, int startLine, int endLine, TypeDeclarationStatement typeDeclarationStatement) {
         super(fileName, startLine, endLine, typeDeclarationStatement);
         moNodeType = MoNodeType.TYPETypeDeclarationStatement;
     }

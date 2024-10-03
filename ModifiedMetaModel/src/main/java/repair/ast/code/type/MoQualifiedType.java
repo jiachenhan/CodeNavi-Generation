@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +52,7 @@ public class MoQualifiedType extends MoAnnotatableType {
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoSimpleName simpleName;
 
-    public MoQualifiedType(String fileName, int startLine, int endLine, QualifiedType qualifiedType) {
+    public MoQualifiedType(Path fileName, int startLine, int endLine, QualifiedType qualifiedType) {
         super(fileName, startLine, endLine, qualifiedType);
         moNodeType = MoNodeType.TYPEQualifiedType;
         super.annotations = new MoNodeList<>(this, annotationsDescription);

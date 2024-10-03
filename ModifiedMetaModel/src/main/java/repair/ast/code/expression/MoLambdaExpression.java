@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +51,7 @@ public class MoLambdaExpression extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "body", mandatory = true)
     private MoNode body;
 
-    public MoLambdaExpression(String fileName, int startLine, int endLine, LambdaExpression lambdaExpression) {
+    public MoLambdaExpression(Path fileName, int startLine, int endLine, LambdaExpression lambdaExpression) {
         super(fileName, startLine, endLine, lambdaExpression);
         moNodeType = MoNodeType.TYPELambdaExpression;
         parameters = new MoNodeList<>(this, parametersDescription);

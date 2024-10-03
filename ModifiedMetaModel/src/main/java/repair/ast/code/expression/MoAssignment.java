@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class MoAssignment extends MoExpression {
     private MoExpression right = null;
 
 
-    public MoAssignment(String fileName, int startLine, int endLine, Assignment assignment) {
+    public MoAssignment(Path fileName, int startLine, int endLine, Assignment assignment) {
         super(fileName, startLine, endLine, assignment);
         moNodeType = MoNodeType.TYPEAssignment;
     }

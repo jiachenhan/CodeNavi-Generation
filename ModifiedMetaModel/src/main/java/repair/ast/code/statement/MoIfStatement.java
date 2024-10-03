@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class MoIfStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "elseStatement", mandatory = false)
     private MoStatement elseStatement;
 
-    public MoIfStatement(String fileName, int startLine, int endLine, IfStatement ifStatement) {
+    public MoIfStatement(Path fileName, int startLine, int endLine, IfStatement ifStatement) {
         super(fileName, startLine, endLine, ifStatement);
         moNodeType = MoNodeType.TYPEIfStatement;
     }

@@ -15,6 +15,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +46,7 @@ public class MoVariableDeclarationFragment extends MoVariableDeclaration {
     );
 
 
-    public MoVariableDeclarationFragment(String fileName, int startLine, int endLine, VariableDeclarationFragment variableDeclarationFragment) {
+    public MoVariableDeclarationFragment(Path fileName, int startLine, int endLine, VariableDeclarationFragment variableDeclarationFragment) {
         super(fileName, startLine, endLine, variableDeclarationFragment);
         moNodeType = MoNodeType.TYPEVariableDeclarationFragment;
         super.CStyleArrayDimensions = new MoNodeList<>(this, extraDimensionsDescription);

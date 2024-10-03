@@ -22,7 +22,7 @@ public class ExprTypeAttribute extends Attribute<String> implements HardConstrai
         if(node instanceof MoExpression expression) {
             this.value = expression.getExprTypeStr();
         } else {
-            this.value = "UNCompatible";
+            this.value = "<UNCompatible>";
         }
         super.considered = true;
     }

@@ -17,6 +17,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +53,7 @@ public class MoVariableDeclarationStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "fragments", mandatory = true)
     private final MoNodeList<MoVariableDeclarationFragment> fragments;
 
-    public MoVariableDeclarationStatement(String fileName, int startLine, int endLine, VariableDeclarationStatement variableDeclarationStatement) {
+    public MoVariableDeclarationStatement(Path fileName, int startLine, int endLine, VariableDeclarationStatement variableDeclarationStatement) {
         super(fileName, startLine, endLine, variableDeclarationStatement);
         moNodeType = MoNodeType.TYPEVariableDeclarationStatement;
         modifiers = new MoNodeList<>(this, modifiersDescription);

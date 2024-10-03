@@ -11,6 +11,7 @@ import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoCompilationUnit extends MoNode implements Serializable {
@@ -46,7 +47,7 @@ public class MoCompilationUnit extends MoNode implements Serializable {
     private final MoNodeList<MoAbstractTypeDeclaration> types;
 
 
-    public MoCompilationUnit(String fileName, int startLine, int endLine, CompilationUnit oriNode) {
+    public MoCompilationUnit(Path fileName, int startLine, int endLine, CompilationUnit oriNode) {
         super(fileName, startLine, endLine, oriNode);
         moNodeType = MoNodeType.TYPECompilationUnit;
         imports = new MoNodeList<>(this, importsDescription);

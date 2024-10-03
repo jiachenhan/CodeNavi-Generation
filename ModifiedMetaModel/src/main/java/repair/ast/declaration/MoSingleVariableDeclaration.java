@@ -19,6 +19,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -78,7 +79,7 @@ public class MoSingleVariableDeclaration extends MoVariableDeclaration {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "varargs", mandatory = true)
     private boolean isVarargs;
 
-    public MoSingleVariableDeclaration(String fileName, int startLine, int endLine, SingleVariableDeclaration singleVariableDeclaration) {
+    public MoSingleVariableDeclaration(Path fileName, int startLine, int endLine, SingleVariableDeclaration singleVariableDeclaration) {
         super(fileName, startLine, endLine, singleVariableDeclaration);
         moNodeType = MoNodeType.TYPESingleVariableDeclaration;
         super.CStyleArrayDimensions = new MoNodeList<>(this, extraDimensionsDescription);

@@ -20,6 +20,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class MoInfixExpression extends MoExpression {
         return false;
     }
 
-    public MoInfixExpression(String fileName, int startLine, int endLine, InfixExpression infixExpression) {
+    public MoInfixExpression(Path fileName, int startLine, int endLine, InfixExpression infixExpression) {
         super(fileName, startLine, endLine, infixExpression);
         moNodeType = MoNodeType.TYPEInfixExpression;
         extendedOperands = new MoNodeList<>(this, extendedOperandsDescription);

@@ -17,6 +17,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,7 @@ public class MoNormalAnnotation extends MoAnnotation {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "values", mandatory = true)
     private final MoNodeList<MoMemberValuePair> memberValuePairs;
 
-    public MoNormalAnnotation(String fileName, int startLine, int endLine, NormalAnnotation normalAnnotation) {
+    public MoNormalAnnotation(Path fileName, int startLine, int endLine, NormalAnnotation normalAnnotation) {
         super(fileName, startLine, endLine, normalAnnotation);
         moNodeType = MoNodeType.TYPENormalAnnotation;
         memberValuePairs = new MoNodeList<>(this, valuesDescription);

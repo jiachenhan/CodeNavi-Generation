@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class MoLabeledStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "body", mandatory = true)
     private MoStatement statement;
 
-    public MoLabeledStatement(String fileName, int startLine, int endLine, LabeledStatement labeledStatement) {
+    public MoLabeledStatement(Path fileName, int startLine, int endLine, LabeledStatement labeledStatement) {
         super(fileName, startLine, endLine, labeledStatement);
         moNodeType = MoNodeType.TYPELabeledStatement;
     }

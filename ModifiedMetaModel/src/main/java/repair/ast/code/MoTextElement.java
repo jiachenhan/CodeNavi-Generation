@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class MoTextElement extends MoNode implements MoDocElement{
     @RoleDescriptor(type = ChildType.SIMPLE, role = "text", mandatory = true)
     private String text;
 
-    public MoTextElement(String fileName, int startLine, int endLine, TextElement textElement) {
+    public MoTextElement(Path fileName, int startLine, int endLine, TextElement textElement) {
         super(fileName, startLine, endLine, textElement);
         moNodeType = MoNodeType.TYPETextElement;
     }

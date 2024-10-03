@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class MoMethodInvocationTarget extends MoVirtualChildNode {
     @RoleDescriptor(type = ChildType.CHILD, role = "expression", mandatory = true)
     private MoExpression expression;
 
-    public MoMethodInvocationTarget(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+    public MoMethodInvocationTarget(Path fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
         super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEMethodInvocationTarget;
     }

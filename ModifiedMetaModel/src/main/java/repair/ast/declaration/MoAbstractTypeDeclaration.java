@@ -10,6 +10,7 @@ import repair.ast.role.ChildType;
 import repair.ast.role.RoleDescriptor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public abstract class MoAbstractTypeDeclaration extends MoBodyDeclaration {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "bodyDeclarations", mandatory = true)
     protected MoNodeList<MoBodyDeclaration> bodyDeclarations;
 
-    public MoAbstractTypeDeclaration(String fileName, int startLine, int endLine, AbstractTypeDeclaration abstractTypeDeclaration) {
+    public MoAbstractTypeDeclaration(Path fileName, int startLine, int endLine, AbstractTypeDeclaration abstractTypeDeclaration) {
         super(fileName, startLine, endLine, abstractTypeDeclaration);
     }
 

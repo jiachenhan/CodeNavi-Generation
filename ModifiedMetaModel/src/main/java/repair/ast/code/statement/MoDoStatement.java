@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class MoDoStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "expression", mandatory = true)
     private MoExpression expression;
 
-    public MoDoStatement(String fileName, int startLine, int endLine, DoStatement doStatement) {
+    public MoDoStatement(Path fileName, int startLine, int endLine, DoStatement doStatement) {
         super(fileName, startLine, endLine, doStatement);
         moNodeType = MoNodeType.TYPEDoStatement;
     }

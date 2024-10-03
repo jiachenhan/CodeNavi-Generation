@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class MoBooleanLiteral extends MoExpression {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "booleanValue", mandatory = true)
     private boolean value;
 
-    public MoBooleanLiteral(String fileName, int startLine, int endLine, BooleanLiteral booleanLiteral) {
+    public MoBooleanLiteral(Path fileName, int startLine, int endLine, BooleanLiteral booleanLiteral) {
         super(fileName, startLine, endLine, booleanLiteral);
         moNodeType = MoNodeType.TYPEBooleanLiteral;
     }

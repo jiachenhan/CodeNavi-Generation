@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoArrayCreation extends MoExpression {
@@ -50,7 +51,7 @@ public class MoArrayCreation extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "initializer", mandatory = false)
     private MoArrayInitializer initializer;
 
-    public MoArrayCreation(String fileName, int startLine, int endLine, ArrayCreation arrayCreation) {
+    public MoArrayCreation(Path fileName, int startLine, int endLine, ArrayCreation arrayCreation) {
         super(fileName, startLine, endLine, arrayCreation);
         moNodeType = MoNodeType.TYPEArrayCreation;
         dimensionExpressions = new MoNodeList<>(this, dimensionDescription);

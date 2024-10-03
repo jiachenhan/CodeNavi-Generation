@@ -11,6 +11,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class MoSimpleName extends MoName {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "identifier", mandatory = true)
     private String identifier;
 
-    public MoSimpleName(String fileName, int startLine, int endLine, SimpleName simpleName) {
+    public MoSimpleName(Path fileName, int startLine, int endLine, SimpleName simpleName) {
         super(fileName, startLine, endLine, simpleName);
         moNodeType = MoNodeType.TYPESimpleName;
     }

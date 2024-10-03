@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class MoDimension extends MoNode {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "annotations", mandatory = true)
     private final MoNodeList<MoAnnotation> annotations;
 
-    public MoDimension(String fileName, int startLine, int endLine, Dimension dimension) {
+    public MoDimension(Path fileName, int startLine, int endLine, Dimension dimension) {
         super(fileName, startLine, endLine, dimension);
         moNodeType = MoNodeType.TYPEDimension;
         annotations = new MoNodeList<>(this, annotationsDescription);

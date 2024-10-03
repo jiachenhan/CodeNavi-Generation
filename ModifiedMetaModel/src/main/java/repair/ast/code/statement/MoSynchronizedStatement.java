@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class MoSynchronizedStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "body", mandatory = true)
     private MoBlock block;
 
-    public MoSynchronizedStatement(String fileName, int startLine, int endLine, SynchronizedStatement synchronizedStatement) {
+    public MoSynchronizedStatement(Path fileName, int startLine, int endLine, SynchronizedStatement synchronizedStatement) {
         super(fileName, startLine, endLine, synchronizedStatement);
         moNodeType = MoNodeType.TYPESynchronizedStatement;
     }

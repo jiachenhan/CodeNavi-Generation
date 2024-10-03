@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,7 @@ public class MoSwitchStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "statements", mandatory = true)
     private final MoNodeList<MoStatement> statements;
 
-    public MoSwitchStatement(String fileName, int startLine, int endLine, SwitchStatement switchStatement) {
+    public MoSwitchStatement(Path fileName, int startLine, int endLine, SwitchStatement switchStatement) {
         super(fileName, startLine, endLine, switchStatement);
         moNodeType = MoNodeType.TYPESwitchStatement;
         statements = new MoNodeList<>(this, statementsDescription);

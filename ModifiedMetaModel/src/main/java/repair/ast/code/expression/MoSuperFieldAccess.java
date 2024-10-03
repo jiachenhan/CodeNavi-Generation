@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public class MoSuperFieldAccess extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoSimpleName name;
 
-    public MoSuperFieldAccess(String fileName, int startLine, int endLine, SuperFieldAccess superFieldAccess) {
+    public MoSuperFieldAccess(Path fileName, int startLine, int endLine, SuperFieldAccess superFieldAccess) {
         super(fileName, startLine, endLine, superFieldAccess);
         moNodeType = MoNodeType.TYPESuperFieldAccess;
     }

@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class MoWhileStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "body", mandatory = true)
     private MoStatement body;
 
-    public MoWhileStatement(String fileName, int startLine, int endLine, WhileStatement whileStatement) {
+    public MoWhileStatement(Path fileName, int startLine, int endLine, WhileStatement whileStatement) {
         super(fileName, startLine, endLine, whileStatement);
         moNodeType = MoNodeType.TYPEWhileStatement;
     }

@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class MoNullLiteral extends MoExpression {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "value", mandatory = true)
     private final String nullValue = "null";
 
-    public MoNullLiteral(String fileName, int startLine, int endLine, NullLiteral nullLiteral) {
+    public MoNullLiteral(Path fileName, int startLine, int endLine, NullLiteral nullLiteral) {
         super(fileName, startLine, endLine, nullLiteral);
         moNodeType = MoNodeType.TYPENullLiteral;
     }

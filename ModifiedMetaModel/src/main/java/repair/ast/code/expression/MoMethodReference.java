@@ -7,6 +7,7 @@ import repair.ast.role.ChildType;
 import repair.ast.role.RoleDescriptor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 
 public abstract class MoMethodReference extends MoExpression {
@@ -16,7 +17,7 @@ public abstract class MoMethodReference extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "typeArguments", mandatory = true)
     protected MoNodeList<MoType> typeArguments;
 
-    protected MoMethodReference(String fileName, int startLine, int endLine, MethodReference methodReference) {
+    protected MoMethodReference(Path fileName, int startLine, int endLine, MethodReference methodReference) {
         super(fileName, startLine, endLine, methodReference);
     }
 

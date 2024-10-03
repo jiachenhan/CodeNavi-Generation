@@ -9,6 +9,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class MoBlockComment extends MoComment {
     @Serial
     private static final long serialVersionUID = 6521251584375479098L;
 
-    public MoBlockComment(String fileName, int startLine, int endLine, BlockComment blockComment) {
+    public MoBlockComment(Path fileName, int startLine, int endLine, BlockComment blockComment) {
         super(fileName, startLine, endLine, blockComment);
         moNodeType = MoNodeType.TYPEBlockComment;
     }

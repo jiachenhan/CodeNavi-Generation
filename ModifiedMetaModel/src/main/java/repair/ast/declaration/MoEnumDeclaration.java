@@ -18,6 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,7 +71,7 @@ public class MoEnumDeclaration extends MoAbstractTypeDeclaration{
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "enumConstants", mandatory = true)
     private final MoNodeList<MoEnumConstantDeclaration> enumConstants;
 
-    public MoEnumDeclaration(String fileName, int startLine, int endLine, EnumDeclaration enumDeclaration) {
+    public MoEnumDeclaration(Path fileName, int startLine, int endLine, EnumDeclaration enumDeclaration) {
         super(fileName, startLine, endLine, enumDeclaration);
         moNodeType = MoNodeType.TYPEEnumDeclaration;
         super.modifiers = new MoNodeList<>(this, modifiersDescription);

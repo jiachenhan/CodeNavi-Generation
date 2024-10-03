@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class MoBreakStatement extends MoStatement{
     @RoleDescriptor(type = ChildType.CHILD, role = "label", mandatory = false)
     private MoSimpleName breakLabel;
 
-    public MoBreakStatement(String fileName, int startLine, int endLine, BreakStatement breakStatement) {
+    public MoBreakStatement(Path fileName, int startLine, int endLine, BreakStatement breakStatement) {
         super(fileName, startLine, endLine, breakStatement);
         moNodeType = MoNodeType.TYPEBreakStatement;
     }

@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public class MoSimpleType extends MoAnnotatableType {
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoName name;
 
-    public MoSimpleType(String fileName, int startLine, int endLine, SimpleType simpleType) {
+    public MoSimpleType(Path fileName, int startLine, int endLine, SimpleType simpleType) {
         super(fileName, startLine, endLine, simpleType);
         moNodeType = MoNodeType.TYPESimpleType;
         super.annotations = new MoNodeList<>(this, annotationsDescription);

@@ -10,6 +10,7 @@ import repair.ast.role.ChildType;
 import repair.ast.role.RoleDescriptor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public abstract class MoVariableDeclaration extends MoNode {
     @RoleDescriptor(type = ChildType.CHILD, role = "initializer", mandatory = false)
     protected MoExpression initializer;
 
-    public MoVariableDeclaration(String fileName, int startLine, int endLine, VariableDeclaration variableDeclaration) {
+    public MoVariableDeclaration(Path fileName, int startLine, int endLine, VariableDeclaration variableDeclaration) {
         super(fileName, startLine, endLine, variableDeclaration);
     }
 

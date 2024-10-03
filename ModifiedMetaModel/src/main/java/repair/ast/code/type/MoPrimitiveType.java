@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,7 @@ public class MoPrimitiveType extends MoAnnotatableType {
         }
     }
 
-    public MoPrimitiveType(String fileName, int startLine, int endLine, PrimitiveType primitiveType) {
+    public MoPrimitiveType(Path fileName, int startLine, int endLine, PrimitiveType primitiveType) {
         super(fileName, startLine, endLine, primitiveType);
         moNodeType = MoNodeType.TYPEPrimitiveType;
         super.annotations = new MoNodeList<>(this, annotationsDescription);

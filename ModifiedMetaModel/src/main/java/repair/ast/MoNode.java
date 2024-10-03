@@ -16,6 +16,7 @@ import repair.pattern.serialize.rules.MoNodeSerializer;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,7 +41,7 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
      * @param elementLength : length of the node in the original source file
      * @param oriNode   : original abstract syntax tree node in the JDT model
      */
-    public MoNode(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+    public MoNode(Path fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
         id = counter.incrementAndGet();
 
         this.fileName = fileName;
@@ -51,7 +52,7 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
         this.oriNode = oriNode;
     }
 
-    public MoNode(String fileName, int startLine, int endLine, ASTNode oriNode) {
+    public MoNode(Path fileName, int startLine, int endLine, ASTNode oriNode) {
         id = counter.incrementAndGet();
 
         this.fileName = fileName;
@@ -78,9 +79,9 @@ public abstract class MoNode implements Visitable, Serializable, NodeComparator 
     /**
      * source file name (with absolute path)
      */
-    private final String fileName;
+    private transient final Path fileName;
 
-    public String getFileName() {
+    public Path getFileName() {
         return fileName;
     }
 

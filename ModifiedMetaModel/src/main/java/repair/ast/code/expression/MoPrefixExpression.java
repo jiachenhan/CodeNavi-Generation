@@ -17,6 +17,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class MoPrefixExpression extends MoExpression {
     }
 
 
-    public MoPrefixExpression(String fileName, int startLine, int endLine, PrefixExpression prefixExpression) {
+    public MoPrefixExpression(Path fileName, int startLine, int endLine, PrefixExpression prefixExpression) {
         super(fileName, startLine, endLine, prefixExpression);
         moNodeType = MoNodeType.TYPEPrefixExpression;
     }

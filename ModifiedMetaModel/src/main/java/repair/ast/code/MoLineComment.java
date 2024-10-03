@@ -11,6 +11,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class MoLineComment extends MoComment {
     @Serial
     private static final long serialVersionUID = 9171969145584851370L;
 
-    public MoLineComment(String fileName, int startLine, int endLine, LineComment lineComment) {
+    public MoLineComment(Path fileName, int startLine, int endLine, LineComment lineComment) {
         super(fileName, startLine, endLine, lineComment);
         moNodeType = MoNodeType.TYPELineComment;
     }

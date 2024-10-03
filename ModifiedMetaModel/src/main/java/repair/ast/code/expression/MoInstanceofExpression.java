@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class MoInstanceofExpression extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "rightOperand", mandatory = true)
     private MoType rightOperand;
 
-    public MoInstanceofExpression(String fileName, int startLine, int endLine, InstanceofExpression instanceofExpression) {
+    public MoInstanceofExpression(Path fileName, int startLine, int endLine, InstanceofExpression instanceofExpression) {
         super(fileName, startLine, endLine, instanceofExpression);
         moNodeType = MoNodeType.TYPEInstanceofExpression;
     }

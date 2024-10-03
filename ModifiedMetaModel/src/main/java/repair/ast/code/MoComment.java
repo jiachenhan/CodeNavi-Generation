@@ -4,6 +4,7 @@ import org.eclipse.jdt.core.dom.Comment;
 import repair.ast.MoNode;
 
 import java.io.Serial;
+import java.nio.file.Path;
 
 public abstract class MoComment extends MoNode {
     @Serial
@@ -14,7 +15,7 @@ public abstract class MoComment extends MoNode {
      * Comment is the super class of LineComment, BlockComment and Javadoc
      *
      */
-    public MoComment(String fileName, int startLine, int endLine, Comment comment) {
+    public MoComment(Path fileName, int startLine, int endLine, Comment comment) {
         super(fileName, startLine, endLine, comment);
     }
 

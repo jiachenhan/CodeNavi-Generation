@@ -10,6 +10,7 @@ import repair.ast.role.ChildType;
 import repair.ast.role.RoleDescriptor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 
 public abstract class MoAnnotation extends MoExpression implements MoExtendedModifier {
     @Serial
@@ -18,7 +19,7 @@ public abstract class MoAnnotation extends MoExpression implements MoExtendedMod
     @RoleDescriptor(type = ChildType.CHILD, role = "typeName", mandatory = true)
     protected MoName typeName;
 
-    public MoAnnotation(String fileName, int startLine, int endLine, Annotation annotation) {
+    public MoAnnotation(Path fileName, int startLine, int endLine, Annotation annotation) {
         super(fileName, startLine, endLine, annotation);
     }
 

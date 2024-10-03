@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class MoArrayInitializer extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "expressions", mandatory = true)
     private final MoNodeList<MoExpression> expressions;
 
-    public MoArrayInitializer(String fileName, int startLine, int endLine, ArrayInitializer arrayInitializer) {
+    public MoArrayInitializer(Path fileName, int startLine, int endLine, ArrayInitializer arrayInitializer) {
         super(fileName, startLine, endLine, arrayInitializer);
         moNodeType = MoNodeType.TYPEArrayInitializer;
         expressions = new MoNodeList<>(this, expressionDescription);

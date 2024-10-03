@@ -20,6 +20,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoTryStatement extends MoStatement {
@@ -59,7 +60,7 @@ public class MoTryStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "finally", mandatory = false)
     private MoBlock finallyBlock;
 
-    public MoTryStatement(String fileName, int startLine, int endLine, TryStatement tryStatement) {
+    public MoTryStatement(Path fileName, int startLine, int endLine, TryStatement tryStatement) {
         super(fileName, startLine, endLine, tryStatement);
         moNodeType = MoNodeType.TYPETryStatement;
         resources = new MoNodeList<>(this, resourcesDescription);

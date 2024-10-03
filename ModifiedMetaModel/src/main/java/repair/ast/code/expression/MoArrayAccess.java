@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class MoArrayAccess extends MoExpression{
     @RoleDescriptor(type = ChildType.CHILD, role = "index", mandatory = true)
     private MoExpression index;
 
-    public MoArrayAccess(String fileName, int startLine, int endLine, ArrayAccess arrayAccess) {
+    public MoArrayAccess(Path fileName, int startLine, int endLine, ArrayAccess arrayAccess) {
         super(fileName, startLine, endLine, arrayAccess);
         moNodeType = MoNodeType.TYPEArrayAccess;
     }

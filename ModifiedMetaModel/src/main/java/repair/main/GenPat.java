@@ -52,7 +52,7 @@ public class GenPat {
                 return;
             }
 
-            NodeParser beforeParser = new NodeParser(buggyBeforePath.toString(), beforeCompilationUnit);
+            NodeParser beforeParser = new NodeParser(buggyBeforePath, beforeCompilationUnit);
             MoNode moMethodBefore = beforeParser.process(methodBefore.get());
 
             List<MatchInstance> matchInstances = Matcher.match(pattern, moMethodBefore).stream().limit(5).toList();
@@ -100,8 +100,8 @@ public class GenPat {
             fail("MethodDeclaration is not present");
         }
 
-        NodeParser beforeParser = new NodeParser(patternBeforePath.toString(), beforeCompilationUnit);
-        NodeParser afterParser = new NodeParser(patternAfterPath.toString(), afterCompilationUnit);
+        NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
+        NodeParser afterParser = new NodeParser(patternAfterPath, afterCompilationUnit);
 
         MoNode moMethodBefore = beforeParser.process(methodBefore.get());
         MoNode moMethodAfter = afterParser.process(methodAfter.get());

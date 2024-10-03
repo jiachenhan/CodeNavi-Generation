@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class MoReturnStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "expression", mandatory = false)
     private MoExpression expression;
 
-    public MoReturnStatement(String fileName, int startLine, int endLine, ReturnStatement returnStatement) {
+    public MoReturnStatement(Path fileName, int startLine, int endLine, ReturnStatement returnStatement) {
         super(fileName, startLine, endLine, returnStatement);
         moNodeType = MoNodeType.TYPEReturnStatement;
     }

@@ -65,7 +65,7 @@ public class MoNodeTest {
             fail("MethodDeclaration is not present");
         }
 
-        NodeParser parser = new NodeParser(patternBeforePath.toString(), compilationUnit);
+        NodeParser parser = new NodeParser(patternBeforePath, compilationUnit);
         moNode = parser.process(onlyMethodDeclaration.get());
     }
 

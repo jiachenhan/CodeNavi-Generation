@@ -18,6 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoSuperMethodInvocation extends MoExpression {
@@ -58,7 +59,7 @@ public class MoSuperMethodInvocation extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "arguments", mandatory = true)
     private final MoNodeList<MoExpression> arguments;
 
-    public MoSuperMethodInvocation(String fileName, int startLine, int endLine, SuperMethodInvocation superMethodInvocation) {
+    public MoSuperMethodInvocation(Path fileName, int startLine, int endLine, SuperMethodInvocation superMethodInvocation) {
         super(fileName, startLine, endLine, superMethodInvocation);
         moNodeType = MoNodeType.TYPESuperMethodInvocation;
         typeArguments = new MoNodeList<>(this, typeArgumentsDescription);

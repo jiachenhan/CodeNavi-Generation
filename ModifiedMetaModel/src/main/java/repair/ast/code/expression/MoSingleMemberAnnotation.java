@@ -11,6 +11,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class MoSingleMemberAnnotation extends MoAnnotation {
     @RoleDescriptor(type = ChildType.CHILD, role = "value", mandatory = true)
     private MoExpression value;
 
-    public MoSingleMemberAnnotation(String fileName, int startLine, int endLine, SingleMemberAnnotation singleMemberAnnotation) {
+    public MoSingleMemberAnnotation(Path fileName, int startLine, int endLine, SingleMemberAnnotation singleMemberAnnotation) {
         super(fileName, startLine, endLine, singleMemberAnnotation);
         moNodeType = MoNodeType.TYPESingleMemberAnnotation;
     }

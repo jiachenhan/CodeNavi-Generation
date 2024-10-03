@@ -7,6 +7,7 @@ import repair.ast.role.ChildType;
 import repair.ast.role.RoleDescriptor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public abstract class MoAnnotatableType extends MoType {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "annotations", mandatory = true)
     protected MoNodeList<MoAnnotation> annotations;
 
-    public MoAnnotatableType(String fileName, int startLine, int endLine, AnnotatableType typeNode) {
+    public MoAnnotatableType(Path fileName, int startLine, int endLine, AnnotatableType typeNode) {
         super(fileName, startLine, endLine, typeNode);
     }
 

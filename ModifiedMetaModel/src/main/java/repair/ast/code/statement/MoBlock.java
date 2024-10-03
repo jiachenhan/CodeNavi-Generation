@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 
@@ -34,7 +35,7 @@ public class MoBlock extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "statements",  mandatory = true)
     private final MoNodeList<MoStatement> statements;
 
-    public MoBlock(String fileName, int startLine, int endLine, Block block) {
+    public MoBlock(Path fileName, int startLine, int endLine, Block block) {
         super(fileName, startLine, endLine, block);
         moNodeType = MoNodeType.TYPEBlock;
         statements = new MoNodeList<>(this, statementsDescription);

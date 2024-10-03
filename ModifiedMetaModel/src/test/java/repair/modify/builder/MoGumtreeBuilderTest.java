@@ -46,8 +46,8 @@ public class MoGumtreeBuilderTest {
             fail("MethodDeclaration is not present");
         }
 
-        NodeParser beforeParser = new NodeParser(codeBeforePath.toString(), beforeCompilationUnit);
-        NodeParser afterParser = new NodeParser(codeAfterPath.toString(), afterCompilationUnit);
+        NodeParser beforeParser = new NodeParser(codeBeforePath, beforeCompilationUnit);
+        NodeParser afterParser = new NodeParser(codeAfterPath, afterCompilationUnit);
 
         MoNode moMethodBefore = beforeParser.process(methodBefore.get());
         MoNode moMethodAfter = afterParser.process(methodAfter.get());

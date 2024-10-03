@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class MoNumberLiteral extends MoExpression {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "token", mandatory = true)
     private String value;
 
-    public MoNumberLiteral(String fileName, int startLine, int endLine, NumberLiteral numberLiteral) {
+    public MoNumberLiteral(Path fileName, int startLine, int endLine, NumberLiteral numberLiteral) {
         super(fileName, startLine, endLine, numberLiteral);
         moNodeType = MoNodeType.TYPENumberLiteral;
     }

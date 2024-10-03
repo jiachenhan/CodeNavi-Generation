@@ -52,7 +52,7 @@ public class CodePrinterTest {
                     fail("MethodDeclaration is not present");
                 }
 
-                NodeParser parser = new NodeParser(path.toString(), compilationUnit);
+                NodeParser parser = new NodeParser(path, compilationUnit);
                 MoNode moNode = parser.process(onlyMethodDeclaration.get());
                 String afterParseCode = "class PlaceHold {" + moNode.toString() + "}";
 
@@ -93,7 +93,7 @@ public class CodePrinterTest {
                     fail("MethodDeclaration is not present");
                 }
 
-                NodeParser parser = new NodeParser(path.toString(), compilationUnit);
+                NodeParser parser = new NodeParser(path, compilationUnit);
                 MoNode moNode = parser.process(onlyMethodDeclaration.get());
 
                 DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moNode);
@@ -135,7 +135,7 @@ public class CodePrinterTest {
             fail("MethodDeclaration is not present");
         }
 
-        NodeParser parser = new NodeParser(path.toString(), compilationUnit);
+        NodeParser parser = new NodeParser(path, compilationUnit);
         MoNode moNode = parser.process(onlyMethodDeclaration.get());
 
         DeepCopyScanner deepCopyScanner = new DeepCopyScanner(moNode);

@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class MoTypeLiteral extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "type", mandatory = true)
     private MoType type;
 
-    public MoTypeLiteral(String fileName, int startLine, int endLine, TypeLiteral typeLiteral) {
+    public MoTypeLiteral(Path fileName, int startLine, int endLine, TypeLiteral typeLiteral) {
         super(fileName, startLine, endLine, typeLiteral);
         moNodeType = MoNodeType.TYPETypeLiteral;
     }

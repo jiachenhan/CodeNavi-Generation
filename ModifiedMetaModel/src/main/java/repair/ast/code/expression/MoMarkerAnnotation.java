@@ -12,6 +12,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class MoMarkerAnnotation extends MoAnnotation {
     );
 
 
-    public MoMarkerAnnotation(String fileName, int startLine, int endLine, MarkerAnnotation markerAnnotation) {
+    public MoMarkerAnnotation(Path fileName, int startLine, int endLine, MarkerAnnotation markerAnnotation) {
         super(fileName, startLine, endLine, markerAnnotation);
         moNodeType = MoNodeType.TYPEMarkerAnnotation;
     }

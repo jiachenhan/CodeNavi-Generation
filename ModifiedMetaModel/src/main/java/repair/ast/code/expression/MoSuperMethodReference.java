@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoSuperMethodReference extends MoMethodReference {
@@ -44,7 +45,7 @@ public class MoSuperMethodReference extends MoMethodReference {
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoSimpleName simpleName;
 
-    public MoSuperMethodReference(String fileName, int startLine, int endLine, SuperMethodReference superMethodReference) {
+    public MoSuperMethodReference(Path fileName, int startLine, int endLine, SuperMethodReference superMethodReference) {
         super(fileName, startLine, endLine, superMethodReference);
         moNodeType = MoNodeType.TYPEExpressionMethodReference;
     }

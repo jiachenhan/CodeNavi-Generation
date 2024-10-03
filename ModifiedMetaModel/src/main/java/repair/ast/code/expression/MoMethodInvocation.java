@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -61,7 +62,7 @@ public class MoMethodInvocation extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "arguments", mandatory = true)
     private MoMethodInvocationArguments arguments;
 
-    public MoMethodInvocation(String fileName, int startLine, int endLine, MethodInvocation methodInvocation) {
+    public MoMethodInvocation(Path fileName, int startLine, int endLine, MethodInvocation methodInvocation) {
         super(fileName, startLine, endLine, methodInvocation);
         moNodeType = MoNodeType.TYPEMethodInvocation;
         typeArguments = new MoNodeList<>(this, typeArgumentsDescription);

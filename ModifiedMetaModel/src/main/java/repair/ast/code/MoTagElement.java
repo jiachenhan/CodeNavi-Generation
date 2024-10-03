@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoTagElement extends MoNode implements MoDocElement {
@@ -37,7 +38,7 @@ public class MoTagElement extends MoNode implements MoDocElement {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "fragments", mandatory = true)
     private final MoNodeList<MoDocElement> docFragments;
 
-    public MoTagElement(String fileName, int startLine, int endLine, TagElement tagName) {
+    public MoTagElement(Path fileName, int startLine, int endLine, TagElement tagName) {
         super(fileName, startLine, endLine, tagName);
         moNodeType = MoNodeType.TYPETagElement;
         docFragments = new MoNodeList<>(this, fragmentsDescription);

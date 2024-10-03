@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class MoPostfixExpression extends MoExpression {
         return false;
     }
 
-    public MoPostfixExpression(String fileName, int startLine, int endLine, PostfixExpression postfixExpression) {
+    public MoPostfixExpression(Path fileName, int startLine, int endLine, PostfixExpression postfixExpression) {
         super(fileName, startLine, endLine, postfixExpression);
         moNodeType = MoNodeType.TYPEPostfixExpression;
     }

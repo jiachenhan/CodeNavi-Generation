@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class MoConditionalExpression extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "elseExpression", mandatory = true)
     private MoExpression elseExpression;
 
-    public MoConditionalExpression(String fileName, int startLine, int endLine, ConditionalExpression conditionalExpression) {
+    public MoConditionalExpression(Path fileName, int startLine, int endLine, ConditionalExpression conditionalExpression) {
         super(fileName, startLine, endLine, conditionalExpression);
         moNodeType = MoNodeType.TYPEConditionalExpression;
     }

@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoPackageDeclaration extends MoNode {
@@ -48,7 +49,7 @@ public class MoPackageDeclaration extends MoNode {
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoName name;
 
-    public MoPackageDeclaration(String fileName, int startLine, int endLine, PackageDeclaration packageDeclaration) {
+    public MoPackageDeclaration(Path fileName, int startLine, int endLine, PackageDeclaration packageDeclaration) {
         super(fileName, startLine, endLine, packageDeclaration);
         moNodeType = MoNodeType.TYPEPackageDeclaration;
         annotations = new MoNodeList<>(this, annotationsDescription);

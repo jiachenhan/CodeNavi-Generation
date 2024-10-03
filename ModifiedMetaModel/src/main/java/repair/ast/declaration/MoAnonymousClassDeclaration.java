@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoAnonymousClassDeclaration extends MoNode {
@@ -30,7 +31,7 @@ public class MoAnonymousClassDeclaration extends MoNode {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "bodyDeclarations", mandatory = true)
     private final MoNodeList<MoBodyDeclaration> bodyDeclarations;
 
-    public MoAnonymousClassDeclaration(String fileName, int startLine, int endLine, AnonymousClassDeclaration anonymousClassDeclaration) {
+    public MoAnonymousClassDeclaration(Path fileName, int startLine, int endLine, AnonymousClassDeclaration anonymousClassDeclaration) {
         super(fileName, startLine, endLine, anonymousClassDeclaration);
         moNodeType = MoNodeType.TYPEAnonymousClassDeclaration;
         bodyDeclarations = new MoNodeList<>(this, bodyDeclarationsDescription);

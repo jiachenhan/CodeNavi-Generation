@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,7 @@ public class MoTypeMethodReference extends MoMethodReference {
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoSimpleName simpleName;
 
-    public MoTypeMethodReference(String fileName, int startLine, int endLine, TypeMethodReference typeMethodReference) {
+    public MoTypeMethodReference(Path fileName, int startLine, int endLine, TypeMethodReference typeMethodReference) {
         super(fileName, startLine, endLine, typeMethodReference);
         moNodeType = MoNodeType.TYPETypeMethodReference;
     }

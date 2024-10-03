@@ -12,6 +12,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +34,7 @@ public class MoIntersectionType extends MoType{
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "types", mandatory = true)
     private final MoNodeList<MoType> types;
 
-    public MoIntersectionType(String fileName, int startLine, int endLine, IntersectionType intersectionType) {
+    public MoIntersectionType(Path fileName, int startLine, int endLine, IntersectionType intersectionType) {
         super(fileName, startLine, endLine, intersectionType);
         moNodeType = MoNodeType.TYPEIntersectionType;
         types = new MoNodeList<>(this, typesDescription);

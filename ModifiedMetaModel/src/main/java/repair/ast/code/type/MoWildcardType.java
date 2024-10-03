@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoWildcardType extends MoAnnotatableType {
@@ -45,7 +46,7 @@ public class MoWildcardType extends MoAnnotatableType {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "upperBound", mandatory = true)
     private boolean upperBound;
 
-    public MoWildcardType(String fileName, int startLine, int endLine, WildcardType wildcardType) {
+    public MoWildcardType(Path fileName, int startLine, int endLine, WildcardType wildcardType) {
         super(fileName, startLine, endLine, wildcardType);
         moNodeType = MoNodeType.TYPEWildcardType;
         super.annotations = new MoNodeList<>(this, annotationsDescription);

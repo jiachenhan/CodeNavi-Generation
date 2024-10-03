@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class MoThisExpression extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "qualifier", mandatory = false)
     private MoName qualifier;
 
-    public MoThisExpression(String fileName, int startLine, int endLine, ThisExpression thisExpression) {
+    public MoThisExpression(Path fileName, int startLine, int endLine, ThisExpression thisExpression) {
         super(fileName, startLine, endLine, thisExpression);
         moNodeType = MoNodeType.TYPEThisExpression;
     }

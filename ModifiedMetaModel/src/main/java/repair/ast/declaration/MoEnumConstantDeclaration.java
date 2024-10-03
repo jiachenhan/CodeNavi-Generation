@@ -18,6 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -68,7 +69,7 @@ public class MoEnumConstantDeclaration extends MoBodyDeclaration {
     @RoleDescriptor(type = ChildType.CHILD, role = "anonymousClassDeclaration", mandatory = false)
     private MoAnonymousClassDeclaration anonymousClassDeclaration;
 
-    public MoEnumConstantDeclaration(String fileName, int startLine, int endLine, EnumConstantDeclaration enumConstantDeclaration) {
+    public MoEnumConstantDeclaration(Path fileName, int startLine, int endLine, EnumConstantDeclaration enumConstantDeclaration) {
         super(fileName, startLine, endLine, enumConstantDeclaration);
         moNodeType = MoNodeType.TYPEEnumConstantDeclaration;
         super.modifiers = new MoNodeList<>(this, modifiersDescription);

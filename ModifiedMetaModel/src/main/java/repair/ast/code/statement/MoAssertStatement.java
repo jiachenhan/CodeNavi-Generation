@@ -16,6 +16,7 @@ import repair.ast.visitor.Visitor;
 
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class MoAssertStatement extends MoStatement {
 	@RoleDescriptor(type = ChildType.CHILD, role = "message", mandatory = false)
 	private MoExpression message;
 
-	public MoAssertStatement(String fileName, int startLine, int endLine, AssertStatement assertStatement) {
+	public MoAssertStatement(Path fileName, int startLine, int endLine, AssertStatement assertStatement) {
 		super(fileName, startLine, endLine, assertStatement);
 		moNodeType = MoNodeType.TYPEAssertStatement;
 	}

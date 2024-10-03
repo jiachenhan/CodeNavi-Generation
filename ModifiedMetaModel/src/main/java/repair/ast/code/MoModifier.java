@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public final class MoModifier extends MoNode implements MoExtendedModifier {
 
     }
 
-    public MoModifier(String fileName, int startLine, int endLine, Modifier modifier) {
+    public MoModifier(Path fileName, int startLine, int endLine, Modifier modifier) {
         super(fileName, startLine, endLine, modifier);
         moNodeType = MoNodeType.TYPEModifier;
     }

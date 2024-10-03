@@ -15,6 +15,7 @@ import repair.ast.visitor.CodePrinter;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class MoQualifiedName extends MoName {
 
 
 
-    public MoQualifiedName(String fileName, int startLine, int endLine, QualifiedName qualifiedName) {
+    public MoQualifiedName(Path fileName, int startLine, int endLine, QualifiedName qualifiedName) {
         super(fileName, startLine, endLine, qualifiedName);
         moNodeType = MoNodeType.TYPEQualifiedName;
     }

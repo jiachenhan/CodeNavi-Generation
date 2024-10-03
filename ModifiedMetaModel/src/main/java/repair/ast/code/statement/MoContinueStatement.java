@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +35,7 @@ public class MoContinueStatement extends MoStatement {
     @RoleDescriptor(type = ChildType.CHILD, role = "label", mandatory = false)
     private MoSimpleName continueLabel;
 
-    public MoContinueStatement(String fileName, int startLine, int endLine, ContinueStatement continueStatement) {
+    public MoContinueStatement(Path fileName, int startLine, int endLine, ContinueStatement continueStatement) {
         super(fileName, startLine, endLine, continueStatement);
         moNodeType = MoNodeType.TYPEContinueStatement;
     }

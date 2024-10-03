@@ -10,6 +10,7 @@ import repair.ast.role.Description;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ public class MoEmptyStatement extends MoStatement {
     @Serial
     private static final long serialVersionUID = 8469060971594045593L;
 
-    public MoEmptyStatement(String fileName, int startLine, int endLine, EmptyStatement emptyStatement) {
+    public MoEmptyStatement(Path fileName, int startLine, int endLine, EmptyStatement emptyStatement) {
         super(fileName, startLine, endLine, emptyStatement);
         moNodeType = MoNodeType.TYPEEmptyStatement;
     }

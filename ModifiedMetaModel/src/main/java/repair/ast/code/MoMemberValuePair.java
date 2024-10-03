@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class MoMemberValuePair extends MoNode {
     @RoleDescriptor(type = ChildType.CHILD, role = "value", mandatory = true)
     private MoExpression value;
 
-    public MoMemberValuePair(String fileName, int startLine, int endLine, MemberValuePair memberValuePair) {
+    public MoMemberValuePair(Path fileName, int startLine, int endLine, MemberValuePair memberValuePair) {
         super(fileName, startLine, endLine, memberValuePair);
         moNodeType = MoNodeType.TYPEMemberValuePair;
     }

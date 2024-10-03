@@ -15,6 +15,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +52,7 @@ public class MoVariableDeclarationExpression extends MoExpression {
     private final MoNodeList<MoVariableDeclarationFragment> fragments;
 
 
-    public MoVariableDeclarationExpression(String fileName, int startLine, int endLine, VariableDeclarationExpression variableDeclarationExpression) {
+    public MoVariableDeclarationExpression(Path fileName, int startLine, int endLine, VariableDeclarationExpression variableDeclarationExpression) {
         super(fileName, startLine, endLine, variableDeclarationExpression);
         moNodeType = MoNodeType.TYPEVariableDeclarationExpression;
         modifiers = new MoNodeList<>(this, modifiersDescription);

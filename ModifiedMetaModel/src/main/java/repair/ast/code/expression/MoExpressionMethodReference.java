@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +47,7 @@ public class MoExpressionMethodReference extends MoMethodReference {
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoSimpleName simpleName;
 
-    public MoExpressionMethodReference(String fileName, int startLine, int endLine, ExpressionMethodReference expressionMethodReference) {
+    public MoExpressionMethodReference(Path fileName, int startLine, int endLine, ExpressionMethodReference expressionMethodReference) {
         super(fileName, startLine, endLine, expressionMethodReference);
         moNodeType = MoNodeType.TYPEExpressionMethodReference;
         super.typeArguments = new MoNodeList<>(this, typeArgumentsDescription);

@@ -13,6 +13,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class MoParenthesizedExpression extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "expression", mandatory = true)
     private MoExpression expression;
 
-    public MoParenthesizedExpression(String fileName, int startLine, int endLine, ParenthesizedExpression parenthesizedExpression) {
+    public MoParenthesizedExpression(Path fileName, int startLine, int endLine, ParenthesizedExpression parenthesizedExpression) {
         super(fileName, startLine, endLine, parenthesizedExpression);
         moNodeType = MoNodeType.TYPEParenthesizedExpression;
     }

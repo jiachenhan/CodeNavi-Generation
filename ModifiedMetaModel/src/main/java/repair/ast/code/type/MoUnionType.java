@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,7 @@ public class MoUnionType extends MoType {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "types", mandatory = true)
     private final MoNodeList<MoType> types;
 
-    public MoUnionType(String fileName, int startLine, int endLine, UnionType unionType) {
+    public MoUnionType(Path fileName, int startLine, int endLine, UnionType unionType) {
         super(fileName, startLine, endLine, unionType);
         moNodeType = MoNodeType.TYPEUnionType;
         types = new MoNodeList<>(this, typesDescription);

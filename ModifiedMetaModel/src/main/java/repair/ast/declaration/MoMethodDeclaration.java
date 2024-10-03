@@ -18,6 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoMethodDeclaration extends MoBodyDeclaration {
@@ -93,7 +94,7 @@ public class MoMethodDeclaration extends MoBodyDeclaration {
     @RoleDescriptor(type = ChildType.CHILD, role = "body", mandatory = false)
     private MoBlock body;
 
-    public MoMethodDeclaration(String fileName, int startLine, int endLine, MethodDeclaration methodDeclaration) {
+    public MoMethodDeclaration(Path fileName, int startLine, int endLine, MethodDeclaration methodDeclaration) {
         super(fileName, startLine, endLine, methodDeclaration);
         moNodeType = MoNodeType.TYPEMethodDeclaration;
         super.modifiers = new MoNodeList<>(this, modifiersDescription);

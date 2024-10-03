@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public class MoParameterizedType extends MoType {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "typeArguments", mandatory = true)
     private final MoNodeList<MoType> typeArguments;
 
-    public MoParameterizedType(String fileName, int startLine, int endLine, ParameterizedType parameterizedType) {
+    public MoParameterizedType(Path fileName, int startLine, int endLine, ParameterizedType parameterizedType) {
         super(fileName, startLine, endLine, parameterizedType);
         moNodeType = MoNodeType.TYPEParameterizedType;
         typeArguments = new MoNodeList<>(this, typeArgumentsDescription);

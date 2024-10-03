@@ -14,6 +14,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class MoMethodInvocationArguments extends MoVirtualChildListNode {
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "arguments", mandatory = true)
     private final MoNodeList<MoExpression> arguments;
 
-    public MoMethodInvocationArguments(String fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
+    public MoMethodInvocationArguments(Path fileName, int startLine, int endLine, int elementPos, int elementLength, ASTNode oriNode) {
         super(fileName, startLine, endLine, elementPos, elementLength, null);
         moNodeType = MoNodeType.TYPEMethodInvocationArguments;
         arguments = new MoNodeList<>(this, argumentsDescription);

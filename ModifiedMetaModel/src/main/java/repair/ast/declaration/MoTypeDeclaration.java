@@ -18,6 +18,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoTypeDeclaration extends MoAbstractTypeDeclaration{
@@ -80,7 +81,7 @@ public class MoTypeDeclaration extends MoAbstractTypeDeclaration{
     @RoleDescriptor(type = ChildType.CHILDLIST, role = "typeParameters", mandatory = true)
     private final MoNodeList<MoTypeParameter> typeParameters;
 
-    public MoTypeDeclaration(String fileName, int startLine, int endLine, TypeDeclaration typeDeclaration) {
+    public MoTypeDeclaration(Path fileName, int startLine, int endLine, TypeDeclaration typeDeclaration) {
         super(fileName, startLine, endLine, typeDeclaration);
         moNodeType = MoNodeType.TYPETypeDeclaration;
         super.modifiers = new MoNodeList<>(this, modifiersDescription);

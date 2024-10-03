@@ -16,6 +16,7 @@ import repair.ast.role.RoleDescriptor;
 import repair.ast.visitor.Visitor;
 
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MoClassInstanceCreation extends MoExpression {
@@ -66,7 +67,7 @@ public class MoClassInstanceCreation extends MoExpression {
     @RoleDescriptor(type = ChildType.CHILD, role = "anonymousClassDeclaration", mandatory = false)
     private MoAnonymousClassDeclaration anonymousClassDeclaration;
 
-    public MoClassInstanceCreation(String fileName, int startLine, int endLine, ClassInstanceCreation classInstanceCreation) {
+    public MoClassInstanceCreation(Path fileName, int startLine, int endLine, ClassInstanceCreation classInstanceCreation) {
         super(fileName, startLine, endLine, classInstanceCreation);
         moNodeType = MoNodeType.TYPEClassInstanceCreation;
         typeArguments = new MoNodeList<>(this, typeArgumentsDescription);
