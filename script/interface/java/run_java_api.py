@@ -54,12 +54,24 @@ def java_genpat_repair(timeout_sec: float,
 
 
 def java_gain_oracle(timeout_sec: float,
-                       # 解析oracle，写入temp文件
-                       oracle_path: Path,
-                       method_signature: str,
-                       temp_path: Path,
-                       java_program: str):
+                     # 解析oracle，写入temp文件
+                     oracle_path: Path,
+                     method_signature: str,
+                     temp_path: Path,
+                     java_program: str):
     work_dir = utils.config.get_root_project_path()
     cmd = ["java", "-jar", java_program, "oracle",
            str(oracle_path), str(method_signature), str(temp_path)]
+    start_process(cmd, work_dir, timeout_sec)
+
+
+def java_extract_pattern(timeout_sec: float,
+                         # 提取pattern
+                         pattern_pair_path: Path,
+                         pattern_ser_path: Path,
+                         pattern_json_path: Path,
+                         java_program: str):
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java", "-jar", java_program, "extract",
+           str(pattern_pair_path), str(pattern_ser_path), str(pattern_json_path)]
     start_process(cmd, work_dir, timeout_sec)

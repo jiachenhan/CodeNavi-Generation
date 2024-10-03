@@ -1,7 +1,20 @@
 package repair.main;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repair.ast.MoNode;
+import repair.ast.parser.NodeParser;
+import repair.modify.diff.DiffComparator;
+import repair.pattern.Pattern;
+
+import java.nio.file.Path;
+import java.util.Optional;
+
+import static org.junit.Assert.fail;
+import static repair.common.JDTUtils.genASTFromFile;
+import static repair.common.JDTUtils.getOnlyMethodDeclaration;
 
 public class Main {
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -20,10 +33,37 @@ public class Main {
             case "oracle":
                 GainOracle.main(args);
                 break;
+            case "extract":
+                Extract.main(args);
+                break;
             case "abstract":
                 break;
             default:
                 logger.error("not supported command: {}", args[0]);
         }
+    }
+
+    public static Pattern generatePattern(Path patternCase) {
+        System.out.println("Processing case: " + patternCase.getFileName());
+        Path patternBeforePath = patternCase.resolve("before.java");
+        Path patternAfterPath = patternCase.resolve("after.java");
+
+        CompilationUnit beforeCompilationUnit = genASTFromFile(patternBeforePath);
+        CompilationUnit afterCompilationUnit = genASTFromFile(patternAfterPath);
+
+        Optional<MethodDeclaration> methodBefore = getOnlyMethodDeclaration(beforeCompilationUnit);
+        Optional<MethodDeclaration> methodAfter = getOnlyMethodDeclaration(afterCompilationUnit);
+
+        if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
+            fail("MethodDeclaration is not present");
+        }
+
+        NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
+        NodeParser afterParser = new NodeParser(patternAfterPath, afterCompilationUnit);
+
+        MoNode moMethodBefore = beforeParser.process(methodBefore.get());
+        MoNode moMethodAfter = afterParser.process(methodAfter.get());
+
+        return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
     }
 }

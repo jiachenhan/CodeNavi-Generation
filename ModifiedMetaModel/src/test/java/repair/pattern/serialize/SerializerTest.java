@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,7 +77,7 @@ public class SerializerTest {
         assert patternCasePath != null;
         Pattern pattern = generatePattern(patternCasePath);
 
-        String json = JsonSerializer.serializeToJSON(pattern);
+        String json = JsonSerializer.serializeToJson(pattern);
         try(FileWriter file = new FileWriter(jsonSerializePath.resolve("pattern.json").toFile())) {
             file.write(Objects.requireNonNull(json));
         } catch (IOException e) {

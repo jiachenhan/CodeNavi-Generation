@@ -49,6 +49,14 @@ def get_root_project_path() -> Path:
     return Path(__file__).parents[2]
 
 
+def get_pattern_base_path() -> Path:
+    return get_root_project_path().joinpath("01pattern")
+
+
+def get_pattern_info_base_path() -> Path:
+    return get_root_project_path().joinpath("02pattern_info")
+
+
 def get_patches_base_path() -> Path:
     return get_root_project_path().joinpath("04patch")
 

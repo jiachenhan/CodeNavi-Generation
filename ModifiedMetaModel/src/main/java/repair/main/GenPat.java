@@ -24,6 +24,7 @@ import static org.apache.commons.io.FileUtils.writeStringToFile;
 import static org.junit.Assert.fail;
 import static repair.common.JDTUtils.genASTFromFile;
 import static repair.common.JDTUtils.getOnlyMethodDeclaration;
+import static repair.main.Main.generatePattern;
 
 public class GenPat {
     private final static Logger logger = LoggerFactory.getLogger(GenPat.class);
@@ -83,30 +84,6 @@ public class GenPat {
         } catch (Exception e) {
             logger.error("build graph error: {}", e.getMessage());
         }
-    }
-
-    private static Pattern generatePattern(Path patternCase) {
-        System.out.println("Processing case: " + patternCase.getFileName());
-        Path patternBeforePath = patternCase.resolve("before.java");
-        Path patternAfterPath = patternCase.resolve("after.java");
-
-        CompilationUnit beforeCompilationUnit = genASTFromFile(patternBeforePath);
-        CompilationUnit afterCompilationUnit = genASTFromFile(patternAfterPath);
-
-        Optional<MethodDeclaration> methodBefore = getOnlyMethodDeclaration(beforeCompilationUnit);
-        Optional<MethodDeclaration> methodAfter = getOnlyMethodDeclaration(afterCompilationUnit);
-
-        if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
-            fail("MethodDeclaration is not present");
-        }
-
-        NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
-        NodeParser afterParser = new NodeParser(patternAfterPath, afterCompilationUnit);
-
-        MoNode moMethodBefore = beforeParser.process(methodBefore.get());
-        MoNode moMethodAfter = afterParser.process(methodAfter.get());
-
-        return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
     }
 
 }
