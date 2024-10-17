@@ -421,7 +421,9 @@ public class CodePrinter implements Visitor {
         }
         scan("name", moMethodInvocation.getName());
         write("(");
-        scan("arguments", moMethodInvocation.getArguments());
+        moMethodInvocation.getArguments().ifPresent(arguments -> {
+            scan("arguments", arguments);
+        });
         write(")");
     }
 

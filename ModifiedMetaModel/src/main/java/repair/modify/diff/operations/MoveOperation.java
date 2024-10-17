@@ -3,7 +3,7 @@ package repair.modify.diff.operations;
 import com.github.gumtreediff.actions.model.Move;
 import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.tree.Tree;
-import com.github.gumtreediff.utils.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import repair.ast.MoNode;
 import repair.ast.role.Description;
 import repair.modify.builder.GumtreeMetaConstant;
@@ -32,7 +32,7 @@ public class MoveOperation extends Operation<Move> implements AddOperator {
         if (moveDst != null) {
             MoNode moveDstNode = (MoNode) moveDst.getMetadata(GumtreeMetaConstant.MO_NODE_KEY);
             moveToLocation = moveDstNode.getLocationInParent();
-            movePair = new Pair<>(moveNode, moveDstNode);
+            movePair = Pair.of(moveNode, moveDstNode);
         }
 
         strategy = new OriginGumtreeInsertStrategy(action.getPosition());
@@ -50,7 +50,7 @@ public class MoveOperation extends Operation<Move> implements AddOperator {
 
     @Override
     public MoNode getAddNode() {
-        return movePair.second;
+        return movePair.getRight();
     }
 
     @Override

@@ -952,6 +952,7 @@ public class NodeParser extends ASTVisitor {
             }
         }
 
+
         if(!node.arguments().isEmpty()){
             int argumentsStart = ((ASTNode)node.arguments().get(0)).getStartPosition();
             int argumentSLength = ((ASTNode)node.arguments().get(node.arguments().size() - 1)).getStartPosition() +

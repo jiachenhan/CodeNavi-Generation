@@ -10,8 +10,6 @@ import java.io.IOException;
 public class MoTypeAttrSerializer extends JsonSerializer<MoTypeAttribute> {
     @Override
     public void serialize(MoTypeAttribute moTypeAttribute, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("moType", moTypeAttribute.getValue().toString());
-        jsonGenerator.writeEndObject();
     }
 }

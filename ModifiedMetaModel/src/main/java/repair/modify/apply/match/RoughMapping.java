@@ -1,6 +1,6 @@
 package repair.modify.apply.match;
 
-import com.github.gumtreediff.utils.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import repair.ast.MoNode;
 
 import java.util.*;
@@ -21,13 +21,13 @@ public class RoughMapping {
         if (!roughMapping.containsKey(patternNode)) {
             roughMapping.put(patternNode, new ArrayList<>());
         }
-        roughMapping.get(patternNode).add(new Pair<>(leftNode, similarity));
+        roughMapping.get(patternNode).add(Pair.of(leftNode, similarity));
     }
 
     public void sortMapping() {
         for (Map.Entry<MoNode, List<Pair<MoNode, Double>>> entry : roughMapping.entrySet()) {
             List<Pair<MoNode, Double>> list = entry.getValue();
-            list.sort((p1, p2) -> Double.compare(p2.second, p1.second)); // 从大到小排序
+            list.sort((p1, p2) -> Double.compare(p2.getRight(), p1.getRight())); // 从大到小排序
         }
 
         List<Map.Entry<MoNode, List<Pair<MoNode, Double>>>> entryList = new ArrayList<>(roughMapping.entrySet());
@@ -43,7 +43,7 @@ public class RoughMapping {
 
     public void filterMapping(double threshold) {
         for (Map.Entry<MoNode, List<Pair<MoNode, Double>>> entry : roughMapping.entrySet()) {
-            entry.getValue().removeIf(pair -> pair.second <= threshold);
+            entry.getValue().removeIf(pair -> pair.getRight() <= threshold);
         }
     }
 

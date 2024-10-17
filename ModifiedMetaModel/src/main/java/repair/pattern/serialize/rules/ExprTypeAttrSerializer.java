@@ -10,8 +10,6 @@ import java.io.IOException;
 public class ExprTypeAttrSerializer extends JsonSerializer<ExprTypeAttribute> {
     @Override
     public void serialize(ExprTypeAttribute exprTypeAttribute, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("exprType", exprTypeAttribute.getValue());
-        jsonGenerator.writeEndObject();
     }
 }

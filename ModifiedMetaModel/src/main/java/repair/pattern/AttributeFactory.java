@@ -1,17 +1,12 @@
 package repair.pattern;
 
-import com.github.gumtreediff.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.pattern.abstraction.TermFrequencyAbstractor;
 import repair.pattern.attr.*;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 

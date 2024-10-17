@@ -385,8 +385,9 @@ public class TokenizeScanner implements Visitor {
         });
         scan("name", moMethodInvocation.getName());
         tokens.add("(");
-        scan("arguments", moMethodInvocation.getArguments());
-
+        moMethodInvocation.getArguments().ifPresent(arguments -> {
+            scan("arguments", arguments);
+        });
         tokens.add(")");
     }
 

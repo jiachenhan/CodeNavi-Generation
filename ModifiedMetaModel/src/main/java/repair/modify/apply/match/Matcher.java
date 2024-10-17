@@ -1,8 +1,8 @@
 package repair.modify.apply.match;
 
-import com.github.gumtreediff.utils.Pair;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
@@ -38,17 +38,17 @@ public class Matcher {
             MoNode patternNode = (MoNode) roughMapping.getRoughMapping().keySet().toArray()[i];
             List<Pair<MoNode, Double>> leftNodes = roughMapping.getRoughMapping().get(patternNode);
             for (Pair<MoNode, Double> leftNode : leftNodes) {
-                if(alreadyMatched.contains(leftNode.first)) {
+                if(alreadyMatched.contains(leftNode.getLeft())) {
                     continue;
                 }
-                if(!checkParentEdge(patternNode, leftNode.first, matchedNodeMap)) {
+                if(!checkParentEdge(patternNode, leftNode.getLeft(), matchedNodeMap)) {
                     continue;
                 }
-                matchedNodeMap.put(patternNode, leftNode.first);
-                alreadyMatched.add(leftNode.first);
-                matchNext(matchedNodeMap, roughMapping, i+1, alreadyMatched, matchSimilarity + leftNode.second, instances);
+                matchedNodeMap.put(patternNode, leftNode.getLeft());
+                alreadyMatched.add(leftNode.getLeft());
+                matchNext(matchedNodeMap, roughMapping, i+1, alreadyMatched, matchSimilarity + leftNode.getRight(), instances);
                 matchedNodeMap.remove(patternNode);
-                alreadyMatched.remove(leftNode.first);
+                alreadyMatched.remove(leftNode.getLeft());
             }
         }
     }

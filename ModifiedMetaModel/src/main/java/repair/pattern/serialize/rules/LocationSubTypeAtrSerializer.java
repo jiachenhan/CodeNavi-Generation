@@ -10,9 +10,7 @@ import java.io.IOException;
 public class LocationSubTypeAtrSerializer extends JsonSerializer<LocationSubTypeAttribute> {
     @Override
     public void serialize(LocationSubTypeAttribute locationSubTypeAttribute, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("locationSubType",
                 locationSubTypeAttribute.getValue() == null ? "null" : locationSubTypeAttribute.getValue().toString());
-        jsonGenerator.writeEndObject();
     }
 }

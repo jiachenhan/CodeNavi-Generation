@@ -8,6 +8,7 @@ import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.Patch;
 import repair.FileUtils;
 import repair.ast.MoNode;
+import repair.ast.code.expression.MoExpression;
 import repair.ast.code.statement.MoStatement;
 import repair.pattern.Pattern;
 import repair.pattern.attr.Attribute;
@@ -22,15 +23,19 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
     @Override
     public void serialize(Pattern pattern, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
-        List<MoStatement> statements = pattern.getNodeToConsidered().keySet().stream()
-                .filter(node -> node instanceof MoStatement)
-                .map(node -> (MoStatement) node)
-                .toList();
+//        List<MoStatement> statements = pattern.getNodeToConsidered().keySet().stream()
+//                .filter(node -> node instanceof MoStatement)
+//                .map(node -> (MoStatement) node)
+//                .toList();
 
         generateBeforeCode(pattern.getPatternBefore0().getFileName(), jsonGenerator); // part 1: before code
         generateDiff(pattern.getPatternBefore0().getFileName(), pattern.getPatternAfter0().getFileName(), jsonGenerator); // part 2: diff
-        generateStmts(statements, jsonGenerator); // part 3: stmts
-        generateNodes(pattern.getNodeToConsidered().keySet(), jsonGenerator, serializerProvider); // part 4: nodes
+
+//        generateStmts(statements, jsonGenerator); // part 3: stmts
+//        generateNodes(pattern.getNodeToConsidered().keySet(), jsonGenerator, serializerProvider); // part 4: nodes
+
+        jsonGenerator.writeFieldName("Before0Tree");
+        generateBefore0Tree(pattern.getPatternBefore0(), jsonGenerator); // part 3: before0 tree
         generateAttrs(pattern.getNodeToAttributes(), jsonGenerator, serializerProvider); // part 5: attrs
         jsonGenerator.writeEndObject();
     }
@@ -75,7 +80,27 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
         jsonGenerator.writeEndArray();
     }
 
+    private void generateBefore0Tree(MoNode node, JsonGenerator jsonGenerator) throws IOException {
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeNumberField("id", node.getId());
+        jsonGenerator.writeStringField("type", node.getClass().getSimpleName());
+        jsonGenerator.writeBooleanField("isExpr", node instanceof MoExpression);
+        jsonGenerator.writeStringField("value", node.toString());
+        jsonGenerator.writeBooleanField("leaf", node.isLeaf());
+        jsonGenerator.writeNumberField("startLine", node.getStartLine());
+        jsonGenerator.writeNumberField("endLine", node.getEndLine());
+        if(!node.isLeaf()) {
+            jsonGenerator.writeFieldName("children");
+            jsonGenerator.writeStartArray();
+            for (MoNode child : node.getChildren()) {
+                generateBefore0Tree(child, jsonGenerator);
+            }
+            jsonGenerator.writeEndArray();
+        }
+        jsonGenerator.writeEndObject();
+    }
 
+    @Deprecated
     private Optional<MoStatement> findBelongStmts(MoNode node) {
         if(node instanceof MoStatement) {
             return Optional.of((MoStatement) node);
@@ -90,6 +115,7 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
         return Optional.empty();
     }
 
+    @Deprecated
     private void generateStmts(List<MoStatement> statements, JsonGenerator jsonGenerator) throws IOException {
         jsonGenerator.writeFieldName("Stmts");
         jsonGenerator.writeStartArray();
@@ -105,6 +131,7 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
         jsonGenerator.writeEndArray();
     }
 
+    @Deprecated
     private void generateNodes(Set<MoNode> nodes, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeFieldName("Nodes");
         // group nodes by their parent statement
@@ -134,28 +161,23 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
         jsonGenerator.writeEndArray();
     }
 
+
+
     private void generateAttrs(Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> nodeToAttributes,
                                JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeFieldName("Attrs");
-        jsonGenerator.writeStartArray();
+        jsonGenerator.writeStartObject();
         for (Map.Entry<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> entry : nodeToAttributes.entrySet()) {
             MoNode node = entry.getKey();
             Map<Class<? extends Attribute<?>>, Attribute<?>> attrs = entry.getValue();
+            jsonGenerator.writeFieldName(String.valueOf(node.getId()));
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeNumberField("nodeId", node.getId());
-            jsonGenerator.writeFieldName("attrs");
-            jsonGenerator.writeStartArray();
             for (Map.Entry<Class<? extends Attribute<?>>, Attribute<?>> attrEntry : attrs.entrySet()) {
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("attrType", attrEntry.getKey().getName());
-                jsonGenerator.writeFieldName("attr");
                 JsonSerializer<Object> attrSerializer = serializerProvider.findValueSerializer(attrEntry.getKey());
                 attrSerializer.serialize(attrEntry.getValue(), jsonGenerator, serializerProvider);
-                jsonGenerator.writeEndObject();
             }
-            jsonGenerator.writeEndArray();
             jsonGenerator.writeEndObject();
         }
-        jsonGenerator.writeEndArray();
+        jsonGenerator.writeEndObject();
     }
 }

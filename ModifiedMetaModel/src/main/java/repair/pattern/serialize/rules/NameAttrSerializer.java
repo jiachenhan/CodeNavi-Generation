@@ -10,8 +10,6 @@ import java.io.IOException;
 public class NameAttrSerializer extends JsonSerializer<NameAttribute> {
     @Override
     public void serialize(NameAttribute nameAttribute, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("name", nameAttribute.getValue());
-        jsonGenerator.writeEndObject();
     }
 }

@@ -3,6 +3,7 @@ package repair.pattern.serialize;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
+import repair.FileUtils;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
 import repair.modify.diff.DiffComparator;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,29 +61,33 @@ public class SerializerTest {
 
     @Test
     public void jsonSerializeTest() {
-        Path groupPath = datasetPath.resolve("15");
-        Path patternCasePath = null;
-        List<Path> otherCasesPath = null;
-
-        // 处理第三级：case
-        try (Stream<Path> caseStream = Files.list(groupPath)) {
-            List<Path> caseList = caseStream.toList();
-            if (caseList.size() < 2) {
-                System.out.println("Case less than 2, skip");
+        List<String> groupList = List.of("17", "21", "28", "30", "31", "43", "56", "63", "74", "78", "99");
+        for (String group : groupList) {
+            Path groupPath = datasetPath.resolve(group);
+            Path patternCasePath = null;
+            List<Path> caseList = null;
+            try (Stream<Path> caseStream = Files.list(groupPath)) {
+                caseList = caseStream.toList();
+                if (caseList.size() < 2) {
+                    System.out.println("Case less than 2, skip");
+                }
+                patternCasePath = caseList.get(0);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            patternCasePath = caseList.get(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        assert patternCasePath != null;
-        Pattern pattern = generatePattern(patternCasePath);
+            assert patternCasePath != null;
+            Pattern pattern = generatePattern(patternCasePath);
 
-        String json = JsonSerializer.serializeToJson(pattern);
-        try(FileWriter file = new FileWriter(jsonSerializePath.resolve("pattern.json").toFile())) {
-            file.write(Objects.requireNonNull(json));
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Serializing pattern: " + patternCasePath);
+            String json = JsonSerializer.serializeToJson(pattern);
+            Path patternJsonPath = jsonSerializePath.resolve("drjava").resolve(group).resolve(patternCasePath.getFileName() + ".json");
+            FileUtils.ensureDirectoryExists(patternJsonPath);
+            try(FileWriter file = new FileWriter(patternJsonPath.toFile())) {
+                file.write(Objects.requireNonNull(json));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

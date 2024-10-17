@@ -315,7 +315,7 @@ public class DeepScanner implements Visitor{
         moMethodInvocation.getTarget().ifPresent(target -> scan("target", target));
         scan("typeArguments", moMethodInvocation.getTypeArguments());
         scan("name", moMethodInvocation.getName());
-        scan("arguments", moMethodInvocation.getArguments());
+        moMethodInvocation.getArguments().ifPresent(arguments -> scan("arguments", arguments));
         exit(moMethodInvocation);
     }
 

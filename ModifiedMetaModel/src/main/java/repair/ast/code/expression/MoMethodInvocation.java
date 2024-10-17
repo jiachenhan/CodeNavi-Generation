@@ -44,7 +44,7 @@ public class MoMethodInvocation extends MoExpression {
 
     private final static Description<MoMethodInvocation, MoMethodInvocationArguments> argumentsDescription =
             new Description<>(ChildType.CHILD, MoMethodInvocation.class, MoMethodInvocationArguments.class,
-                    "arguments", true);
+                    "arguments", false);
 
     private final static Map<String, Description<MoMethodInvocation, ?>> descriptionsMap = Map.ofEntries(
             Map.entry("expression", expressionDescription),
@@ -59,7 +59,7 @@ public class MoMethodInvocation extends MoExpression {
     private final MoNodeList<MoType> typeArguments;
     @RoleDescriptor(type = ChildType.CHILD, role = "name", mandatory = true)
     private MoSimpleName name;
-    @RoleDescriptor(type = ChildType.CHILD, role = "arguments", mandatory = true)
+    @RoleDescriptor(type = ChildType.CHILD, role = "arguments", mandatory = false)
     private MoMethodInvocationArguments arguments;
 
     public MoMethodInvocation(Path fileName, int startLine, int endLine, MethodInvocation methodInvocation) {
@@ -99,8 +99,8 @@ public class MoMethodInvocation extends MoExpression {
         return name;
     }
 
-    public MoMethodInvocationArguments getArguments() {
-        return arguments;
+    public Optional<MoMethodInvocationArguments> getArguments() {
+        return Optional.ofNullable(arguments);
     }
 
     @Override
@@ -116,7 +116,9 @@ public class MoMethodInvocation extends MoExpression {
         }
         children.addAll(typeArguments);
         children.add(name);
-        children.add(arguments);
+        if(arguments != null) {
+            children.add(arguments);
+        }
         return Collections.unmodifiableList(children);
     }
 
