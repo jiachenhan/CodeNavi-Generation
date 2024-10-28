@@ -1,5 +1,6 @@
 package repair;
 
+import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,4 +49,24 @@ public class FileUtils {
         }
     }
 
+    @Deprecated
+    public static String detectCharset(File file) {
+        byte[] buf = new byte[4096];
+        try (FileInputStream fis = new FileInputStream(file)) {
+            UniversalDetector detector = new UniversalDetector(null);
+
+            int nread;
+            while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
+                detector.handleData(buf, 0, nread);
+            }
+            detector.dataEnd();
+
+            String encoding = detector.getDetectedCharset();
+            detector.reset();
+            return encoding;
+        } catch (IOException e) {
+            logger.error("Failed to detect charset for file: " + file, e);
+            return null;
+        }
+    }
 }

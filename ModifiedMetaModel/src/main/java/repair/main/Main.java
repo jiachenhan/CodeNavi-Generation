@@ -6,15 +6,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
-import repair.modify.diff.DiffComparator;
+import repair.apply.diff.DiffComparator;
+import repair.common.MethodSignature;
 import repair.pattern.Pattern;
 
 import java.nio.file.Path;
 import java.util.Optional;
 
 import static org.junit.Assert.fail;
-import static repair.common.JDTUtils.genASTFromFile;
-import static repair.common.JDTUtils.getOnlyMethodDeclaration;
+import static repair.common.JDTUtils.*;
 
 public class Main {
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -28,7 +28,10 @@ public class Main {
 
         switch (args[0]) {
             case "genpat":
-                GenPat.main(args);
+                GenPat.repair_main(args);
+                break;
+            case "genpat_detect":
+                GenPat.detect_main(args);
                 break;
             case "oracle":
                 GainOracle.main(args);
@@ -53,6 +56,32 @@ public class Main {
 
         Optional<MethodDeclaration> methodBefore = getOnlyMethodDeclaration(beforeCompilationUnit);
         Optional<MethodDeclaration> methodAfter = getOnlyMethodDeclaration(afterCompilationUnit);
+
+        if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
+            fail("MethodDeclaration is not present");
+        }
+
+        NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
+        NodeParser afterParser = new NodeParser(patternAfterPath, afterCompilationUnit);
+
+        MoNode moMethodBefore = beforeParser.process(methodBefore.get());
+        MoNode moMethodAfter = afterParser.process(methodAfter.get());
+
+        return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
+    }
+
+    public static Pattern generatePattern(Path patternCase, String beforeSignature, String afterSignature) {
+        Path patternBeforePath = patternCase.resolve("before.java");
+        Path patternAfterPath = patternCase.resolve("after.java");
+
+        CompilationUnit beforeCompilationUnit = genASTFromFile(patternBeforePath);
+        CompilationUnit afterCompilationUnit = genASTFromFile(patternAfterPath);
+
+        MethodSignature methodSignatureBefore = MethodSignature.parseFunctionSignature(beforeSignature);
+        MethodSignature methodSignatureAfter = MethodSignature.parseFunctionSignature(afterSignature);
+
+        Optional<MethodDeclaration> methodBefore = getDeclaration(beforeCompilationUnit, methodSignatureBefore);
+        Optional<MethodDeclaration> methodAfter = getDeclaration(afterCompilationUnit, methodSignatureAfter);
 
         if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
             fail("MethodDeclaration is not present");

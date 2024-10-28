@@ -3,7 +3,7 @@ package repair.pattern.attr;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repair.modify.apply.match.MatchAlgorithm;
+import repair.apply.match.MatchAlgorithm;
 import repair.ast.MoNode;
 import repair.pattern.serialize.rules.TokenAttrSerializer;
 

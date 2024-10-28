@@ -2,7 +2,7 @@ package repair.pattern.abstraction;
 
 import org.apache.commons.collections4.BidiMap;
 import repair.ast.MoNode;
-import repair.modify.diff.operations.*;
+import repair.apply.diff.operations.*;
 import repair.pattern.Pattern;
 import repair.pattern.attr.Attribute;
 

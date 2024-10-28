@@ -48,6 +48,7 @@ public class MoSuperMethodReference extends MoMethodReference {
     public MoSuperMethodReference(Path fileName, int startLine, int endLine, SuperMethodReference superMethodReference) {
         super(fileName, startLine, endLine, superMethodReference);
         moNodeType = MoNodeType.TYPEExpressionMethodReference;
+        super.typeArguments = new MoNodeList<>(this, typeArgumentsDescription);
     }
 
     public void setQualifier(MoName qualifier) {

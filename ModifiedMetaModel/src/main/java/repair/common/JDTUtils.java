@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,23 +14,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.mozilla.universalchardet.UniversalDetector.detectCharset;
+
 public class JDTUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JDTUtils.class);
 
-    public static Optional<MethodDeclaration> getDeclaration(CompilationUnit unit, Method method) {
-        if (method == null || unit == null) return null;
-        final List<MethodDeclaration> declarations = new ArrayList<>(1);
+    /**
+     *  only consider the top method declarations (ignore anonymous class)
+     */
+    public static Optional<MethodDeclaration> getDeclaration(CompilationUnit unit, MethodSignature method) {
+        if (method == null || unit == null) return Optional.empty();
+        final List<MethodDeclaration> declarations = new ArrayList<>();
         unit.accept(new ASTVisitor() {
             public boolean visit(MethodDeclaration m) {
-                if (method.same(m)) {
+                if (method.sameSignature(m)) {
                     declarations.add(m);
-                    return false;
                 }
-                return true;
+                return false;
             }
         });
-
+        if (declarations.size() > 1) {
+            logger.warn("Multiple method declarations found for method: " + method.getName());
+        }
         return declarations.isEmpty() ? Optional.empty() : Optional.of(declarations.get(0));
     }
 
@@ -51,13 +58,19 @@ public class JDTUtils {
     public static CompilationUnit genASTFromFile(Path srcPath) {
         String code = "";
         try {
-            code = Files.readString(srcPath);
+            String encoding = detectCharset(srcPath.toFile());
+            code = Files.readString(srcPath, Charset.forName(encoding));
         } catch (IOException e) {
             logger.error("Failed to read file: " + srcPath, e);
         }
 
-        return (CompilationUnit) compile(code, srcPath.toString());
+        return compile(code, srcPath.toString());
     }
+
+    public static CompilationUnit genAST(String code, Path codePath) {
+        return compile(code, codePath.toString());
+    }
+
 
     public static ASTNode genASTFromSourceWithType(String icu, int type, String filePath, String srcPath) {
         return genASTFromSourceWithType(icu, JavaCore.VERSION_1_7, AST.JLS8, type, filePath, srcPath);

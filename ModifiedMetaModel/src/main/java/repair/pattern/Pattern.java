@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.analysis.IdentifierManager;
 import repair.ast.visitor.FlattenScanner;
-import repair.modify.builder.GumtreeMetaConstant;
-import repair.modify.diff.DiffComparator;
-import repair.modify.diff.operations.Operation;
+import repair.apply.builder.GumtreeMetaConstant;
+import repair.apply.diff.DiffComparator;
+import repair.apply.diff.operations.Operation;
 import repair.pattern.attr.Attribute;
 import repair.pattern.serialize.rules.PatternSerializer;
 

@@ -5,13 +5,15 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.FileUtils;
+import repair.apply.det.Detector;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
-import repair.modify.apply.ApplyModification;
-import repair.modify.apply.ModificationException;
-import repair.modify.apply.match.MatchInstance;
-import repair.modify.apply.match.Matcher;
-import repair.modify.diff.DiffComparator;
+import repair.apply.apr.ApplyModification;
+import repair.apply.apr.ModificationException;
+import repair.apply.match.MatchInstance;
+import repair.apply.match.Matcher;
+import repair.common.CodeChangeInfo;
+import repair.common.CodeChangeInfoReader;
 import repair.pattern.Pattern;
 import repair.pattern.abstraction.Abstractor;
 import repair.pattern.abstraction.TermFrequencyAbstractor;
@@ -29,7 +31,7 @@ import static repair.main.Main.generatePattern;
 public class GenPat {
     private final static Logger logger = LoggerFactory.getLogger(GenPat.class);
 
-    public static void main(String[] args) {
+    public static void repair_main(String[] args) {
         if (args.length < 4) {
             logger.error("Please given the arguments java -jar Main.jar genpat [patternPair] [buggyPair] [patchPath]");
             return;
@@ -84,6 +86,52 @@ public class GenPat {
         } catch (Exception e) {
             logger.error("build graph error: {}", e.getMessage());
         }
+    }
+
+    public static void detect_main(String[] args) {
+        if (args.length < 6) {
+            logger.error("Please given the arguments java -jar Main.jar genpat_detect " +
+                    "[patternPair] [patternInfoPath] [repoPath] [buggyInfoPath] [resultPath]");
+            return;
+        }
+
+        Path patternPath = Path.of(args[1]);
+        Path patternInfoPath = Path.of(args[2]);
+        Path repoPath = Path.of(args[3]);
+        Path buggyInfoPath = Path.of(args[4]);
+        Path resultPath = Path.of(args[5]);
+
+        logger.info("patternPath: " + patternPath + "\t buggyInfoPath: " + buggyInfoPath);
+        try {
+            CodeChangeInfo patternInfo = CodeChangeInfoReader.readCCInfo(patternInfoPath);
+            if (patternInfo == null) {
+                logger.error("Failed to read pattern info from: " + patternInfoPath);
+                return;
+            }
+
+            // 1. 生成/抽象pattern
+            Pattern pattern = generatePattern(patternPath, patternInfo.getSignatureBefore(), patternInfo.getSignatureAfter());
+            Abstractor abstractor = new TermFrequencyAbstractor();
+            abstractor.doAbstraction(pattern);
+
+            // 2. 获取对应buggy info
+            CodeChangeInfo buggyInfo = CodeChangeInfoReader.readCCInfo(buggyInfoPath);
+            if(buggyInfo == null) {
+                logger.error("Failed to read buggy info from: " + buggyInfoPath);
+                return;
+            }
+
+            // 3. 遍历对应commit检测pattern
+            Detector detector = new Detector(pattern, repoPath, buggyInfo.getBeforeCommitId(),
+                    buggyInfo.getFilePath(),
+                    buggyInfo.getSignatureBefore());
+            detector.detect();
+            detector.serializeResults(resultPath);
+
+        } catch (Exception e) {
+            logger.error("Failed to detect pattern", e);
+        }
+
     }
 
 }

@@ -51,6 +51,7 @@ public class MoTypeMethodReference extends MoMethodReference {
     public MoTypeMethodReference(Path fileName, int startLine, int endLine, TypeMethodReference typeMethodReference) {
         super(fileName, startLine, endLine, typeMethodReference);
         moNodeType = MoNodeType.TYPETypeMethodReference;
+        super.typeArguments = new MoNodeList<>(this, typeArgumentsDescription);
     }
 
     public void setType(MoType type) {

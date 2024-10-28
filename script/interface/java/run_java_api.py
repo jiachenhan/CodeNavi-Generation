@@ -53,6 +53,21 @@ def java_genpat_repair(timeout_sec: float,
     start_process(cmd, work_dir, timeout_sec)
 
 
+def java_genpat_detect(timeout_sec: float,
+                       # 使用genpat方法检测bug
+                       pattern_pair_path: Path,
+                       pattern_info_path: Path,
+                       repo_path: Path,
+                       buggy_info_path: Path,
+                       output_path: Path,
+                       java_program: str):
+     _logger.info(f"Start genpat detect use {pattern_pair_path} for {pattern_info_path.stem}")
+     work_dir = utils.config.get_root_project_path()
+     cmd = ["java", "-jar", java_program, "genpat_detect",
+              str(pattern_pair_path), str(pattern_info_path), str(repo_path), str(buggy_info_path), str(output_path)]
+     start_process(cmd, work_dir, timeout_sec)
+
+
 def java_gain_oracle(timeout_sec: float,
                      # 解析oracle，写入temp文件
                      oracle_path: Path,

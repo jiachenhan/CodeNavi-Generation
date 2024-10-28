@@ -7,10 +7,9 @@
 
 package repair.ast;
 
-import repair.common.Utils;
-
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 
 public class Variable implements Serializable {
@@ -39,7 +38,7 @@ public class Variable implements Serializable {
         }
         // currently consider name only
         // if type is needed, update here
-        return Utils.safeStringEqual(name, var.name);
+        return Objects.equals(name, var.name);
 //                && Utils.safeStringEqual(_type, var._type);
     }
 }
