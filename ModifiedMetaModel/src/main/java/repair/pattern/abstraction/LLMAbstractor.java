@@ -1,13 +1,10 @@
 package repair.pattern.abstraction;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repair.FileUtils;
 import repair.ast.MoNode;
-import repair.ast.code.expression.MoExpression;
-import repair.ast.code.expression.MoMethodInvocation;
-import repair.ast.code.expression.MoName;
-import repair.ast.code.type.MoType;
 import repair.pattern.Pattern;
 import repair.pattern.attr.*;
 
@@ -15,30 +12,24 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-public class TermFrequencyAbstractor implements Abstractor {
-    private final static Logger logger = LoggerFactory.getLogger(TermFrequencyAbstractor.class);
-    private final static Map<String, Integer> nameMap;
-    private final static Map<String, Integer> apiMap;
-    private final static Map<String, Integer> typeMap;
-    private final static int TOTAL_FILE_NUM = 1217392;
-    private final static double threshold = 0.005;
+public class LLMAbstractor implements Abstractor {
+    private final static Logger logger = LoggerFactory.getLogger(LLMAbstractor.class);
 
-    static {
-        try {
-            nameMap = FileUtils.loadGenPatMap(Path.of("05resources/AllTokens_var.txt"));
-            apiMap = FileUtils.loadGenPatMap(Path.of("05resources/AllTokens_api.txt"));
-            typeMap = FileUtils.loadGenPatMap(Path.of("05resources/AllTokens_type.txt"));
-        } catch (IOException e) {
-            logger.error("Failed when load token mapping");
-            throw new RuntimeException(e);
-        }
+    private final Path abstractInfoPath;
+    private final List<String> consideredElements;
+    private final Map<String, String> consideredAttrs;
+
+    public LLMAbstractor(Path abstractInfoPath) {
+        this.abstractInfoPath = abstractInfoPath;
+        this.consideredElements = new ArrayList<>();
+        this.consideredAttrs = new HashMap<>();
+        parseAbstractInfo();
     }
-
-    private final Set<MoNode> considerNodeCandidates = new HashSet<>();
 
     @Override
     public boolean shouldConsider(MoNode node) {
-        return considerNodeCandidates.contains(node);
+        // 包含了action相关的节点以及LLM考虑语义的节点
+        return consideredElements.contains(String.valueOf(node.getId())) || considerNodeCandidates.contains(node);
     }
 
     @Override
@@ -53,29 +44,21 @@ public class TermFrequencyAbstractor implements Abstractor {
             return true;
         }
 
-        MoNode node = attribute.getNode();
-        if(attribute instanceof NameAttribute) {
-            if (node instanceof MoName name) {
-                MoNode parent = name.getParent();
-                if(parent instanceof MoMethodInvocation) {
-                    return abstraction(name.getIdentifier(), apiMap);
-                } else if(parent instanceof MoType) {
-                    return abstraction(name.getIdentifier(), typeMap);
-                } else {
-                    return abstraction(name.getIdentifier(), nameMap);
+        if(attribute instanceof ExprTypeAttribute exprTypeAttribute) {
+            String nodeId = String.valueOf(attribute.getNode().getId());
+            String attrName = exprTypeAttribute.getValue();
+            if(consideredAttrs.containsKey(nodeId)) {
+                String consideredAttrName = consideredAttrs.get(nodeId);
+                if(!consideredAttrName.equals(attrName)) {
+                    logger.warn("Node {} Attribute {} has error", nodeId, attrName);
                 }
-            } else {
-                return false;
-            }
-        } else if (attribute instanceof ExprTypeAttribute) {
-            if(node instanceof MoExpression expr) {
-                return abstraction(expr.getExprTypeStr(), typeMap);
-            } else {
-                return false;
+                return true;
             }
         }
         return false;
     }
+
+    private final Set<MoNode> considerNodeCandidates = new HashSet<>();
 
     @Override
     public void doAbstraction(Pattern pattern) {
@@ -112,7 +95,6 @@ public class TermFrequencyAbstractor implements Abstractor {
 
         });
 
-
         nodeToConsidered.forEach((node, value) -> {
             boolean shouldConsider = shouldConsider(node);
             nodeToConsidered.put(node, shouldConsider);
@@ -123,17 +105,32 @@ public class TermFrequencyAbstractor implements Abstractor {
                 });
             }
         });
+
     }
 
-    /**
-     * 频率小于阈值的时候说明这个东西可能比较重要
-     * @param token
-     * @param map
-     * @return
-     */
-    private boolean abstraction(String token, Map<String, Integer> map) {
-        double numInDoc = map.getOrDefault(token, 1);
-        double frequency = numInDoc / TOTAL_FILE_NUM;
-        return frequency < threshold;
+    private void parseAbstractInfo() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            // 读取 JSON 文件并反序列化为 JsonNode
+            JsonNode rootNode = objectMapper.readTree(this.abstractInfoPath.toFile());
+
+            // 解析 considered_elements
+            JsonNode consideredElementsNode = rootNode.get("considered_elements");
+            for (JsonNode element : consideredElementsNode) {
+                consideredElements.add(element.asText());
+            }
+
+            // 解析 considered_attrs
+            JsonNode consideredAttrsNode = rootNode.get("considered_attrs");
+            Iterator<Map.Entry<String, JsonNode>> fields = consideredAttrsNode.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> field = fields.next();
+                consideredAttrs.put(field.getKey(), field.getValue().asText());
+            }
+
+        } catch (IOException e) {
+            logger.error("Failed to read abstract info file");
+        }
     }
+
 }

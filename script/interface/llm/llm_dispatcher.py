@@ -36,20 +36,21 @@ class LLMDispatcher:
 
         # 执行任务
         try:
-            _logger.info(f"Processing task by LLM {llm_server.base_url}")
+            _logger.info(f"Processing task by LLM {llm_server}")
             result = task_func(llm_server, *args)
-            with threading.Lock():
-                self.cost_manager.update_all_cost([llm_server.cost_manager for llm_server in self.llm_servers])
             self.cost_manager.show_cost()
 
         finally:
-            with threading.Lock():
-                self.cost_manager.update_all_cost([llm_server.cost_manager for llm_server in self.llm_servers])
-
+            self.cost_manager.update_all_cost([llm_server.cost_manager for llm_server in self.llm_servers])
             with self.condition:
                 # 任务完成，释放LLM，并重新加入可用列表
                 self.available_llms.append(llm_server)
                 self.condition.notify()  # 通知其他等待的线程
+
+    @staticmethod
+    def print_running_threads(_executor):
+        running_threads = len([thread for thread in _executor._threads if thread.is_alive()])
+        print(f"Running threads in the pool: {running_threads}")
 
     def submit_tasks(self, _task_generator: Generator):
         """
@@ -59,32 +60,9 @@ class LLMDispatcher:
         _max_workers = len(self.llm_servers)  # 同时工作的最大任务数
         _futures = []
         with ThreadPoolExecutor(max_workers=_max_workers) as executor:
-            # for task in _task_generator:
-            #     future = executor.submit(self.process_task, task['func'], *task['args'])
-            #     _futures.append(future)
-
-            # 提前提交最多 max_workers 数量的任务
-            for _ in range(_max_workers):
-                try:
-                    task = next(_task_generator)
-                    _logger.info(f"提交任务: {task['func']}")
-                    future = executor.submit(self.process_task, task['func'], *task['args'])
-                    _futures.append(future)
-                except StopIteration:
-                    break  # 没有更多任务可提交
-
-            # 每当有一个任务完成时，再提交新的任务
-            for future in as_completed(_futures):
-                _logger.info(f"任务完成: {future}")
-                future.result()  # 确保任务完成
-                try:
-                    # 任务完成后继续提交新任务
-                    task = next(_task_generator)
-                    _logger.info(f"提交任务: {task['func']}")
-                    new_future = executor.submit(self.process_task, task['func'], *task['args'])
-                    _futures.append(new_future)
-                except StopIteration:
-                    continue  # 如果没有更多任务，则继续处理现有的任务
+            for task in _task_generator:
+                future = executor.submit(self.process_task, task['func'], *task['args'])
+                _futures.append(future)
 
             # 最后确保所有任务都完成
             for future in _futures:

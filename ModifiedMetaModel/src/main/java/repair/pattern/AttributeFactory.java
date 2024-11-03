@@ -19,7 +19,7 @@ public class AttributeFactory {
     public static final Map<Class<? extends Attribute<?>>, Double> attrToWeight = new HashMap<>();
 
     // 抽象器属性配置
-    private static final AttributeConfig config = TermFrequencyAbstractor.getAttrConfig();
+    private static final AttributeConfig config = AttributeConfig.getAttributeConfig();
 
     static {
         attrToWeight.putAll(config.getAttrToWeight());

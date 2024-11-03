@@ -23,7 +23,7 @@ Here is the modification information: ```
 
 SYSTEM_PROMPT2 = """
 Based on your analysis, there are some code elements that may be related to the changes. \
-I will split the original code into an AST, and I will give you the AST element later.\
+I will provide you with the elements of AST, please do not attempt to split AST by yourself.\
 and then I hope you can help me analyze the role of each AST element in this modification. 
 """
 
@@ -60,6 +60,7 @@ def background_analysis(_llm: LLMAPI, _global_schema: InputSchema) -> list:
     _background_response2 = _llm.invoke(_background_messages)
 
     _background_messages.append({"role": "assistant", "content": _background_response2})
+    # print(f"background_messages: {_background_messages}")
     return _background_messages
 
 

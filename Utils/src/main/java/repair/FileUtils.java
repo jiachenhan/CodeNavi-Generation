@@ -5,11 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Hashtable;
 import java.util.Map;
+
+import static org.mozilla.universalchardet.UniversalDetector.detectCharset;
 
 public class FileUtils {
     private final static Logger logger = LoggerFactory.getLogger(FileUtils.class);
@@ -49,24 +52,25 @@ public class FileUtils {
         }
     }
 
-    @Deprecated
-    public static String detectCharset(File file) {
-        byte[] buf = new byte[4096];
-        try (FileInputStream fis = new FileInputStream(file)) {
-            UniversalDetector detector = new UniversalDetector(null);
-
-            int nread;
-            while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
-                detector.handleData(buf, 0, nread);
-            }
-            detector.dataEnd();
-
-            String encoding = detector.getDetectedCharset();
-            detector.reset();
-            return encoding;
+    public static String detectCharset(byte[] data) {
+        try (InputStream is = new ByteArrayInputStream(data)) {
+            String encoding = org.mozilla.universalchardet.UniversalDetector.detectCharset(is);
+            // 如果编码为null，使用默认的UTF-8编码
+            return (encoding == null || encoding.isEmpty()) ? "UTF-8" : encoding;
         } catch (IOException e) {
-            logger.error("Failed to detect charset for file: " + file, e);
-            return null;
+            logger.error("Failed to read file", e);
+            return "UTF-8";
+        }
+    }
+
+    public static String detectCharset(Path path) {
+        try {
+            String encoding = org.mozilla.universalchardet.UniversalDetector.detectCharset(path.toFile());
+            // 如果编码为null，使用默认的UTF-8编码
+            return (encoding == null || encoding.isEmpty()) ? "UTF-8" : encoding;
+        } catch (IOException e) {
+            logger.error("Failed to read file", e);
+            return "UTF-8";
         }
     }
 }

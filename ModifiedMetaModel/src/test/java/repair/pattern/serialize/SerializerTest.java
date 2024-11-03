@@ -7,6 +7,9 @@ import repair.FileUtils;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
 import repair.apply.diff.DiffComparator;
+import repair.common.CodeChangeInfo;
+import repair.common.CodeChangeInfoReader;
+import repair.common.MethodSignature;
 import repair.pattern.Pattern;
 import repair.pattern.abstraction.Abstractor;
 import repair.pattern.abstraction.TermFrequencyAbstractor;
@@ -22,8 +25,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
-import static repair.common.JDTUtils.genASTFromFile;
-import static repair.common.JDTUtils.getOnlyMethodDeclaration;
+import static repair.common.JDTUtils.*;
+import static repair.common.JDTUtils.getDeclaration;
+import static repair.main.Main.generatePattern;
 
 public class SerializerTest {
     private final Path datasetPath = Paths.get("E:/dataset/c3/drjava1");
@@ -60,33 +64,28 @@ public class SerializerTest {
 
     @Test
     public void jsonSerializeTest() {
-        List<String> groupList = List.of("17", "21", "28", "30", "31", "43", "56", "63", "74", "78", "99");
-        for (String group : groupList) {
-            Path groupPath = datasetPath.resolve(group);
-            Path patternCasePath = null;
-            List<Path> caseList = null;
-            try (Stream<Path> caseStream = Files.list(groupPath)) {
-                caseList = caseStream.toList();
-                if (caseList.size() < 2) {
-                    System.out.println("Case less than 2, skip");
-                }
-                patternCasePath = caseList.get(0);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        String group = "41225";
+        Path groupPath = Path.of("E:/dataset/c3/c3_random_1000/jdt").resolve(group);
+        Path patternCasePath = groupPath.resolve("1");
 
-            assert patternCasePath != null;
-            Pattern pattern = generatePattern(patternCasePath);
+        Path patternInfoPath = patternCasePath.resolve("info.json");
+        CodeChangeInfo patternInfo = CodeChangeInfoReader.readCCInfo(patternInfoPath);
+        if (patternInfo == null) {
+            System.out.println("Failed to read pattern info from: " + patternInfoPath);
+            return;
+        }
 
-            System.out.println("Serializing pattern: " + patternCasePath);
-            String json = JsonSerializer.serializeToJson(pattern);
-            Path patternJsonPath = jsonSerializePath.resolve("drjava").resolve(group).resolve(patternCasePath.getFileName() + ".json");
-            FileUtils.ensureDirectoryExists(patternJsonPath);
-            try(FileWriter file = new FileWriter(patternJsonPath.toFile())) {
-                file.write(Objects.requireNonNull(json));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        Pattern pattern = generatePattern(patternCasePath, patternInfo.getSignatureBefore(), patternInfo.getSignatureAfter());
+
+        System.out.println("Serializing pattern: " + patternCasePath);
+        String json = JsonSerializer.serializeToJson(pattern);
+        Path patternJsonPath = jsonSerializePath.resolve("c3_random_1000").resolve("jdt").resolve(group)
+                .resolve(patternCasePath.getFileName() + ".json");
+        FileUtils.ensureDirectoryExists(patternJsonPath);
+        try(FileWriter file = new FileWriter(patternJsonPath.toFile())) {
+            file.write(Objects.requireNonNull(json));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -122,6 +121,32 @@ public class SerializerTest {
 
         return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE,
                 beforeParser.getIdentifierManager(), afterParser.getIdentifierManager());
+    }
+
+    public static Pattern generatePattern(Path patternCase, String beforeSignature, String afterSignature) {
+        Path patternBeforePath = patternCase.resolve("before.java");
+        Path patternAfterPath = patternCase.resolve("after.java");
+
+        CompilationUnit beforeCompilationUnit = genASTFromFile(patternBeforePath);
+        CompilationUnit afterCompilationUnit = genASTFromFile(patternAfterPath);
+
+        MethodSignature methodSignatureBefore = MethodSignature.parseFunctionSignature(beforeSignature);
+        MethodSignature methodSignatureAfter = MethodSignature.parseFunctionSignature(afterSignature);
+
+        Optional<MethodDeclaration> methodBefore = getDeclaration(beforeCompilationUnit, methodSignatureBefore);
+        Optional<MethodDeclaration> methodAfter = getDeclaration(afterCompilationUnit, methodSignatureAfter);
+
+        if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
+            fail("MethodDeclaration is not present");
+        }
+
+        NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
+        NodeParser afterParser = new NodeParser(patternAfterPath, afterCompilationUnit);
+
+        MoNode moMethodBefore = beforeParser.process(methodBefore.get());
+        MoNode moMethodAfter = afterParser.process(methodAfter.get());
+
+        return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
     }
 
 }

@@ -61,11 +61,38 @@ def java_genpat_detect(timeout_sec: float,
                        buggy_info_path: Path,
                        output_path: Path,
                        java_program: str):
-     _logger.info(f"Start genpat detect use {pattern_pair_path} for {pattern_info_path.stem}")
-     work_dir = utils.config.get_root_project_path()
-     cmd = ["java", "-jar", java_program, "genpat_detect",
-              str(pattern_pair_path), str(pattern_info_path), str(repo_path), str(buggy_info_path), str(output_path)]
-     start_process(cmd, work_dir, timeout_sec)
+    _logger.info(f"Start genpat detect use {pattern_pair_path} for {buggy_info_path.stem}")
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java", "-jar", java_program, "genpat_detect",
+           str(pattern_pair_path), str(pattern_info_path), str(repo_path), str(buggy_info_path), str(output_path)]
+    start_process(cmd, work_dir, timeout_sec)
+
+
+def java_detect(timeout_sec: float,
+                # 使用genpat方法检测bug
+                pattern_abs_path: Path,
+                repo_path: Path,
+                buggy_info_path: Path,
+                output_path: Path,
+                java_program: str):
+    _logger.info(f"Start detect use {pattern_abs_path} for {buggy_info_path.stem}")
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java", "-jar", java_program, "detect",
+           str(pattern_abs_path), str(repo_path), str(buggy_info_path), str(output_path)]
+    start_process(cmd, work_dir, timeout_sec)
+
+
+def java_abstract(timeout_sec: float,
+                  # LLM的抽象结果抽象pattern
+                  origin_pattern_path: Path,
+                  abstract_info_path: Path,
+                  abstract_pattern_path: Path,
+                  java_program: str):
+    _logger.info(f"Start abstract pattern for {origin_pattern_path.stem}")
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java", "-jar", java_program, "abstract",
+           str(origin_pattern_path), str(abstract_info_path), str(abstract_pattern_path)]
+    start_process(cmd, work_dir, timeout_sec)
 
 
 def java_gain_oracle(timeout_sec: float,

@@ -6,7 +6,7 @@ from app.communication import InputSchema
 from app.select_elements import ElementAnalysis
 from interface.llm.llm_dispatcher import LLMDispatcher
 from interface.llm.llm_openai import LLMOpenAI
-from utils.config import get_pattern_info_base_path
+from utils.config import get_pattern_info_base_path, set_proxy
 from utils.timer import Timer
 
 
@@ -14,39 +14,70 @@ def execute_task(_llm,
                  _global_schema: InputSchema,
                  _view_path: Path) -> None:
     with Timer():
-        # 调用背景分析
-        _background_history = background_analysis(_llm, _global_schema)
-        # 进行元素分析
-        _element_analysis = ElementAnalysis(_llm, _global_schema)
-        _element_analysis.analysis(_background_history)
+        print(f"Processing {_view_path}")
+        try:
+            # 调用背景分析
+            _background_history = background_analysis(_llm, _global_schema)
+            # 进行元素分析
+            _element_analysis = ElementAnalysis(_llm, _global_schema)
+            _element_analysis.analysis(_background_history)
 
-        _element_analysis.view(_view_path)
+            _element_analysis.view(_view_path)
+        except Exception as e:
+            print(f"Error in {_view_path}: {e}")
+            return
 
 
 def task_generator(_input_path: Path, _output_path: Path) -> Generator:
-    for _json_file in _input_path.rglob("*.json"):
-        _group_num = _json_file.parent.name
-        _file_name = _json_file.stem
+    for dataset_path in _input_path.iterdir():
+        for _json_file in dataset_path.rglob("*.json"):
+            _group_num = _json_file.parent.name
+            _file_name = _json_file.stem
 
-        _global_schema = InputSchema.parse_file(_json_file)
-        _view_path = _output_path / _group_num / f"{_file_name}.json"
+            try:
+                _global_schema = InputSchema.parse_file(_json_file)
+            except Exception as e:
+                print(f"Error: {e}")
+                continue
+            _view_path = _output_path / dataset_path.stem / _group_num / f"{_file_name}.json"
 
-        yield {
-            "func": execute_task,
-            "args": (_global_schema, _view_path, )
-        }
+            yield {
+                "func": execute_task,
+                "args": (_global_schema, _view_path,)
+            }
 
 
 if __name__ == "__main__":
-    codeLlama0 = LLMOpenAI(base_url="http://localhost:8001/v1", api_key="empty", model_name="CodeLlama")
-    codeLlama2 = LLMOpenAI(base_url="http://localhost:8002/v1", api_key="empty", model_name="CodeLlama")
-    codeLlama4 = LLMOpenAI(base_url="http://localhost:8003/v1", api_key="empty", model_name="CodeLlama")
-    codeLlama6 = LLMOpenAI(base_url="http://localhost:8004/v1", api_key="empty", model_name="CodeLlama")
+    set_proxy()
+    deepseek_instances1 = [
+        LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-92e516aab3d443adb30c6659284163e8",
+                  model_name="deepseek-chat")
+        for _ in range(100)
+    ]
 
-    dispatcher = LLMDispatcher([codeLlama0, codeLlama2, codeLlama4, codeLlama6])
+    # deepseek_instances2 = [
+    #     LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-a52d51021f214e27a8eb6d12fa18a0ff",
+    #               model_name="deepseek-chat")
+    #     for _ in range(50)
+    # ]
+    #
+    # deepseek_instances3 = [
+    #     LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-5dd60037665f4ae6995140fced285412",
+    #               model_name="deepseek-chat")
+    #     for _ in range(50)
+    # ]
+    #
+    # deepseek_instances4 = [
+    #     LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-a467d9d3a9a34c5ca4a45ee6add34e68",
+    #               model_name="deepseek-chat")
+    #     for _ in range(50)
+    # ]
 
-    input_path = get_pattern_info_base_path() / "input" / "c3" / "drjava1"
-    output_path = get_pattern_info_base_path() / "output" / "c3" / "drjava1"
+    deepseek_instances = deepseek_instances1
+    dispatcher = LLMDispatcher(deepseek_instances)
+
+    input_path = get_pattern_info_base_path() / "input" / "c3_random_1000"
+    output_path = get_pattern_info_base_path() / "output" / "c3_random_1000"
 
     tasks = task_generator(input_path, output_path)
     dispatcher.submit_tasks(tasks)

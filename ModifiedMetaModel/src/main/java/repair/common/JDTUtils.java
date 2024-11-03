@@ -4,6 +4,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repair.FileUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -13,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static org.mozilla.universalchardet.UniversalDetector.detectCharset;
 
 public class JDTUtils {
 
@@ -58,7 +57,7 @@ public class JDTUtils {
     public static CompilationUnit genASTFromFile(Path srcPath) {
         String code = "";
         try {
-            String encoding = detectCharset(srcPath.toFile());
+            String encoding = FileUtils.detectCharset(srcPath);
             code = Files.readString(srcPath, Charset.forName(encoding));
         } catch (IOException e) {
             logger.error("Failed to read file: " + srcPath, e);

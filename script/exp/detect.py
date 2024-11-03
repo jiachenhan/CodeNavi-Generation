@@ -5,7 +5,7 @@ from typing import List
 
 import utils
 from data.dataset import DataCollection, OneMethodFilePair
-from interface.java.run_java_api import java_genpat_detect
+from interface.java.run_java_api import java_genpat_detect, java_detect
 from utils.config import LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
@@ -15,26 +15,17 @@ def detect_bugs(_collection_name: str,
                 _dataset_name: str,
                 _repo_path: Path,
                 _group: str,
-                _pairs: list[OneMethodFilePair],
+                _pattern_path: Path,
+                _buggy_pair: OneMethodFilePair,
                 _jar_path: str,
                 timeout_sec: float):
-    if len(_pairs) < 2:
-        _logger.error(f"dataset {_dataset_name}, Group {_group} has less than 2 pairs")
-        return
-    pattern_pair: OneMethodFilePair = _pairs[0]
-    buggy_pairs: List[OneMethodFilePair] = _pairs[1:]
-    random.seed(utils.config.get_random_seed())
-    buggy_pair: OneMethodFilePair = random.choice(buggy_pairs)
 
-    pattern_pair_path = pattern_pair.case_path
-    pattern_info_path = pattern_pair.case_path / "info.json"
-    buggy_info_path = buggy_pair.case_path / "info.json"
+    buggy_info_path = _buggy_pair.case_path / "info.json"
     repo_path = _repo_path / _dataset_name
-    output_path = (utils.config.get_patches_base_path() / "detect" / _collection_name
-                   / _dataset_name / _group / f"{pattern_pair_path.stem}-{buggy_pair.case_path.stem}.json")
-    java_genpat_detect(timeout_sec,
-                       pattern_pair_path, pattern_info_path, repo_path, buggy_info_path, output_path, _jar_path)
-    pass
+    output_path = (utils.config.get_patches_base_path() / "detect" / _collection_name / "abs_pat"
+                   / _dataset_name / _group / f"{_pattern_path.stem}-{_buggy_pair.case_path.stem}.json")
+    java_detect(timeout_sec,
+                _pattern_path, repo_path, buggy_info_path, output_path, _jar_path)
 
 
 def process(_data_collection: DataCollection,
@@ -46,9 +37,23 @@ def process(_data_collection: DataCollection,
         futures = []
         for dataset in _data_collection.datasets:
             for group, pairs in dataset.get_datas():
+                pattern_group_path = (utils.config.get_pattern_base_path() / "abs" / _data_collection.collection_name /
+                                      dataset.name / group)
+                if not pattern_group_path.exists():
+                    _logger.warning(f"Pattern not found: {pattern_group_path}")
+                    continue
+                patterns = list(pattern_group_path.iterdir())
+                if len(patterns) == 0:
+                    _logger.warning(f"Pattern not found: {pattern_group_path}")
+                    continue
+                pattern = patterns[0]
+                random.seed(utils.config.get_random_seed())
+                buggy_pairs = list(filter(lambda pair: pair.case_path.stem != pattern.stem, pairs))
+                buggy_pair = random.choice(buggy_pairs)
+
                 futures.append(executor.submit(detect_bugs,
                                                _data_collection.collection_name, dataset.name, _repos_path,
-                                               group, pairs, _jar_path, timeout_sec))
+                                               group, pattern, buggy_pair, _jar_path, timeout_sec))
 
         # 等待所有任务完成
         concurrent.futures.wait(futures)
@@ -63,4 +68,4 @@ if __name__ == "__main__":
     jar_path = ("/data/jiangjiajun/LLMPAT/ModifyMeta/ModifiedMetaModel/artifacts/"
                 "ModifiedMetaModel-1.0-SNAPSHOT-runnable.jar")
     # extract pattern
-    process(data_collection, repos_path, 20, jar_path, 180.0)
+    process(data_collection, repos_path, 50, jar_path, 600.0)

@@ -30,4 +30,21 @@ public class AttributeConfig {
     public Map<String, Function<MoNode, Attribute<?>>> getRegisteredAttrConstructors() {
         return registeredAttrConstructors;
     }
+
+    // the default attribute config as the following
+
+    private final static AttributeConfig attributeConfig;
+
+    static {
+        attributeConfig = new AttributeConfig();
+        attributeConfig.addAttribute("LocationSubTypeAttribute", LocationSubTypeAttribute.class, 1.0, LocationSubTypeAttribute::new);
+        attributeConfig.addAttribute("NameAttribute", NameAttribute.class, 1.0, NameAttribute::new);
+        attributeConfig.addAttribute("ExprTypeAttribute", ExprTypeAttribute.class, 1.0, ExprTypeAttribute::new);
+        attributeConfig.addAttribute("MoTypeAttribute", MoTypeAttribute.class, 0.5, MoTypeAttribute::new);
+        attributeConfig.addAttribute("TokenAttribute", TokenAttribute.class, 0.5, TokenAttribute::new);
+    }
+
+    public static AttributeConfig getAttributeConfig() {
+        return attributeConfig;
+    }
 }

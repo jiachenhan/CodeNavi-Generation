@@ -40,6 +40,10 @@ public class Main {
                 Extract.main(args);
                 break;
             case "abstract":
+                Abstract.main(args);
+                break;
+            case "detect":
+                Detect.main(args);
                 break;
             default:
                 logger.error("not supported command: {}", args[0]);

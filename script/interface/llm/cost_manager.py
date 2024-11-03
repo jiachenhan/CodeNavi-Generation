@@ -7,8 +7,7 @@ _logger = LoggerConfig.get_logger(__name__)
 
 # $x / 1M tokens
 TOKEN_COSTS = {
-    "CodeLlama": {"prompt": 0.0, "completion": 0.0},
-    "deepseek-chat": {"prompt_hit": 0.014, "prompt_miss": 0.14, "completion": 0.28},
+    "CodeLlama-34b": {"prompt": 0.0, "completion": 0.0},
 
     "gpt-3.5-turbo-instruct": {"prompt": 1.5, "completion": 2.0},
     "gpt-4-turbo": {"prompt": 10.0, "completion": 30.0},
@@ -19,12 +18,22 @@ TOKEN_COSTS = {
     "text-embedding-ada-002": {"prompt": 0.4, "completion": 0.0},
 }
 
+# ￥x / 1M tokens
+CACHE_COSTS = {
+    "deepseek-chat": {"prompt_hit": 0.1, "prompt_miss": 1, "completion": 2},
+}
+
 
 class CostManager:
     def __init__(self, model_name: str):
         self.model_name = model_name
+        cost_model = "ALL"
+        if model_name in CACHE_COSTS.keys():
+            cost_model = "cache"
+        elif model_name in TOKEN_COSTS.keys():
+            cost_model = "normal"
         self.tokens = {
-            "cost_model": "ALL",  # ALL, normal, cache\
+            "cost_model": cost_model,  # ALL, normal, cache\
             "normal": {
                 "prompt": 0,
                 "completion": 0,
@@ -67,16 +76,14 @@ class CostManager:
         completion_tokens = 0
 
         if len(args) == 2:
-            self.tokens["cost_model"] = "normal"
             prompt_tokens, completion_tokens = args
         elif len(args) == 3:
-            self.tokens["cost_model"] = "cache"
             prompt_hit, prompt_miss, completion_tokens = args
 
         if self.tokens["cost_model"] == "normal":
             self.tokens["normal"]["prompt"] += prompt_tokens
             self.tokens["normal"]["completion"] += completion_tokens
-            self.tokens["cost"] = (
+            self.tokens["cost"] += (
                     prompt_tokens * TOKEN_COSTS[self.model_name]["prompt"] +
                     completion_tokens * TOKEN_COSTS[self.model_name]["completion"]
             ) / 1000 / 1000
@@ -84,10 +91,10 @@ class CostManager:
             self.tokens["cache"]["prompt_hit"] += prompt_hit
             self.tokens["cache"]["prompt_miss"] += prompt_miss
             self.tokens["cache"]["completion"] += completion_tokens
-            self.tokens["cost"] = (
-                    prompt_hit * TOKEN_COSTS[self.model_name]["prompt_hit"] +
-                    prompt_miss * TOKEN_COSTS[self.model_name]["prompt_miss"] +
-                    completion_tokens * TOKEN_COSTS[self.model_name]["completion"]
+            self.tokens["cost"] += (
+                    prompt_hit * CACHE_COSTS[self.model_name]["prompt_hit"] +
+                    prompt_miss * CACHE_COSTS[self.model_name]["prompt_miss"] +
+                    completion_tokens * CACHE_COSTS[self.model_name]["completion"]
             ) / 1000 / 1000
 
     def show_cost(self):

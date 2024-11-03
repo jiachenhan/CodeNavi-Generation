@@ -3,7 +3,6 @@ package repair.apply.det;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -18,6 +17,7 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import repair.FileUtils;
 import repair.apply.match.MatchInstance;
 import repair.apply.match.Matcher;
 import repair.ast.declaration.MoMethodDeclaration;
@@ -25,16 +25,13 @@ import repair.ast.parser.NodeParser;
 import repair.common.MethodSignature;
 import repair.pattern.Pattern;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 
-import static org.mozilla.universalchardet.UniversalDetector.detectCharset;
 import static repair.FileUtils.ensureDirectoryExists;
 import static repair.common.JDTUtils.genAST;
 
@@ -92,19 +89,10 @@ public class Detector {
                         ObjectLoader loader = repository.open(treeWalk.getObjectId(0));
                         // 读取文件内容
                         byte[] fileData = loader.getBytes();
-                        try (InputStream is = new ByteArrayInputStream(fileData)) {
-                            String encoding = detectCharset(is);
-                            // 如果编码为null，使用默认的UTF-8编码
-                            if (encoding == null || encoding.isEmpty()) {
-                                logger.warn("Failed to detect encoding for file: " + filePath + ". Defaulting to UTF-8.");
-                                encoding = "UTF-8";  // 设置默认编码为UTF-8
-                            }
-                            String code = new String(fileData, Charset.forName(encoding));
-                            detectFile(code, Path.of(filePath));
-                        } catch (IOException e) {
-                            logger.error("Failed to read file", e);
-                            continue;
-                        }
+                        String encoding = FileUtils.detectCharset(fileData);
+                        String code = new String(fileData, Charset.forName(encoding));
+                        detectFile(code, Path.of(filePath));
+
                     }
                 }
             }

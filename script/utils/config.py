@@ -1,3 +1,5 @@
+import os
+
 import yaml
 from pathlib import Path
 import logging
@@ -34,6 +36,19 @@ class YamlConfig(metaclass=SingletonMeta):
 
 
 _config = YamlConfig().get_config()
+
+
+def set_proxy():
+    proxies = {
+        'http': 'http://172.19.135.130:5000',
+        'https': 'http://172.19.135.130:5000'
+    }
+
+    os.environ['HTTP_PROXY'] = proxies.get('http')
+    os.environ['HTTPS_PROXY'] = proxies.get('https')
+
+    # print(f'HTTP Proxy: {os.environ.get("HTTP_PROXY")}')
+    # print(f'HTTPS Proxy: {os.environ.get("HTTPS_PROXY")}')
 
 
 # 指代FixGen

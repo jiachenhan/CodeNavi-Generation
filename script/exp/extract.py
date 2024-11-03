@@ -36,7 +36,7 @@ def extract_pattern(_collection_name: str,
 def process(_data_collection: DataCollection,
             _max_threads: int,
             _jar_path: str,
-            timeout_sec: float):
+            _timeout_sec: float):
     # 创建线程池，并固定线程数量
     with concurrent.futures.ThreadPoolExecutor(max_workers=_max_threads) as executor:
         futures = []
@@ -44,7 +44,7 @@ def process(_data_collection: DataCollection,
             for group, pairs in dataset.get_datas():
                 futures.append(executor.submit(extract_pattern,
                                                _data_collection.collection_name, dataset.name,
-                                               group, pairs, _jar_path, timeout_sec))
+                                               group, pairs, _jar_path, _timeout_sec))
 
         # 等待所有任务完成
         concurrent.futures.wait(futures)
@@ -53,9 +53,8 @@ def process(_data_collection: DataCollection,
 
 
 if __name__ == "__main__":
-    cluster_path = Path("/data/jiangjiajun/LLMPAT/temporary/c3")
-    names = ["junit1"]
-    data_collection = DataCollection(cluster_path, names=names, grouped=True)
+    cluster_path = Path("/data/jiangjiajun/LLMPAT/dataset/c3_random_1000")
+    data_collection = DataCollection(cluster_path, names=None, grouped=True)
     jar_path = ("/data/jiangjiajun/LLMPAT/ModifyMeta/ModifiedMetaModel/artifacts/"
                 "ModifiedMetaModel-1.0-SNAPSHOT-runnable.jar")
     # extract pattern
