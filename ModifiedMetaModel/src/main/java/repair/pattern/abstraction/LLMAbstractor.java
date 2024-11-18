@@ -23,6 +23,7 @@ public class LLMAbstractor implements Abstractor {
         this.abstractInfoPath = abstractInfoPath;
         this.consideredElements = new ArrayList<>();
         this.consideredAttrs = new HashMap<>();
+
         parseAbstractInfo();
     }
 
