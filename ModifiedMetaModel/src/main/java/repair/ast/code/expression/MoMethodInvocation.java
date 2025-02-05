@@ -189,7 +189,11 @@ public class MoMethodInvocation extends MoExpression {
             }
             match = match && MoNodeList.sameList(typeArguments, otherMethodInvocation.typeArguments);
             match = match && name.isSame(otherMethodInvocation.name);
-            match = match && arguments.isSame(otherMethodInvocation.arguments);
+            if (arguments == null) {
+                match = match && otherMethodInvocation.arguments == null;
+            } else {
+                match = match && arguments.isSame(otherMethodInvocation.arguments);
+            }
             return match;
         }
         return false;

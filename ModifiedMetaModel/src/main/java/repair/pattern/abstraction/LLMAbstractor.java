@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
+import repair.ast.code.expression.MoName;
 import repair.pattern.Pattern;
 import repair.pattern.attr.*;
 
@@ -16,13 +17,13 @@ public class LLMAbstractor implements Abstractor {
     private final static Logger logger = LoggerFactory.getLogger(LLMAbstractor.class);
 
     private final Path abstractInfoPath;
-    private final List<String> consideredElements;
-    private final Map<String, String> consideredAttrs;
+    private final List<String> LLMConsideredElements;
+    private final Map<String, String> LLMConsideredAttrs;
 
     public LLMAbstractor(Path abstractInfoPath) {
         this.abstractInfoPath = abstractInfoPath;
-        this.consideredElements = new ArrayList<>();
-        this.consideredAttrs = new HashMap<>();
+        this.LLMConsideredElements = new ArrayList<>();
+        this.LLMConsideredAttrs = new HashMap<>();
 
         parseAbstractInfo();
     }
@@ -30,7 +31,7 @@ public class LLMAbstractor implements Abstractor {
     @Override
     public boolean shouldConsider(MoNode node) {
         // 包含了action相关的节点以及LLM考虑语义的节点
-        return consideredElements.contains(String.valueOf(node.getId())) || considerNodeCandidates.contains(node);
+        return LLMConsideredElements.contains(String.valueOf(node.getId())) || actionRelatedConsiderNodes.contains(node);
     }
 
     @Override
@@ -45,11 +46,16 @@ public class LLMAbstractor implements Abstractor {
             return true;
         }
 
+        if(attribute instanceof NameAttribute) {
+            MoNode node = attribute.getNode();
+            return node instanceof MoName && actionRelatedConsiderNodes.contains(node);
+        }
+
         if(attribute instanceof ExprTypeAttribute exprTypeAttribute) {
             String nodeId = String.valueOf(attribute.getNode().getId());
             String attrName = exprTypeAttribute.getValue();
-            if(consideredAttrs.containsKey(nodeId)) {
-                String consideredAttrName = consideredAttrs.get(nodeId);
+            if(LLMConsideredAttrs.containsKey(nodeId)) {
+                String consideredAttrName = LLMConsideredAttrs.get(nodeId);
                 if(!consideredAttrName.equals(attrName)) {
                     logger.warn("Node {} Attribute {} has error", nodeId, attrName);
                 }
@@ -59,7 +65,7 @@ public class LLMAbstractor implements Abstractor {
         return false;
     }
 
-    private final Set<MoNode> considerNodeCandidates = new HashSet<>();
+    private final Set<MoNode> actionRelatedConsiderNodes = new HashSet<>();
 
     @Override
     public void doAbstraction(Pattern pattern) {
@@ -71,26 +77,26 @@ public class LLMAbstractor implements Abstractor {
 
         // expand action nodes
         actionsRelatedNodes.forEach(node -> {
-            considerNodeCandidates.add(node);
+            actionRelatedConsiderNodes.add(node);
             MoNode parent = node.getParent();
             // expand parent k=1
             if(parent != null) {
-                considerNodeCandidates.add(parent);
+                actionRelatedConsiderNodes.add(parent);
             }
             // expand children k=1
             if(!node.isLeaf()) {
-                considerNodeCandidates.addAll(node.getChildren());
+                actionRelatedConsiderNodes.addAll(node.getChildren());
             }
 
             // data flow
             if (node.context.getDataDependency() != null) {
-                considerNodeCandidates.add(node.context.getDataDependency());
+                actionRelatedConsiderNodes.add(node.context.getDataDependency());
             }
             MoNode nodeAfter = pattern.getBeforeToAfterMap().get(node);
             if(nodeAfter != null) {
                 if (nodeAfter.context.getDataDependency() != null) {
                     MoNode dataDepBefore = pattern.getBeforeToAfterMap().getKey(nodeAfter.context.getDataDependency());
-                    considerNodeCandidates.add(dataDepBefore);
+                    actionRelatedConsiderNodes.add(dataDepBefore);
                 }
             }
 
@@ -118,7 +124,7 @@ public class LLMAbstractor implements Abstractor {
             // 解析 considered_elements
             JsonNode consideredElementsNode = rootNode.get("considered_elements");
             for (JsonNode element : consideredElementsNode) {
-                consideredElements.add(element.asText());
+                LLMConsideredElements.add(element.asText());
             }
 
             // 解析 considered_attrs
@@ -126,7 +132,7 @@ public class LLMAbstractor implements Abstractor {
             Iterator<Map.Entry<String, JsonNode>> fields = consideredAttrsNode.fields();
             while (fields.hasNext()) {
                 Map.Entry<String, JsonNode> field = fields.next();
-                consideredAttrs.put(field.getKey(), field.getValue().asText());
+                LLMConsideredAttrs.put(field.getKey(), field.getValue().asText());
             }
 
         } catch (IOException e) {

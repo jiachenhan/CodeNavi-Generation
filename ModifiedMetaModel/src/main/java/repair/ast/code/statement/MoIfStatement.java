@@ -145,9 +145,15 @@ public class MoIfStatement extends MoStatement {
     @Override
     public boolean isSame(MoNode other) {
         if(other instanceof MoIfStatement otherIfStatement) {
-            return condition.isSame(otherIfStatement.condition) &&
-                    thenStatement.isSame(otherIfStatement.thenStatement) &&
-                    elseStatement.isSame(otherIfStatement.elseStatement);
+            boolean match = condition.isSame(otherIfStatement.condition) &&
+                    thenStatement.isSame(otherIfStatement.thenStatement);
+
+            if (elseStatement == null) {
+                match = match && otherIfStatement.elseStatement == null;
+            } else {
+                match = match && elseStatement.isSame(otherIfStatement.elseStatement);
+            }
+            return match;
         }
         return false;
     }

@@ -39,6 +39,18 @@ public class JDTUtils {
         return declarations.isEmpty() ? Optional.empty() : Optional.of(declarations.get(0));
     }
 
+    public static List<MethodDeclaration> getMethodDeclarations(CompilationUnit unit) {
+        if (unit == null) return List.of();
+        final List<MethodDeclaration> declarations = new ArrayList<>();
+        unit.accept(new ASTVisitor() {
+            public boolean visit(MethodDeclaration m) {
+                declarations.add(m);
+                return false;
+            }
+        });
+        return declarations;
+    }
+
     public static Optional<MethodDeclaration> getOnlyMethodDeclaration(CompilationUnit unit) {
         if (unit == null) return Optional.empty();
         final List<MethodDeclaration> declarations = new ArrayList<>(1);

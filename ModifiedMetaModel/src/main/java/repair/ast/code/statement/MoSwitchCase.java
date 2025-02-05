@@ -26,7 +26,7 @@ public class MoSwitchCase extends MoStatement {
 
     private final static Description<MoSwitchCase, MoExpression> expressionDescription =
             new Description<>(ChildType.CHILD, MoSwitchCase.class, MoExpression.class,
-                    "expression", true);
+                    "expression", false);
 
     private final static Map<String, Description<MoSwitchCase, ?>> descriptionsMap = Map.ofEntries(
             Map.entry("expression", expressionDescription)

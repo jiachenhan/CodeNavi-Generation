@@ -18,6 +18,8 @@ target/
 02pattern-info/
 03graph/
 04patch/
+06config/
+07dsl/
 artifacts/
 
 ### Eclipse ###
