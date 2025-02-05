@@ -65,7 +65,7 @@ public class SerializerTest {
     @Test
     public void jsonSerializeTest() {
         String group = "41225";
-        Path groupPath = Path.of("E:/dataset/c3/c3_random_1000/jdt").resolve(group);
+        Path groupPath = Path.of("E:/datasets/c3_random_1000/jdt").resolve(group);
         Path patternCasePath = groupPath.resolve("1");
 
         Path patternInfoPath = patternCasePath.resolve("info.json");

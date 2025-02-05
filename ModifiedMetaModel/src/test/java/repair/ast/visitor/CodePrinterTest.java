@@ -19,7 +19,8 @@ import static repair.common.JDTUtils.genASTFromFile;
 import static repair.common.JDTUtils.getOnlyMethodDeclaration;
 
 public class CodePrinterTest {
-    private final Path datasetPath = Paths.get("E:/dataset/api/apache-API-cluster");
+//    private final Path datasetPath = Paths.get("E:/dataset/api/apache-API-cluster");
+    private final Path datasetPath = Paths.get("E:\\datasets\\c3_random_1000");
 
     private final List<Path> excludedPaths = List.of(
             // over JLS8 limit (instanceof pattern)
