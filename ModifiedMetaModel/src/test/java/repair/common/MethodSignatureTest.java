@@ -86,7 +86,7 @@ public class MethodSignatureTest {
 
         // check before
         CompilationUnit beforeCompilationUnit = genASTFromFile(beforePath);
-        Optional<MethodDeclaration> methodBefore = getDeclaration(beforeCompilationUnit, methodSignatureBefore);
+        Optional<MethodDeclaration> methodBefore = getMethodDeclaration(beforeCompilationUnit, methodSignatureBefore);
         if(methodBefore.isEmpty()) {
             fail("MethodDeclaration is not present");
         }
@@ -99,7 +99,7 @@ public class MethodSignatureTest {
 
         // check after
         CompilationUnit afterCompilationUnit = genASTFromFile(afterPath);
-        Optional<MethodDeclaration> methodAfter = getDeclaration(afterCompilationUnit, methodSignatureAfter);
+        Optional<MethodDeclaration> methodAfter = getMethodDeclaration(afterCompilationUnit, methodSignatureAfter);
         if(methodAfter.isEmpty()) {
             fail("MethodDeclaration is not present");
         }
@@ -130,7 +130,7 @@ public class MethodSignatureTest {
 
                 // check before
                 CompilationUnit beforeCompilationUnit = genASTFromFile(beforePath);
-                Optional<MethodDeclaration> methodBefore = getDeclaration(beforeCompilationUnit, methodSignatureBefore);
+                Optional<MethodDeclaration> methodBefore = getMethodDeclaration(beforeCompilationUnit, methodSignatureBefore);
                 if(methodBefore.isEmpty()) {
                     System.out.println("MethodDeclaration is not present");
                     errorPaths.add(beforePath);
@@ -144,7 +144,7 @@ public class MethodSignatureTest {
 
                 // check after
                 CompilationUnit afterCompilationUnit = genASTFromFile(afterPath);
-                Optional<MethodDeclaration> methodAfter = getDeclaration(afterCompilationUnit, methodSignatureAfter);
+                Optional<MethodDeclaration> methodAfter = getMethodDeclaration(afterCompilationUnit, methodSignatureAfter);
                 if(methodAfter.isEmpty()) {
                     System.out.println("MethodDeclaration is not present");
                     errorPaths.add(afterPath);

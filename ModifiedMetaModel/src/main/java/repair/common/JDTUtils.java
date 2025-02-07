@@ -22,7 +22,7 @@ public class JDTUtils {
     /**
      *  only consider the top method declarations (ignore anonymous class)
      */
-    public static Optional<MethodDeclaration> getDeclaration(CompilationUnit unit, MethodSignature method) {
+    public static Optional<MethodDeclaration> getMethodDeclaration(CompilationUnit unit, MethodSignature method) {
         if (method == null || unit == null) return Optional.empty();
         final List<MethodDeclaration> declarations = new ArrayList<>();
         unit.accept(new ASTVisitor() {

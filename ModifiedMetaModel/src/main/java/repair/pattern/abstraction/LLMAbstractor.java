@@ -18,7 +18,7 @@ public class LLMAbstractor implements Abstractor {
 
     private final Path abstractInfoPath;
     private final List<String> LLMConsideredElements;
-    private final Map<String, String> LLMConsideredAttrs;
+    private final Map<String, List<String>> LLMConsideredAttrs;
 
     public LLMAbstractor(Path abstractInfoPath) {
         this.abstractInfoPath = abstractInfoPath;
@@ -54,13 +54,8 @@ public class LLMAbstractor implements Abstractor {
         if(attribute instanceof ExprTypeAttribute exprTypeAttribute) {
             String nodeId = String.valueOf(attribute.getNode().getId());
             String attrName = exprTypeAttribute.getValue();
-            if(LLMConsideredAttrs.containsKey(nodeId)) {
-                String consideredAttrName = LLMConsideredAttrs.get(nodeId);
-                if(!consideredAttrName.equals(attrName)) {
-                    logger.warn("Node {} Attribute {} has error", nodeId, attrName);
-                }
-                return true;
-            }
+            List<String> consideredExprTypeNodes = LLMConsideredAttrs.get("exprType");
+            return consideredExprTypeNodes.contains(nodeId);
         }
         return false;
     }
@@ -129,12 +124,16 @@ public class LLMAbstractor implements Abstractor {
 
             // 解析 considered_attrs
             JsonNode consideredAttrsNode = rootNode.get("considered_attrs");
-            Iterator<Map.Entry<String, JsonNode>> fields = consideredAttrsNode.fields();
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> field = fields.next();
-                LLMConsideredAttrs.put(field.getKey(), field.getValue().asText());
+            Iterator<Map.Entry<String, JsonNode>> attrs = consideredAttrsNode.fields();
+            while (attrs.hasNext()) {
+                Map.Entry<String, JsonNode> attr = attrs.next();
+                LLMConsideredAttrs.put(attr.getKey(), new ArrayList<>());
+                Iterator<JsonNode> nodes = attr.getValue().elements();
+                while (nodes.hasNext()) {
+                    String id = nodes.next().asText();
+                    LLMConsideredAttrs.get(attr.getKey()).add(id);
+                }
             }
-
         } catch (IOException e) {
             logger.error("Failed to read abstract info file");
         }

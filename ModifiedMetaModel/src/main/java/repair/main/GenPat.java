@@ -26,7 +26,7 @@ import static org.apache.commons.io.FileUtils.writeStringToFile;
 import static org.junit.Assert.fail;
 import static repair.common.JDTUtils.genASTFromFile;
 import static repair.common.JDTUtils.getOnlyMethodDeclaration;
-import static repair.main.Main.generatePattern;
+import static repair.common.Utils.generatePattern;
 
 public class GenPat {
     private final static Logger logger = LoggerFactory.getLogger(GenPat.class);

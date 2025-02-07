@@ -1,15 +1,9 @@
 package repair.pattern.serialize;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
 import repair.FileUtils;
-import repair.ast.MoNode;
-import repair.ast.parser.NodeParser;
-import repair.apply.diff.DiffComparator;
 import repair.common.CodeChangeInfo;
 import repair.common.CodeChangeInfoReader;
-import repair.common.MethodSignature;
 import repair.pattern.Pattern;
 import repair.pattern.abstraction.Abstractor;
 import repair.pattern.abstraction.TermFrequencyAbstractor;
@@ -25,9 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
-import static repair.common.JDTUtils.*;
-import static repair.common.JDTUtils.getDeclaration;
-import static repair.main.Main.generatePattern;
+import static repair.common.Utils.generatePattern;
 
 public class SerializerTest {
     private final Path datasetPath = Paths.get("E:/dataset/c3/drjava1");
@@ -96,57 +88,6 @@ public class SerializerTest {
 
         Pattern patternAbstracted = Serializer.deserializeFromDisk(serializePath.resolve("pattern_abstracted.ser")).orElse(null);
         assertNotNull(patternAbstracted);
-    }
-
-    private Pattern generatePattern(Path patternCase) {
-        System.out.println("Processing case: " + patternCase.getFileName());
-        Path patternBeforePath = patternCase.resolve("before.java");
-        Path patternAfterPath = patternCase.resolve("after.java");
-
-        CompilationUnit beforeCompilationUnit = genASTFromFile(patternBeforePath);
-        CompilationUnit afterCompilationUnit = genASTFromFile(patternAfterPath);
-
-        Optional<MethodDeclaration> methodBefore = getOnlyMethodDeclaration(beforeCompilationUnit);
-        Optional<MethodDeclaration> methodAfter = getOnlyMethodDeclaration(afterCompilationUnit);
-
-        if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
-            fail("MethodDeclaration is not present");
-        }
-
-        NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
-        NodeParser afterParser = new NodeParser(patternAfterPath, afterCompilationUnit);
-
-        MoNode moMethodBefore = beforeParser.process(methodBefore.get());
-        MoNode moMethodAfter = afterParser.process(methodAfter.get());
-
-        return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE,
-                beforeParser.getIdentifierManager(), afterParser.getIdentifierManager());
-    }
-
-    public static Pattern generatePattern(Path patternCase, String beforeSignature, String afterSignature) {
-        Path patternBeforePath = patternCase.resolve("before.java");
-        Path patternAfterPath = patternCase.resolve("after.java");
-
-        CompilationUnit beforeCompilationUnit = genASTFromFile(patternBeforePath);
-        CompilationUnit afterCompilationUnit = genASTFromFile(patternAfterPath);
-
-        MethodSignature methodSignatureBefore = MethodSignature.parseFunctionSignature(beforeSignature);
-        MethodSignature methodSignatureAfter = MethodSignature.parseFunctionSignature(afterSignature);
-
-        Optional<MethodDeclaration> methodBefore = getDeclaration(beforeCompilationUnit, methodSignatureBefore);
-        Optional<MethodDeclaration> methodAfter = getDeclaration(afterCompilationUnit, methodSignatureAfter);
-
-        if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
-            fail("MethodDeclaration is not present");
-        }
-
-        NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
-        NodeParser afterParser = new NodeParser(patternAfterPath, afterCompilationUnit);
-
-        MoNode moMethodBefore = beforeParser.process(methodBefore.get());
-        MoNode moMethodAfter = afterParser.process(methodAfter.get());
-
-        return new Pattern(moMethodBefore, moMethodAfter, DiffComparator.Mode.MOVE_MODE);
     }
 
 }

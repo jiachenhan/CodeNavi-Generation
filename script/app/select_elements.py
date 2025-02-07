@@ -7,10 +7,10 @@ from types import MappingProxyType
 from typing import Tuple, Optional
 
 from app.basic_modification_analysis import background_analysis
-from app.communication import InputSchema, pretty_print_history
+from app.communication import PatternInput, pretty_print_history
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
-from utils.config import get_pattern_info_base_path, LoggerConfig, set_proxy
+from utils.config import get_pattern_info_base_path, LoggerConfig, set_config
 from utils.timer import Timer
 
 _logger = LoggerConfig.get_logger(__name__)
@@ -108,7 +108,7 @@ class ElementAnalysis:
 
     def __init__(self,
                  llm: LLMAPI,
-                 _global_schema: InputSchema):
+                 _global_schema: PatternInput):
         self.element_history = dict()
         self.considered_elements = set()
         self.considered_attrs = dict()
@@ -239,11 +239,11 @@ class ElementAnalysis:
 
 
 def main():
-    set_proxy()
+    set_config("deepseek")
     code_llama = LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-92e516aab3d443adb30c6659284163e8",
                            model_name="deepseek-chat")
     file_path = get_pattern_info_base_path() / "input" / "c3_random_1000" / "ant" / "10142" / "1.json"
-    global_schema = InputSchema.parse_file(file_path)
+    global_schema = PatternInput.parse_file(file_path)
 
     background_history = background_analysis(code_llama, global_schema)
 

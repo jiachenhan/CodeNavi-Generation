@@ -3,9 +3,6 @@ from functools import cached_property
 from pathlib import Path
 from typing import Generator, List, Dict, Union, Optional
 
-before_java: str = "before.java"
-after_java: str = "after.java"
-
 
 class DataCollection:
     def __init__(self,
@@ -46,7 +43,9 @@ class OneMethodFilePair:
     """must process to one method warped with a class file"""
     def __init__(self,
                  dataset_path: Path,
-                 relative_path: Path) -> None:
+                 relative_path: Path,
+                 before_java: str = "error.java",
+                 after_java: str = "correct.java") -> None:
         self.dataset_path = dataset_path
         self.relative_path = relative_path  # from dataset to cases
         self.case_path: Path = dataset_path / relative_path
@@ -73,7 +72,7 @@ class Dataset(ABC):
         return filter(lambda file: file.is_dir(), self.dataset_path.iterdir())
 
     @abstractmethod
-    def get_datas(self) -> Generator[Union[List[OneMethodFilePair], Dict[str, List[OneMethodFilePair]]], None, None]:
+    def get_datas(self) -> Generator[Union[OneMethodFilePair], Dict[str, List[OneMethodFilePair]], None, None]:
         """对文件对进行抽象，具体操作由子类实现"""
         pass
 
@@ -81,7 +80,6 @@ class Dataset(ABC):
 class GroupedDataset(Dataset):
     def __init__(self,
                  dataset_path: Path):
-        self.groups = {}
         super().__init__(dataset_path)
 
     def get_datas(self) -> Generator[Dict[str, List[OneMethodFilePair]], None, None]:
@@ -95,10 +93,9 @@ class GroupedDataset(Dataset):
 class UnGroupedDataset(Dataset):
     def __init__(self,
                  dataset_path: Path):
-        self.pairs = []
         super().__init__(dataset_path)
 
-    def get_datas(self) -> Generator[List[OneMethodFilePair], None, None]:
+    def get_datas(self) -> Generator[OneMethodFilePair, None, None]:
         for group in self._get_groups():
             yield OneMethodFilePair.from_case(self.dataset_path, group)
 

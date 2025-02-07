@@ -6,21 +6,8 @@ from openai import OpenAI
 
 from interface.llm.cost_manager import CostManager
 from interface.llm.llm_api import LLMAPI
-from utils.config import set_proxy, LoggerConfig
+from utils.config import set_config, LoggerConfig
 
-"""
-curl https://api.deepseek.com/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-92e516aab3d443adb30c6659284163e8" \
-  -d '{
-        "model": "deepseek-chat",
-        "messages": [
-          {"role": "system", "content": "You are a helpful assistant."},
-          {"role": "user", "content": "Hello!"}
-        ],
-        "stream": false
-      }'
-"""
 
 _logger = LoggerConfig.get_logger(__name__)
 
@@ -45,18 +32,25 @@ class LLMOpenAI(LLMAPI):
             try:
                 thread_id = threading.current_thread().ident
                 _logger.info(f"Thread (ID: {thread_id}) is about to perform LLM request")
-                raw_response = self.client.chat.completions.with_raw_response.create(
+                response = self.client.chat.completions.create(
                     model=self.model_name,
                     messages=_messages,
                     stream=False
                 )
-                response = raw_response.parse()
-                # 目前没有并发限制（但是实际上算力有限
-                rate_limit_remaining = raw_response.headers.get("x-ratelimit-remaining")
-                if rate_limit_remaining == 0:
-                    _logger.warn(f"Rate limit remaining: {rate_limit_remaining}")
-                    raise Exception("Rate limit exceeded")
+                # raw_response = self.client.chat.completions.with_raw_response.create(
+                #     model=self.model_name,
+                #     messages=_messages,
+                #     stream=False
+                # )
+                # response = raw_response.parse()
+                # # 目前没有并发限制（但是实际上算力有限
+                # rate_limit_remaining = raw_response.headers.get("x-ratelimit-remaining")
+                # if rate_limit_remaining == 0:
+                #     _logger.warn(f"Rate limit remaining: {rate_limit_remaining}")
+                #     raise Exception("Rate limit exceeded")
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 _logger.error(f"OpenAI API error: {e}")
                 time.sleep(30)
 
@@ -75,9 +69,9 @@ class LLMOpenAI(LLMAPI):
 
 
 if __name__ == "__main__":
-    set_proxy()
-    deepseek = LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-92e516aab3d443adb30c6659284163e8",
-                         model_name="deepseek-chat")
+    set_config("deepseek")
+    deepseek = LLMOpenAI(base_url=os.environ.get("OPENAI_BASE_URL"), api_key=os.environ.get("OPENAI_API_KEY"),
+                         model_name=os.environ.get("MODEL_NAME"))
     # codeLlama = LLMOpenAI(base_url="http://localhost:8001/v1", api_key="empty", model_name="CodeLlama")
     messages = [
         {"role": "system", "content": "you are a helpful assistant!"},

@@ -2,19 +2,14 @@ package repair.main;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repair.common.CodeChangeInfo;
-import repair.common.CodeChangeInfoReader;
 import repair.pattern.Pattern;
 import repair.pattern.abstraction.Abstractor;
 import repair.pattern.abstraction.LLMAbstractor;
-import repair.pattern.abstraction.TermFrequencyAbstractor;
-import repair.pattern.serialize.JsonSerializer;
 import repair.pattern.serialize.Serializer;
 
 import java.nio.file.Path;
 import java.util.Optional;
 
-import static repair.main.Main.generatePattern;
 
 public class Abstract {
     private final static Logger logger = LoggerFactory.getLogger(Abstract.class);

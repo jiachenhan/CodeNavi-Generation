@@ -1,17 +1,18 @@
+import os
 from pathlib import Path
 from typing import Generator
 
 from app.basic_modification_analysis import background_analysis
-from app.communication import InputSchema
+from app.communication import PatternInput
 from app.select_elements import ElementAnalysis
 from interface.llm.llm_dispatcher import LLMDispatcher
 from interface.llm.llm_openai import LLMOpenAI
-from utils.config import get_pattern_info_base_path, set_proxy
+from utils.config import get_pattern_info_base_path, set_config
 from utils.timer import Timer
 
 
 def execute_task(_llm,
-                 _global_schema: InputSchema,
+                 _global_schema: PatternInput,
                  _view_path: Path) -> None:
     with Timer():
         print(f"Processing {_view_path}")
@@ -35,7 +36,7 @@ def task_generator(_input_path: Path, _output_path: Path) -> Generator:
             _file_name = _json_file.stem
 
             try:
-                _global_schema = InputSchema.parse_file(_json_file)
+                _global_schema = PatternInput.parse_file(_json_file)
             except Exception as e:
                 print(f"Error: {e}")
                 continue
@@ -48,30 +49,11 @@ def task_generator(_input_path: Path, _output_path: Path) -> Generator:
 
 
 if __name__ == "__main__":
-    set_proxy()
+    set_config("deepseek")
     deepseek_instances1 = [
-        LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-92e516aab3d443adb30c6659284163e8",
-                  model_name="deepseek-chat")
-        for _ in range(100)
+        LLMOpenAI(base_url=os.environ.get("OPENAI_BASE_URL"), api_key=os.environ.get("OPENAI_API_KEY"),
+                  model_name=os.environ.get("MODEL_NAME"))
     ]
-
-    # deepseek_instances2 = [
-    #     LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-a52d51021f214e27a8eb6d12fa18a0ff",
-    #               model_name="deepseek-chat")
-    #     for _ in range(50)
-    # ]
-    #
-    # deepseek_instances3 = [
-    #     LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-5dd60037665f4ae6995140fced285412",
-    #               model_name="deepseek-chat")
-    #     for _ in range(50)
-    # ]
-    #
-    # deepseek_instances4 = [
-    #     LLMOpenAI(base_url="https://api.deepseek.com", api_key="sk-a467d9d3a9a34c5ca4a45ee6add34e68",
-    #               model_name="deepseek-chat")
-    #     for _ in range(50)
-    # ]
 
     deepseek_instances = deepseek_instances1
     dispatcher = LLMDispatcher(deepseek_instances)

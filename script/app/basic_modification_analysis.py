@@ -1,4 +1,4 @@
-from app.communication import InputSchema, pretty_print_history
+from app.communication import PatternInput, pretty_print_history
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import get_pattern_info_base_path
@@ -28,11 +28,11 @@ and then I hope you can help me analyze the role of each AST element in this mod
 """
 
 
-def original_code(input_schema: InputSchema) -> str:
+def original_code(input_schema: PatternInput) -> str:
     return "\n".join(input_schema.before_code)
 
 
-def basic_change_info(input_schema: InputSchema) -> str:
+def basic_change_info(input_schema: PatternInput) -> str:
     change_prompt = f"""there are {len(input_schema.diff)} changes in the code, """
 
     for i, change in enumerate(input_schema.diff):
@@ -48,7 +48,7 @@ def basic_change_info(input_schema: InputSchema) -> str:
     return change_prompt
 
 
-def background_analysis(_llm: LLMAPI, _global_schema: InputSchema) -> list:
+def background_analysis(_llm: LLMAPI, _global_schema: PatternInput) -> list:
     _background_messages = [
         {"role": "user", "content": SYSTEM_PROMPT1.format(original_code=original_code(_global_schema),
                                                           change_info=basic_change_info(_global_schema))},
@@ -67,7 +67,7 @@ def background_analysis(_llm: LLMAPI, _global_schema: InputSchema) -> list:
 if __name__ == "__main__":
     codeLlama = LLMOpenAI(base_url="http://localhost:8001/v1", api_key="empty", model_name="CodeLlama")
     file_path = get_pattern_info_base_path() / "drjava" / "17" / "0.json"
-    global_schema = InputSchema.parse_file(file_path)
+    global_schema = PatternInput.parse_file(file_path)
 
     history = background_analysis(codeLlama, global_schema)
     pretty_print_history(history)

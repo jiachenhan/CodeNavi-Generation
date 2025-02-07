@@ -117,3 +117,33 @@ def java_extract_pattern(timeout_sec: float,
     cmd = ["java", "-jar", java_program, "extract",
            str(pattern_pair_path), str(pattern_ser_path), str(pattern_json_path)]
     start_process(cmd, work_dir, timeout_sec)
+
+
+def kirin_engine(timeout_sec: float,
+                 engine_path: Path,
+                 dsl_path: Path,
+                 scanned_file_path: Path,
+                 output_dir: Path,
+                 language: str = "java"):
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java",
+           "-Dfile.encoding-utf-8",
+           "--add-opens=java.base/java.util=ALL-UNNAMED",
+           "--add-opens=java.base/java.lang=ALL-UNNAMED",
+           "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+           "--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED",
+           "--add-opens=java.base/java.nio.charset=ALL-UNNAMED",
+           "--add-opens=java.base/java.net=ALL-UNNAMED",
+           "--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+           "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+           "--enable-preview",
+           "-cp", str(engine_path), "com.huawei.secbrella.kirin.Main",
+           "--plugin",
+           "--dir", str(scanned_file_path),
+           "--outputFormat", "xml",
+           "--output", str(output_dir),
+           "--checkerDir", dsl_path,
+           "--language", language
+           ]
+
+    start_process(cmd, work_dir, timeout_sec)

@@ -1,0 +1,40 @@
+import copy
+from typing import List, Dict
+
+
+class ElementHistory:
+    def __init__(self,
+                 element_id: int,
+                 history: list):
+        self.element_id = element_id
+        self.history = history
+        self.element_round = list()
+        self.structure_round = list()
+
+    def get_round_history(self) -> List[Dict]:
+        history_copy = copy.deepcopy(self.history)
+        history_copy.extend(self.element_round)
+        return history_copy
+
+    def add_message_to_history(self, role: str, content: str):
+        self.history.append({"role": role, "content": content})
+
+    def add_user_message_to_history(self, content: str):
+        self.add_message_to_history(role="user", content=content)
+
+    def add_assistant_message_to_history(self, content: str):
+        self.add_message_to_history(role="assistant", content=content)
+
+    def add_message_to_round(self, role: str, content: str):
+        self.element_round.append({"role": role, "content": content})
+
+    def add_user_message_to_round(self, content: str):
+        self.add_message_to_round(role="user", content=content)
+
+    def add_assistant_message_to_round(self, content: str):
+        self.add_message_to_round(role="assistant", content=content)
+
+
+class GlobalHistories:
+    background_history: list
+    element_histories: Dict[int, ElementHistory] = dict()

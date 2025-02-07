@@ -37,18 +37,27 @@ class YamlConfig(metaclass=SingletonMeta):
 
 _config = YamlConfig().get_config()
 
+def set_config(tag: str = "deepseek"):
+    if tag == "huawei":
+        huawei_config()
+    elif tag == "deepseek":
+        deepseek_config()
 
-def set_proxy():
-    proxies = {
-        'http': 'http://172.19.135.130:5000',
-        'https': 'http://172.19.135.130:5000'
-    }
+def huawei_config():
+    os.environ["OPENAI_API_KEY"] = _config["huawei"]["API_KEY"][0]
+    os.environ["OPENAI_BASE_URL"] = _config["huawei"]["BASE_URL"]
+    os.environ["MODEL_NAME"] = _config["huawei"]["MODEL_NAME"]
+    os.environ["NO_PROXY"] = _config["huawei"]["NO_PROXY"]
 
-    os.environ['HTTP_PROXY'] = proxies.get('http')
-    os.environ['HTTPS_PROXY'] = proxies.get('https')
+def deepseek_config():
+    os.environ["OPENAI_API_KEY"] = _config["deepseek"]["API_KEY"][0]
+    os.environ["OPENAI_BASE_URL"] = _config["deepseek"]["BASE_URL"]
+    os.environ["MODEL_NAME"] = _config["deepseek"]["MODEL_NAME"]
+    os.environ['HTTP_PROXY'] = _config["deepseek"]["HTTP_PROXY"]
+    os.environ['HTTPS_PROXY'] = _config["deepseek"]["HTTPS_PROXY"]
 
-    # print(f'HTTP Proxy: {os.environ.get("HTTP_PROXY")}')
-    # print(f'HTTPS Proxy: {os.environ.get("HTTPS_PROXY")}')
+def get_jar_path() -> str:
+    return _config["jar_path"]
 
 
 # 指代FixGen

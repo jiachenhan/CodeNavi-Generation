@@ -228,7 +228,11 @@ public class MoTypeDeclaration extends MoAbstractTypeDeclaration{
             match = match && name.isSame(moTypeDeclaration.name);
             match = match && MoNodeList.sameList(bodyDeclarations, moTypeDeclaration.bodyDeclarations);
             match = match && isInterface == moTypeDeclaration.isInterface;
-            match = match && superclassType.isSame(moTypeDeclaration.superclassType);
+            if (superclassType == null) {
+                match = match && moTypeDeclaration.superclassType == null;
+            } else {
+                match = match && superclassType.isSame(moTypeDeclaration.superclassType);
+            }
             match = match && MoNodeList.sameList(superInterfaceTypes, moTypeDeclaration.superInterfaceTypes);
             return match && MoNodeList.sameList(typeParameters, moTypeDeclaration.typeParameters);
         }

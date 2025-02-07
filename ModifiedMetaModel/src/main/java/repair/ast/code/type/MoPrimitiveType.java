@@ -27,7 +27,7 @@ public class MoPrimitiveType extends MoAnnotatableType {
                     "annotations", true);
 
     private final static Description<MoPrimitiveType, MoPrimitiveType.TypeKind> primitiveTypeCodeDescription =
-            new Description<>(ChildType.CHILD, MoPrimitiveType.class, MoPrimitiveType.TypeKind.class,
+            new Description<>(ChildType.SIMPLE, MoPrimitiveType.class, MoPrimitiveType.TypeKind.class,
                     "primitiveTypeCode", true);
 
     private final static Map<String, Description<MoPrimitiveType, ?>> descriptionsMap = Map.ofEntries(
