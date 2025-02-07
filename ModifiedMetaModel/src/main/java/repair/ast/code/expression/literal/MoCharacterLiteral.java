@@ -32,6 +32,8 @@ public class MoCharacterLiteral extends MoExpression {
     @RoleDescriptor(type = ChildType.SIMPLE, role = "escapedValue", mandatory = true)
     private String escapedValue;
 
+    private char value;
+
     public MoCharacterLiteral(Path fileName, int startLine, int endLine, CharacterLiteral characterLiteral) {
         super(fileName, startLine, endLine, characterLiteral);
         moNodeType = MoNodeType.TYPECharacterLiteral;
@@ -39,6 +41,14 @@ public class MoCharacterLiteral extends MoExpression {
 
     public String getEscapedValue() {
         return escapedValue;
+    }
+
+    public char getValue() {
+        return value;
+    }
+
+    public void setValue(char value) {
+        this.value = value;
     }
 
     @Override

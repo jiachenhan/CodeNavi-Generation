@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @JsonSerialize(using = PatternSerializer.class)
 public class Pattern implements Serializable {
@@ -52,6 +53,19 @@ public class Pattern implements Serializable {
         });
 
         initAttributes();
+        setNotLogicManager();
+    }
+
+    /**
+     * this constructor is used to create a pattern from a single node, aims to test convert model from graph to DSL
+     * @param singleNode the single before AST
+     */
+    public Pattern(MoNode singleNode) {
+        actionMode = null;
+        this.patternBefore0 = singleNode;
+        this.patternAfter0 = null;
+        diffComparator = null;
+        initAttributes();
     }
 
     private final Map<MoNode, Boolean> nodeToConsidered = new HashMap<>();
@@ -83,6 +97,19 @@ public class Pattern implements Serializable {
     public Map<MoNode, Map<Class<? extends Attribute<?>>, Attribute<?>>> getNodeToAttributes() {
         return nodeToAttributes;
     }
+
+    /**
+     * this field is used to manage the node in after tree, which need to add non-logic to dsl
+     */
+    private NotLogicManager notLogicManager = null;
+    private void setNotLogicManager() {
+        notLogicManager = new NotLogicManager(this);
+    }
+
+    public Optional<NotLogicManager> getNotLogicManager() {
+        return Optional.ofNullable(notLogicManager);
+    }
+
 
 
     /**

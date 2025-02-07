@@ -349,6 +349,7 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoCharacterLiteral characterLiteral = new MoCharacterLiteral(fileName, startLine, endLine, node);
         characterLiteral.setStructuralProperty("escapedValue", node.getEscapedValue());
+        characterLiteral.setValue(node.charValue());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
@@ -1368,6 +1369,7 @@ public class NodeParser extends ASTVisitor {
         int endLine = getEndLine(node);
         MoStringLiteral stringLiteral = new MoStringLiteral(fileName, startLine, endLine, node);
         stringLiteral.setStructuralProperty("escapedValue", node.getEscapedValue());
+        stringLiteral.setValue(node.getLiteralValue());
 
         if(!nodeStack.isEmpty()) {
             MoNode moParent = nodeStack.peek();
