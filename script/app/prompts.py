@@ -10,7 +10,7 @@ Here is the original code:
 
 Here is the modification information:
 ```
-{original_code}
+{change_info}
 ```
 
 Your task is to:
