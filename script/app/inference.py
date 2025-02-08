@@ -42,7 +42,7 @@ class Analyzer:
     @staticmethod
     def check_valid_response(response: str) -> bool:
         # 使用正则表达式删除第一个字母之前的所有符号，并保留整个字符串
-        cleaned_response = re.sub(r'^[^a-zA-Z]*[a-zA-Z]', '', response)
+        cleaned_response = re.sub(r'^[^a-zA-Z]*([a-zA-Z])', r'\1', response)
         is_valid = cleaned_response.lower().startswith(("yes", "no"))
         if not is_valid:
             _logger.error(f"Retry! Invalid response: {response}")
@@ -51,7 +51,7 @@ class Analyzer:
     @staticmethod
     def check_true_response(response: str) -> bool:
         # 使用正则表达式删除第一个字母之前的所有符号，并保留整个字符串
-        cleaned_response = re.sub(r'^[^a-zA-Z]*[a-zA-Z]', '', response)
+        cleaned_response = re.sub(r'^[^a-zA-Z]*([a-zA-Z])', r'\1', response)
         return cleaned_response.lower().startswith("yes")
 
     @staticmethod
