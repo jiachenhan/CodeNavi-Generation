@@ -77,6 +77,10 @@ def get_patches_base_path() -> Path:
     return get_root_project_path().joinpath("04patch")
 
 
+def get_dsl_base_path() -> Path:
+    return get_root_project_path().joinpath("07dsl")
+
+
 def get_random_seed() -> int:
     return 42
 

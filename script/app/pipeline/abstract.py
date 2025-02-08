@@ -29,22 +29,19 @@ if __name__ == "__main__":
                     model_name=os.environ.get("MODEL_NAME"))
 
     jar_path = utils.config.get_jar_path()
+
+    dataset_path = Path("D:/datas/sample_100_dataset")
     dataset_name = "sample_100_dataset"
+    group = "0bea84025c7545adbaacef130eea46cd"
+    pattern_ori_path = utils.config.get_pattern_base_path() / dataset_name / "ori" / f"{group}.ser"
+    pattern_abs_path = utils.config.get_pattern_base_path() / dataset_name / "abs" / f"{group}.ser"
 
-    group_names = []
+    pattern_info_path = utils.config.get_pattern_info_base_path() / dataset_name / "input" / f"{group}.json"
+    pattern_output_path = utils.config.get_pattern_info_base_path() / dataset_name / "output" / f"{group}.json"
 
-    for group_name in group_names:
-        pattern_ori_ser_path = get_pattern_base_path() / "ori" / dataset_name / f"{group_name}.ser"
-        pattern_abs_ser_path = get_pattern_base_path() / "abs" / dataset_name / f"{group_name}.ser"
-
-        if pattern_abs_ser_path.exists():
-            continue
-
-        input_path = get_pattern_info_base_path() / "input" / dataset_name / f"{group_name}.json"
-        output_path = get_pattern_info_base_path() / "output" / dataset_name / f"{group_name}.json"
-
-        pattern_input = PatternInput.from_file(input_path)
-
-        llm_abstract(llm, pattern_input, output_path)
-        java_abstract(10, pattern_ori_ser_path, pattern_abs_ser_path, output_path, jar_path)
+    # 调用LLM抽象
+    pattern_input = PatternInput.from_file(pattern_info_path)
+    llm_abstract(llm, pattern_input, pattern_output_path)
+    # 生成修改后pattern
+    java_abstract(10, pattern_ori_path, pattern_abs_path, pattern_output_path, jar_path)
         
