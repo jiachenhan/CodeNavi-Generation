@@ -10,6 +10,7 @@ import repair.pattern.serialize.Serializer;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -32,13 +33,8 @@ public class GenQuery {
             Pattern pattern = patternOpt.get();
             Query query = QueryGenerator.getInstance().generate(pattern);
             String prettyPrint = query.prettyPrint();
-            System.out.println(prettyPrint);
-            try (FileWriter file = new FileWriter(queryPath.toFile())){
-                FileUtils.ensureDirectoryExists(queryPath);
-                file.write(prettyPrint);
-            } catch (IOException e) {
-                logger.error("Failed to write query to {}", queryPath);
-            }
+            FileUtils.ensureDirectoryExists(queryPath);
+            Files.writeString(queryPath, prettyPrint);
         } catch (Exception e) {
             logger.error("Failed to gen query", e);
         }

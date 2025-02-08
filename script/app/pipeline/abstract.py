@@ -43,5 +43,5 @@ if __name__ == "__main__":
     pattern_input = PatternInput.from_file(pattern_info_path)
     llm_abstract(llm, pattern_input, pattern_output_path)
     # 生成修改后pattern
-    java_abstract(10, pattern_ori_path, pattern_abs_path, pattern_output_path, jar_path)
+    java_abstract(10, pattern_ori_path, pattern_output_path, pattern_abs_path, jar_path)
         

@@ -31,7 +31,8 @@ public class LLMAbstractor implements Abstractor {
     @Override
     public boolean shouldConsider(MoNode node) {
         // 包含了action相关的节点以及LLM考虑语义的节点
-        return LLMConsideredElements.contains(String.valueOf(node.getId())) || actionRelatedConsiderNodes.contains(node);
+//        return LLMConsideredElements.contains(String.valueOf(node.getId())) || actionRelatedConsiderNodes.contains(node);
+        return LLMConsideredElements.contains(String.valueOf(node.getId()));
     }
 
     @Override
