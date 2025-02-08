@@ -34,6 +34,15 @@ class ElementHistory:
     def add_assistant_message_to_round(self, content: str):
         self.add_message_to_round(role="assistant", content=content)
 
+    def add_message_to_structure_round(self, role: str, content: str):
+        self.structure_round.append({"role": role, "content": content})
+
+    def add_user_message_to_structure_round(self, content: str):
+        self.add_message_to_structure_round(role="user", content=content)
+
+    def add_assistant_message_to_structure_round(self, content: str):
+        self.add_message_to_structure_round(role="assistant", content=content)
+
 
 class GlobalHistories:
     background_history: list

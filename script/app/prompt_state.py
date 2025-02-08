@@ -67,7 +67,6 @@ class NormalElementState(PromptState):
                 _element_history.add_user_message_to_round(_element_prompt)
                 _element_history.add_assistant_message_to_round(response)
                 if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_elements.add(_element.get("id"))
                     self.analyzer.push(_element)
                     self.analyzer.prompt_state = StructureState(self.analyzer)
                 else:
@@ -107,11 +106,12 @@ class StructureState(PromptState):
         _element = self.analyzer.current_element
         _element_type = _element.get("type")
         if _element_type not in self.STRUCTURE_RELATED_AST_NODE_TYPES:
+            self.analyzer.considered_elements.add(_element.get("id"))
             self.analyzer.current_element = None
             self.analyzer.prompt_state = ElementState(self.analyzer)
             return
 
-        _element_prompt = STRUCTURE_ELEMENT_PROMPT.format(element=_element, elementType=_element_type)
+        _element_prompt = STRUCTURE_ELEMENT_PROMPT.format(element=_element.get("value"), elementType=_element_type)
 
         for _ in range(self.analyzer.retries):
             _element_history = self.analyzer.get_current_element_history()
@@ -122,8 +122,8 @@ class StructureState(PromptState):
             response = self.analyzer.llm.invoke(_round_prompt)
 
             if self.analyzer.check_valid_response(response):
-                _element_history.add_user_message_to_round(_element_prompt)
-                _element_history.add_assistant_message_to_round(response)
+                _element_history.add_user_message_to_structure_round(_element_prompt)
+                _element_history.add_assistant_message_to_structure_round(response)
                 if self.analyzer.check_true_response(response):
                     self.analyzer.considered_elements.add(_element.get("id"))
                 self.analyzer.current_element = None
