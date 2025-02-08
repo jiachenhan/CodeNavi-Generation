@@ -39,13 +39,11 @@ public abstract class Query implements Printable, Aliasable, Rhs {
         } else if (this.condition instanceof UnionCondition unionCondition
                 && unionCondition.getPredicate() == UnionCondition.Predicate.AND) {
             unionCondition.addInnerCondition(condition);
-        } else if (this.condition instanceof BinaryCondition binaryCondition) {
+        } else {
             UnionCondition unionCondition = new UnionCondition(UnionCondition.Predicate.AND);
-            unionCondition.addInnerCondition(binaryCondition);
+            unionCondition.addInnerCondition(this.condition);
             unionCondition.addInnerCondition(condition);
             setCondition(unionCondition);
-        } else {
-            logger.error("Unsupported condition type: {}", this.condition.getClass().getName());
         }
     }
 
