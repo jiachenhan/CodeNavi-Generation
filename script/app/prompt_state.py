@@ -111,7 +111,7 @@ class StructureState(PromptState):
             self.analyzer.prompt_state = ElementState(self.analyzer)
             return
 
-        _element_prompt = STRUCTURE_ELEMENT_PROMPT.format(elementType=_element_type)
+        _element_prompt = STRUCTURE_ELEMENT_PROMPT.format(element=_element, elementType=_element_type)
 
         for _ in range(self.analyzer.retries):
             _element_history = self.analyzer.get_current_element_history()

@@ -27,26 +27,14 @@ public class Main {
         }
 
         switch (args[0]) {
-            case "genpat":
-                GenPat.repair_main(args);
-                break;
-            case "genpat_detect":
-                GenPat.detect_main(args);
-                break;
-            case "oracle":
-                GainOracle.main(args);
-                break;
-            case "extract":
-                Extract.main(args);
-                break;
-            case "abstract":
-                Abstract.main(args);
-                break;
-            case "detect":
-                Detect.main(args);
-                break;
-            default:
-                logger.error("not supported command: {}", args[0]);
+            case "genpat" -> GenPat.repair_main(args);
+            case "genpat_detect" -> GenPat.detect_main(args);
+            case "oracle" -> GainOracle.main(args);
+            case "extract" -> Extract.main(args);
+            case "abstract" -> Abstract.main(args);
+            case "detect" -> Detect.main(args);
+            case "genquery" -> GenQuery.main(args);
+            default -> logger.error("not supported command: {}", args[0]);
         }
     }
 

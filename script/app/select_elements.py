@@ -15,7 +15,9 @@ from utils.timer import Timer
 
 _logger = LoggerConfig.get_logger(__name__)
 
-
+"""
+    decorated, please use inference.Analyzer
+"""
 class AnalysisState(Enum):
     YES = "yes"
     NO = "no"

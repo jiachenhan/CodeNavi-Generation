@@ -28,6 +28,7 @@ def start_process(cmd: List[str], work_dir: Path, timeout_sec: float) -> str:
     timer = Timer(timeout_sec, kill_process, [process])
     stdout = ""
     try:
+        _logger.info(f"Starting process: {cmd}")
         timer.start()  # 启动定时器
         stdout, stderr = process.communicate()  # 等待进程完成
         if process.returncode == 0:
@@ -116,6 +117,16 @@ def java_extract_pattern(timeout_sec: float,
     work_dir = utils.config.get_root_project_path()
     cmd = ["java", "-jar", java_program, "extract",
            str(pattern_pair_path), str(pattern_ser_path), str(pattern_json_path)]
+    start_process(cmd, work_dir, timeout_sec)
+
+def java_generate_query(timeout_sec: float,
+                        # generate DSL from abstracted pattern
+                        pattern_ser_path: Path,
+                        output_query_path: Path,
+                        java_program: str):
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java", "-jar", java_program, "genquery",
+           str(pattern_ser_path), str(output_query_path)]
     start_process(cmd, work_dir, timeout_sec)
 
 

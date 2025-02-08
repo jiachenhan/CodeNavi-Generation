@@ -10,6 +10,9 @@ import repair.FileUtils;
 import repair.ast.MoNode;
 import repair.ast.code.expression.MoExpression;
 import repair.ast.code.statement.MoStatement;
+import repair.pattern.InsertNode;
+import repair.pattern.MoveNode;
+import repair.pattern.NotLogicManager;
 import repair.pattern.Pattern;
 import repair.pattern.attr.Attribute;
 
@@ -24,19 +27,19 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
     @Override
     public void serialize(Pattern pattern, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
-//        List<MoStatement> statements = pattern.getNodeToConsidered().keySet().stream()
-//                .filter(node -> node instanceof MoStatement)
-//                .map(node -> (MoStatement) node)
-//                .toList();
 
         generateBeforeCode(pattern.getPatternBefore0(), jsonGenerator); // part 1: before code
         generateDiff(pattern.getPatternBefore0(), pattern.getPatternAfter0(), jsonGenerator); // part 2: diff
 
-//        generateStmts(statements, jsonGenerator); // part 3: stmts
-//        generateNodes(pattern.getNodeToConsidered().keySet(), jsonGenerator, serializerProvider); // part 4: nodes
-
         jsonGenerator.writeFieldName("Before0Tree");
-        generateBefore0Tree(pattern.getPatternBefore0(), jsonGenerator); // part 3: before0 tree
+        generateNodeTree(pattern.getPatternBefore0(), jsonGenerator); // part 3: before0 tree
+
+        if (pattern.getNotLogicManager().isPresent()) {
+            NotLogicManager notLogicManager = pattern.getNotLogicManager().get();
+            generateInsertNodes(notLogicManager, jsonGenerator);
+            generateMoveNodes(notLogicManager, jsonGenerator);
+        }
+
         generateAttrs(pattern.getNodeToAttributes(), jsonGenerator, serializerProvider); // part 5: attrs
         jsonGenerator.writeEndObject();
     }
@@ -89,7 +92,7 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
         jsonGenerator.writeEndArray();
     }
 
-    private void generateBefore0Tree(MoNode node, JsonGenerator jsonGenerator) throws IOException {
+    private void generateNodeTree(MoNode node, JsonGenerator jsonGenerator) throws IOException {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("id", node.getId());
         jsonGenerator.writeStringField("type", node.getClass().getSimpleName());
@@ -102,11 +105,31 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
             jsonGenerator.writeFieldName("children");
             jsonGenerator.writeStartArray();
             for (MoNode child : node.getChildren()) {
-                generateBefore0Tree(child, jsonGenerator);
+                generateNodeTree(child, jsonGenerator);
             }
             jsonGenerator.writeEndArray();
         }
         jsonGenerator.writeEndObject();
+    }
+
+    private void generateInsertNodes(NotLogicManager notLogicManager, JsonGenerator jsonGenerator) throws IOException {
+        List<InsertNode> insertNodes = notLogicManager.getInsertNodes();
+        jsonGenerator.writeFieldName("insertNodes");
+        jsonGenerator.writeStartArray();
+        for (InsertNode insertNode : insertNodes) {
+            generateNodeTree(insertNode.insertNode(), jsonGenerator);
+        }
+        jsonGenerator.writeEndArray();
+    }
+
+    private void generateMoveNodes(NotLogicManager notLogicManager, JsonGenerator jsonGenerator) throws IOException {
+        List<MoveNode> moveNodes = notLogicManager.getMoveNodes();
+        jsonGenerator.writeFieldName("moveParentNodes");
+        jsonGenerator.writeStartArray();
+        for (MoveNode moveNode : moveNodes) {
+            generateNodeTree(moveNode.moveParent(), jsonGenerator);
+        }
+        jsonGenerator.writeEndArray();
     }
 
     @Deprecated
