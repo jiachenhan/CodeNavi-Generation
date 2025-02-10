@@ -54,9 +54,10 @@ for above violation(s).
 'Yes': If the name is representative for above violation(s).
 'No': If the name is not representative for above violation(s).
 
-Note: A code element is considered representative if it meets any of the following criteria:
-1. Direct Contribution: It directly contributes to triggering the violation(s).
-2. Strong Indicator: Its semantics, type, structure are strongly indicative of the underlying violation(s).
+Note: A code element's name is considered representative if it meets any of the following criteria:
+1. Semantic meaning of variables: The semantic meaning contained in the name suggests that it may trigger the violation(s). \
+Please give the possible regular expression, if you thing its semantic meaning trigger the violation(s).
+2. Refers to a specific function: Represents violated function calls, type constructions, etc.
 3. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
 Please answer the question according to the following template:
 [yes/no]: [Cause analysis]
@@ -70,10 +71,9 @@ for the violation(s)? Or is it simply because it contains representative code el
 'Yes': If the structural framework is representative for above violation(s).
 'No': If the structural framework is not representative for above violation(s).
 
-Note: A code element is considered representative if it meets any of the following criteria:
-1. Direct Contribution: It directly contributes to triggering the violation(s).
-2. Strong Indicator: Its semantics, type, structure are strongly indicative of the underlying violation(s).
-3. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
+Note: A structural framework is considered representative if it meets any of the following criteria:
+1. Control flow: The control flow structure is a necessary operation in violation.
+2. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
 Please answer the question according to the following template:
 [yes/no]: [Cause analysis]
 """
