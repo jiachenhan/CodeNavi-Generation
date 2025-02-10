@@ -1,12 +1,8 @@
 from app.communication import PatternInput, pretty_print_history
-from app.prompts import BACKGROUND_PROMPT, TASK_DESCRIPTION_PROMPT
+from app.prompts import BACKGROUND_PROMPT
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import get_pattern_info_base_path
-
-SYSTEM_PROMPT1 = BACKGROUND_PROMPT
-
-SYSTEM_PROMPT2 = TASK_DESCRIPTION_PROMPT
 
 
 def original_code(input_schema: PatternInput) -> str:
@@ -31,17 +27,12 @@ def basic_change_info(input_schema: PatternInput) -> str:
 
 def background_analysis(_llm: LLMAPI, _global_schema: PatternInput) -> list:
     _background_messages = [
-        {"role": "user", "content": SYSTEM_PROMPT1.format(original_code=original_code(_global_schema),
+        {"role": "user", "content": BACKGROUND_PROMPT.format(original_code=original_code(_global_schema),
                                                           change_info=basic_change_info(_global_schema))},
     ]
     _background_response1 = _llm.invoke(_background_messages)
 
     _background_messages.append({"role": "assistant", "content": _background_response1})
-    _background_messages.append({"role": "user", "content": SYSTEM_PROMPT2})
-    _background_response2 = _llm.invoke(_background_messages)
-
-    _background_messages.append({"role": "assistant", "content": _background_response2})
-    # print(f"background_messages: {_background_messages}")
     return _background_messages
 
 

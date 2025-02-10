@@ -4,11 +4,10 @@ import os
 import re
 from pathlib import Path
 
-from setuptools.command.bdist_egg import analyze_egg
-
 from app.communication import PatternInput
 from app.history import GlobalHistories, ElementHistory
-from app.prompt_state import PromptState, InitialState, ExitState, NameState, NormalElementState
+from app.prompt_state import (PromptState, InitialState, ExitState, NameState, NormalElementState,
+                              InsertElementState, InsertNameState, MoveNameState, MoveElementState)
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import LoggerConfig, set_config, get_pattern_info_base_path
@@ -32,6 +31,11 @@ class Analyzer:
         self.global_history = GlobalHistories()
         self.considered_elements = set()
         self.considered_attrs = {"exprType": [], "Name": []}
+
+        # 标识当前正在分析的插入/移动父节点
+        self.current_action_node = None
+        self.considered_inserts = {}
+        self.considered_moves = {}
 
     @staticmethod
     def get_top_stmts_from_tree(tree: dict) -> list:
@@ -95,6 +99,18 @@ class Analyzer:
             self.global_history.element_histories[child_id] = ElementHistory(element_id=child_id, history=round_history)
             self.element_stack.append(child)
 
+    def push_action(self, sub_tree: dict) -> None:
+        if sub_tree.get("leaf"):
+            return
+        for child in reversed(sub_tree.get("children")):
+            element_id = sub_tree.get("id")
+            child_id = child.get("id")
+            round_history = copy.deepcopy(self.global_history.after_tree_history.get(element_id).history)
+            _round = self.global_history.after_tree_history.get(element_id).element_round
+            round_history.extend(_round)
+            self.global_history.after_tree_history[child_id] = ElementHistory(element_id=child_id, history=round_history)
+            self.element_stack.append(child)
+
     def get_current_element_history(self) -> ElementHistory:
         return self.global_history.element_histories.get(self.current_element.get("id"))
 
@@ -108,6 +124,23 @@ class Analyzer:
             self.prompt_state = NameState(self)
         else:
             self.prompt_state = NormalElementState(self)
+
+    def get_action_current_element_history(self) -> ElementHistory:
+        return self.global_history.after_tree_history.get(self.current_element.get("id"))
+
+    def insert_node_analysis(self):
+        self.current_element = self.element_stack.pop()
+        if Analyzer.is_name_element(self.current_element):
+            self.prompt_state = InsertNameState(self)
+        else:
+            self.prompt_state = InsertElementState(self)
+
+    def move_node_analysis(self):
+        self.current_element = self.element_stack.pop()
+        if Analyzer.is_name_element(self.current_element):
+            self.prompt_state = MoveNameState(self)
+        else:
+            self.prompt_state = MoveElementState(self)
 
 if __name__ == "__main__":
     set_config()

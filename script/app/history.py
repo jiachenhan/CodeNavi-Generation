@@ -46,4 +46,9 @@ class ElementHistory:
 
 class GlobalHistories:
     background_history: list
+    task_history: list
+
     element_histories: Dict[int, ElementHistory] = dict()
+
+    after_task_history: list
+    after_tree_history: Dict[int, ElementHistory] = dict()

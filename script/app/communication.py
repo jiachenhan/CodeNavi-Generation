@@ -14,6 +14,9 @@ class PatternInput(BaseModel):
     tree: dict = Field(alias="Before0Tree")
     attrs: dict = Field(alias="Attrs")
 
+    insert_nodes: list[dict] = Field(alias="insertNodes")
+    move_parent_nodes: list[dict] = Field(alias="moveParentNodes")
+
     @classmethod
     def from_file(cls, _file_path: Path) -> "PatternInput":
         try:

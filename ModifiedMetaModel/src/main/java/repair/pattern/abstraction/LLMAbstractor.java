@@ -109,6 +109,12 @@ public class LLMAbstractor implements Abstractor {
             }
         });
 
+        // insert or move nodes abstraction
+        pattern.getNotLogicManager().ifPresent(notLogicManager -> {
+            notLogicManager.getInsertNodes().forEach(insertNode -> {
+            });
+        });
+
     }
 
     private void parseAbstractInfo() {
