@@ -32,6 +32,8 @@ class Analyzer:
         self.considered_elements = set()
         self.considered_attrs = {"exprType": [], "Name": []}
 
+        self.insert_nodes = [node for node in self.pattern_input.insert_nodes]
+        self.move_parent_nodes = [node for node in self.pattern_input.move_parent_nodes]
         # 标识当前正在分析的插入/移动父节点
         self.current_action_node = None
         self.considered_inserts = {}
@@ -63,7 +65,8 @@ class Analyzer:
         return _element.get("type") in ("MoSimpleName", "MoQualifiedName")
 
     def serialize(self, path: Path):
-        histories = {"background": self.global_history.background_history}
+        histories = {"background": self.global_history.background_history, "task": self.global_history.task_history}
+
         element_histories = {}
         for _id, _element_history in self.global_history.element_histories.items():
             element_histories[_id] = {
@@ -71,13 +74,23 @@ class Analyzer:
                 "round": _element_history.element_round,
                 "structure_round": _element_history.structure_round
             }
-
         histories["elements"] = element_histories
+
+        after_histories = {}
+        for _id, _element_history in self.global_history.after_tree_history.items():
+            after_histories[_id] = {
+                "history": _element_history.history,
+                "round": _element_history.element_round,
+                "structure_round": _element_history.structure_round
+            }
+        histories["elements"] = after_histories
 
         data = {
             "histories": histories,
             "considered_elements": list(self.considered_elements),
-            "considered_attrs": self.considered_attrs
+            "considered_attrs": self.considered_attrs,
+            "insert_elements": self.considered_inserts,
+            "move_elements": self.considered_moves
         }
 
         if not path.exists():

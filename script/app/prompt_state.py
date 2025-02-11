@@ -142,10 +142,6 @@ class StructureState(PromptState):
 
 
 class InsertNodeState(PromptState):
-    def __init__(self, analyzer):
-        super().__init__(analyzer)
-        self.insert_nodes = [node for node in self.analyzer.pattern_input.insert_nodes]
-
     def init_history(self):
         element_id = self.analyzer.current_action_node.get("id")
         background_history_copy = copy.deepcopy(self.analyzer.global_history.background_history)
@@ -165,10 +161,10 @@ class InsertNodeState(PromptState):
         if len(self.analyzer.element_stack) > 0:
             self.analyzer.insert_node_analysis()
         else:
-            if len(self.insert_nodes) > 0:
-                insert_node = self.insert_nodes.pop(0)
+            if len(self.analyzer.insert_nodes) > 0:
+                insert_node = self.analyzer.insert_nodes.pop(0)
                 self.analyzer.current_action_node = insert_node
-                self.analyzer.push(insert_node)
+                self.analyzer.element_stack.append(insert_node)
                 self.after_task_prompt()
                 self.init_history()
             else:
@@ -176,10 +172,6 @@ class InsertNodeState(PromptState):
 
 
 class MoveNodeState(PromptState):
-    def __init__(self, analyzer):
-        super().__init__(analyzer)
-        self.move_parent_nodes = [node for node in self.analyzer.pattern_input.move_parent_nodes]
-
     def init_history(self):
         element_id = self.analyzer.current_action_node.get("id")
         background_history_copy = copy.deepcopy(self.analyzer.global_history.background_history)
@@ -191,10 +183,10 @@ class MoveNodeState(PromptState):
         if len(self.analyzer.element_stack) > 0:
             self.analyzer.move_node_analysis()
         else:
-            if len(self.move_parent_nodes) > 0:
-                move_parent_node = self.move_parent_nodes.pop(0)
+            if len(self.analyzer.move_parent_nodes) > 0:
+                move_parent_node = self.analyzer.move_parent_nodes.pop(0)
                 self.analyzer.current_action_node = move_parent_node
-                self.analyzer.push(move_parent_node)
+                self.analyzer.element_stack.append(move_parent_node)
                 self.init_history()
             else:
                 self.analyzer.prompt_state = ExitState(self.analyzer)
@@ -218,11 +210,11 @@ class InsertElementState(PromptState):
                 _element_history.add_user_message_to_round(_element_prompt)
                 _element_history.add_assistant_message_to_round(response)
                 if self.analyzer.check_true_response(response):
-                    # todo: 初始化空列表
-                    self.analyzer.considered_inserts.get(self.analyzer.current_action_node).add(_element.get("id"))
+                    self.analyzer.considered_inserts.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
                     self.analyzer.push_action(_element)
                 self.analyzer.prompt_state = InsertNodeState(self.analyzer)
                 return
+
 
 class InsertNameState(PromptState):
     def accept(self):
@@ -241,7 +233,7 @@ class InsertNameState(PromptState):
                 _element_history.add_user_message_to_round(_element_prompt)
                 _element_history.add_assistant_message_to_round(response)
                 if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_inserts.get(self.analyzer.current_action_node, []).add(_element.get("id"))
+                    self.analyzer.considered_inserts.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
                 self.analyzer.current_element = None
                 self.analyzer.prompt_state = InsertNodeState(self.analyzer)
                 return
@@ -264,6 +256,7 @@ class MoveElementState(PromptState):
                 _element_history.add_user_message_to_round(_element_prompt)
                 _element_history.add_assistant_message_to_round(response)
                 if self.analyzer.check_true_response(response):
+                    self.analyzer.considered_moves.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
                     self.analyzer.push_action(_element)
                 self.analyzer.prompt_state = MoveNodeState(self.analyzer)
                 return
@@ -285,7 +278,7 @@ class MoveNameState(PromptState):
                 _element_history.add_user_message_to_round(_element_prompt)
                 _element_history.add_assistant_message_to_round(response)
                 if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_moves.get(self.analyzer.current_action_node, []).add(_element.get("id"))
+                    self.analyzer.considered_moves.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
                 self.analyzer.current_element = None
                 self.analyzer.prompt_state = MoveNodeState(self.analyzer)
                 return
