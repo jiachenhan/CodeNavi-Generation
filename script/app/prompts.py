@@ -44,10 +44,9 @@ analyze whether it contains representative code elements for above violations(s)
 
 Note: A code element is considered representative if it meets any of the following criteria:
 1. Direct Contribution: It directly contributes to triggering the violation(s).
-2. Strong Indicator: Its semantics, type, structure are strongly indicative of the underlying violation(s).
-3. Include violated code: It contains the code triggering the violation(s).
-4. Key features: It contains features related to the modifications that need to be applied
-5. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
+2. Include violated code: It contains the code triggering the violation(s).
+3. Key features: It contains relevant features that may appear in the context of this violation(s).
+4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
 Please answer the question according to the following template:
 [yes/no]: [Cause analysis]
 """
