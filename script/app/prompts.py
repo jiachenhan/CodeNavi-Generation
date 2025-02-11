@@ -37,7 +37,7 @@ Note: A code element is considered representative if:
 Note: You should NOT attempt to split AST by yourself.
 """
 
-NORMAL_ELEMENT_PROMPT = """For code element `{element}` in line `{line}`, which is `{elementType}` type in AST, please \
+NORMAL_ELEMENT_PROMPT = """For AST type `{elementType}` code element `{element}` in line `{line}`, please \
 analyze whether it contains representative code elements for above violations(s).
 'Yes': If the code snippet contains representative code element for above violation(s).
 'No': If the code snippet does not contain representative code element for above violation(s).
