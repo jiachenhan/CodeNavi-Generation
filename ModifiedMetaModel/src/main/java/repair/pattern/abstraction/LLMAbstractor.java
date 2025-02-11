@@ -20,11 +20,16 @@ public class LLMAbstractor implements Abstractor {
     private final List<String> LLMConsideredElements;
     private final Map<String, List<String>> LLMConsideredAttrs;
 
+    private final Map<String, List<String>> LLMConsideredInsertElement;
+    private final Map<String, List<String>> LLMConsideredMoveElement;
+
     public LLMAbstractor(Path abstractInfoPath) {
         this.abstractInfoPath = abstractInfoPath;
         this.LLMConsideredElements = new ArrayList<>();
         this.LLMConsideredAttrs = new HashMap<>();
 
+        this.LLMConsideredInsertElement = new HashMap<>();
+        this.LLMConsideredMoveElement = new HashMap<>();
         parseAbstractInfo();
     }
 
@@ -112,6 +117,35 @@ public class LLMAbstractor implements Abstractor {
         // insert or move nodes abstraction
         pattern.getNotLogicManager().ifPresent(notLogicManager -> {
             notLogicManager.getInsertNodes().forEach(insertNode -> {
+                MoNode insertedNode = insertNode.insertNode();
+                Map<MoNode, Boolean> insertNodeToConsidered = insertNode.insertConsideredNode();
+                int insertId = insertedNode.getId();
+                if (LLMConsideredInsertElement.containsKey(String.valueOf(insertId))) {
+                    List<String> consideredSubInsertNodes = LLMConsideredInsertElement.get(String.valueOf(insertId));
+                    insertNodeToConsidered.forEach((node, value) -> {
+                        if (consideredSubInsertNodes.contains(String.valueOf(node.getId()))) {
+                            insertNodeToConsidered.put(node, true);
+                        } else {
+                            insertNodeToConsidered.put(node, false);
+                        }
+                    });
+                }
+            });
+
+            notLogicManager.getMoveNodes().forEach(moveNode -> {
+                MoNode movedNode = moveNode.moveNode();
+                Map<MoNode, Boolean> moveNodeToConsidered = moveNode.moveParentConsideredNode();
+                int moveId = movedNode.getId();
+                if (LLMConsideredMoveElement.containsKey(String.valueOf(moveId))) {
+                    List<String> consideredSubMoveNodes = LLMConsideredMoveElement.get(String.valueOf(moveId));
+                    moveNodeToConsidered.forEach((node, value) -> {
+                        if (consideredSubMoveNodes.contains(String.valueOf(node.getId()))) {
+                            moveNodeToConsidered.put(node, true);
+                        } else {
+                            moveNodeToConsidered.put(node, false);
+                        }
+                    });
+                }
             });
         });
 
@@ -122,27 +156,63 @@ public class LLMAbstractor implements Abstractor {
         try {
             // 读取 JSON 文件并反序列化为 JsonNode
             JsonNode rootNode = objectMapper.readTree(this.abstractInfoPath.toFile());
-
             // 解析 considered_elements
-            JsonNode consideredElementsNode = rootNode.get("considered_elements");
-            for (JsonNode element : consideredElementsNode) {
-                LLMConsideredElements.add(element.asText());
-            }
-
+            extractElements(rootNode.get("considered_elements"));
             // 解析 considered_attrs
-            JsonNode consideredAttrsNode = rootNode.get("considered_attrs");
-            Iterator<Map.Entry<String, JsonNode>> attrs = consideredAttrsNode.fields();
-            while (attrs.hasNext()) {
-                Map.Entry<String, JsonNode> attr = attrs.next();
-                LLMConsideredAttrs.put(attr.getKey(), new ArrayList<>());
-                Iterator<JsonNode> nodes = attr.getValue().elements();
-                while (nodes.hasNext()) {
-                    String id = nodes.next().asText();
-                    LLMConsideredAttrs.get(attr.getKey()).add(id);
-                }
-            }
+            extractAttrs(rootNode.get("considered_attrs"));
+
+            // 解析 insert_considered_elements
+            extractInsertElements(rootNode.get("insert_elements"));
+            // 解析 move_considered_elements
+            extractMoveElements(rootNode.get("move_elements"));
         } catch (IOException e) {
             logger.error("Failed to read abstract info file");
+        }
+    }
+
+    private void extractAttrs(JsonNode consideredAttrsNode) {
+        Iterator<Map.Entry<String, JsonNode>> attrs = consideredAttrsNode.fields();
+        while (attrs.hasNext()) {
+            Map.Entry<String, JsonNode> attr = attrs.next();
+            LLMConsideredAttrs.put(attr.getKey(), new ArrayList<>());
+            Iterator<JsonNode> nodes = attr.getValue().elements();
+            while (nodes.hasNext()) {
+                String id = nodes.next().asText();
+                LLMConsideredAttrs.get(attr.getKey()).add(id);
+            }
+        }
+    }
+
+    private void extractElements(JsonNode consideredElementsNode) {
+        // 解析 considered_elements
+        for (JsonNode element : consideredElementsNode) {
+            LLMConsideredElements.add(element.asText());
+        }
+    }
+
+    private void extractInsertElements(JsonNode consideredInsertNode) {
+        Iterator<Map.Entry<String, JsonNode>> insertNodes = consideredInsertNode.fields();
+        while (insertNodes.hasNext()) {
+            Map.Entry<String, JsonNode> insert = insertNodes.next();
+            LLMConsideredInsertElement.put(insert.getKey(), new ArrayList<>());
+            Iterator<JsonNode> nodes = insert.getValue().elements();
+            while (nodes.hasNext()) {
+                String id = nodes.next().asText();
+                LLMConsideredInsertElement.get(insert.getKey()).add(id);
+            }
+        }
+    }
+
+    private void extractMoveElements(JsonNode consideredMoveNode) {
+        Iterator<Map.Entry<String, JsonNode>> moveNodes = consideredMoveNode.fields();
+        while (moveNodes.hasNext()) {
+            Map.Entry<String, JsonNode> move = moveNodes.next();
+            LLMConsideredMoveElement.put(move.getKey(), new ArrayList<>());
+            Iterator<JsonNode> nodes = move.getValue().elements();
+            while (nodes.hasNext()) {
+                String id = nodes.next().asText();
+                LLMConsideredMoveElement.get(move.getKey()).add(id);
+            }
         }
     }
 
