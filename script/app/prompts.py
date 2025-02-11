@@ -46,7 +46,8 @@ Note: A code element is considered representative if it meets any of the followi
 1. Direct Contribution: It directly contributes to triggering the violation(s).
 2. Strong Indicator: Its semantics, type, structure are strongly indicative of the underlying violation(s).
 3. Include violated code: It contains the code triggering the violation(s).
-4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
+4. Key features: It contains features related to the modifications that need to be applied
+5. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
 Please answer the question according to the following template:
 [yes/no]: [Cause analysis]
 """
@@ -60,7 +61,8 @@ Note: A code element's name is considered representative if it meets any of the 
 1. Semantic meaning of variables: The semantic meaning contained in the name suggests that it may trigger the violation(s), \
 or its semantic meaning is related to the modification.
 2. Refers to a violated function: Represents violated function calls, type constructions, etc.
-3. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
+3. Key features: The name is the feature related to the modifications that need to be applied
+4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
 Please answer the question according to the following template:
 [yes/no]: [Cause analysis]
 
