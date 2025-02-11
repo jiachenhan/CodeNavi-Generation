@@ -2,6 +2,8 @@ package repair.common;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import repair.apply.diff.DiffComparator;
 import repair.ast.MoNode;
 import repair.ast.parser.NodeParser;
@@ -15,6 +17,8 @@ import static repair.common.JDTUtils.*;
 import static repair.common.JDTUtils.getMethodDeclaration;
 
 public class Utils {
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+
     public static Pattern generatePattern(Path patternCase) {
         System.out.println("Processing case: " + patternCase.getFileName());
         Path patternBeforePath = patternCase.resolve("before.java");
@@ -22,8 +26,6 @@ public class Utils {
 
         return generatePattern(patternBeforePath, patternAfterPath);
     }
-
-
 
     public static Pattern generatePattern(Path patternCase, String beforeSignature, String afterSignature) {
         Path patternBeforePath = patternCase.resolve("before.java");
@@ -39,7 +41,8 @@ public class Utils {
         Optional<MethodDeclaration> methodAfter = getMethodDeclaration(afterCompilationUnit, methodSignatureAfter);
 
         if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
-            fail("MethodDeclaration is not present");
+            logger.error("MethodBefore or MethodAfter is empty");
+            System.exit(1);
         }
 
         NodeParser beforeParser = new NodeParser(patternBeforePath, beforeCompilationUnit);
@@ -59,7 +62,8 @@ public class Utils {
         Optional<MethodDeclaration> methodAfter = getOnlyMethodDeclaration(afterCompilationUnit);
 
         if(methodBefore.isEmpty() || methodAfter.isEmpty()) {
-            fail("MethodDeclaration is not present");
+            logger.error("MethodBefore or MethodAfter is empty");
+            System.exit(1);
         }
 
         NodeParser beforeParser = new NodeParser(beforePath, beforeCompilationUnit);
