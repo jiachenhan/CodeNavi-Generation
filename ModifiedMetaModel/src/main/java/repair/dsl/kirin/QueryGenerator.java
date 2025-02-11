@@ -89,7 +89,10 @@ public class QueryGenerator {
             return;
         }
 
-        List<MoNode> consideredNodes = insertNode.insertConsideredNode().keySet().stream().toList();
+        List<MoNode> consideredNodes = insertNode.insertConsideredNode().entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .toList();
         List<NodePath> nodePaths = consideredNodes.stream()
                 .filter(node -> node != insertedNode)
                 .map(node -> NodePath.computeNodePath(insertedNode, node, consideredNodes))
@@ -124,7 +127,10 @@ public class QueryGenerator {
             return;
         }
 
-        List<MoNode> consideredNodes = moveNode.moveParentConsideredNode().keySet().stream().toList();
+        List<MoNode> consideredNodes = moveNode.moveParentConsideredNode().entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .toList();
         List<NodePath> nodePaths = consideredNodes.stream()
                 .filter(node -> node != moveParent)
                 .map(node -> NodePath.computeNodePath(moveParent, node, consideredNodes))
