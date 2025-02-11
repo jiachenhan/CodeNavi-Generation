@@ -83,7 +83,7 @@ class Analyzer:
                 "round": _element_history.element_round,
                 "structure_round": _element_history.structure_round
             }
-        histories["elements"] = after_histories
+        histories["afters"] = after_histories
 
         data = {
             "histories": histories,
