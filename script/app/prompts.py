@@ -64,9 +64,6 @@ or its semantic meaning is related to the modification.
 4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
 Please answer the question according to the following template:
 [yes/no]: [Cause analysis]
-
-Please give the possible regular expression, if you think his name can be replaced with other names that have relevant meanings.
-'possible regex': [RegEx]
 """
 
 EXPRESSION_TYPE_ELEMENT_PROMPT = """
