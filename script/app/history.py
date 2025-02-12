@@ -45,10 +45,9 @@ class ElementHistory:
 
 
 class GlobalHistories:
-    background_history: list
-    task_history: list
-
-    element_histories: Dict[int, ElementHistory] = dict()
-
-    after_task_history: list
-    after_tree_history: Dict[int, ElementHistory] = dict()
+    def __init__(self):
+        self.background_history = []
+        self.task_history = []
+        self.element_histories: Dict[int, ElementHistory] = {}
+        self.after_task_history = []
+        self.after_tree_history: Dict[int, ElementHistory] = {}

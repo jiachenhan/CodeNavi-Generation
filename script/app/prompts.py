@@ -47,7 +47,7 @@ Note: A code element is considered representative if it meets any of the followi
 2. Include violated code: It contains the code triggering the violation(s).
 3. Key features: It contains relevant features that may appear in the context of this violation(s).
 4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
-Please answer the question according to the following template:
+Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
 
@@ -62,7 +62,7 @@ or its semantic meaning is related to the modification.
 2. Refers to a violated function: Represents violated function calls, type constructions, etc.
 3. Key features: The name is the feature related to the modifications that need to be applied
 4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
-Please answer the question according to the following template:
+Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
 
@@ -77,7 +77,7 @@ for the violation(s)? Or is it simply because it contains representative code el
 Note: A structural framework is considered representative if it meets any of the following criteria:
 1. Control flow: The control flow structure is a necessary operation in violation.
 2. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
-Please answer the question according to the following template:
+Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
 
@@ -102,7 +102,7 @@ analyze whether it contains representative code elements for resolving above vio
 Note: A code element is considered representative if it meets any of the following criteria:
 1. Direct Contribution: It directly contributes to resolving the violation(s).
 2. Include key semantics: It contains key code, whose semantics are the core of solving this violation(s).
-Please answer the question according to the following template:
+Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
 
@@ -113,5 +113,6 @@ for resolving above violation(s).
 
 Note: A code element's name is considered representative if it meets any of the following criteria:
 1. Refers to a function: this function call is crucial for solving this problem.
+Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
