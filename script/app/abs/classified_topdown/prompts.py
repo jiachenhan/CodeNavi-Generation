@@ -1,27 +1,3 @@
-BACKGROUND_PROMPT = """You are an expert in identifying and resolving security vulnerabilities and code violations, \
-with a deep understanding of java code analysis.
-I will provide you a piece of code and its modification, the modification is a fixing of violations in the original \
-code.
-
-Here is the original code:
-```java
-{original_code}
-```
-
-Here is the modification information:
-```
-{change_info}
-```
-
-Your task is to:
-Step 1 - Analyzing the semantic of this modification: Understand the purpose and significance of the changes within \
-the context of code.
-Step 2 - Identify the violations addressed: Determine the specific problem or deficiency the modification resolves, such \
-as a bug, performance issue, or security vulnerability.
-please think step by step and if you are unsure of the meaning of this modification, \
-please tell me directly 'I don't know the purse of this modification'. 
-"""
-
 TASK_DESCRIPTION_PROMPT = """Based on your analysis, I've identified that there are some representative code elements \
 that clearly illustrate the violation(s) and strongly related to the causes. These representative code elements can \
 be used to detect similar violation(s) in other parts of the codebase.
@@ -94,14 +70,14 @@ Note: A code element is considered representative if:
 Note: You should NOT attempt to split AST by yourself.
 """
 
-AFTER_TREE_ELEMENT_PROMPT = """For code element `{element}`, which is `{elementType}` type in fixed AST, please \
+AFTER_TREE_ELEMENT_PROMPT = """For AST type `{elementType}` code element `{element}` in fixed AST, please \
 analyze whether it contains representative code elements for resolving above violations(s).
 'Yes': If the code snippet contains representative code element for resolving above violation(s).
 'No': If the code snippet does not contain representative code element for resolving above violation(s).
 
 Note: A code element is considered representative if it meets any of the following criteria:
 1. Direct Contribution: It directly contributes to resolving the violation(s).
-2. Include key semantics: It contains key code, whose semantics are the core of solving this violation(s).
+2. Include key semantics: It contains key code, whose semantics are helping to solve this violation(s).
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
@@ -112,7 +88,8 @@ for resolving above violation(s).
 'No': If the name is not representative for resolving above violation(s).
 
 Note: A code element's name is considered representative if it meets any of the following criteria:
-1. Refers to a function: this function call is crucial for solving this problem.
+1. Refers to a function, a class or interface: this function call, class or interface is crucial for solving this problem.
+2. Key semantic: the name's semantic is crucial for solving this problem.
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """

@@ -1,8 +1,8 @@
 import copy
 
 from app.basic_modification_analysis import background_analysis
-from app.history import ElementHistory
-from app.prompts import NORMAL_ELEMENT_PROMPT, NAME_ELEMENT_PROMPT, STRUCTURE_ELEMENT_PROMPT, TASK_DESCRIPTION_PROMPT, \
+from app.abs.classified_topdown.history import ElementHistory
+from app.abs.classified_topdown.prompts import NORMAL_ELEMENT_PROMPT, NAME_ELEMENT_PROMPT, STRUCTURE_ELEMENT_PROMPT, TASK_DESCRIPTION_PROMPT, \
     AFTER_TREE_TASK_PROMPT, AFTER_TREE_ELEMENT_PROMPT, AFTER_TREE_NAME_PROMPT
 from utils.config import LoggerConfig
 

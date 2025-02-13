@@ -1,5 +1,5 @@
 from app.communication import PatternInput, pretty_print_history
-from app.prompts import BACKGROUND_PROMPT
+from app.general_prompts import BACKGROUND_PROMPT
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import get_pattern_info_base_path

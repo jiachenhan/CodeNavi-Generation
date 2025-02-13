@@ -3,10 +3,10 @@ from pathlib import Path
 
 import utils
 from app.communication import PatternInput
-from app.inference import Analyzer
+from app.abs.classified_topdown.inference import Analyzer
 from interface.java.run_java_api import java_abstract
 from interface.llm.llm_openai import LLMOpenAI
-from utils.config import LoggerConfig, set_config, get_pattern_base_path, get_pattern_info_base_path
+from utils.config import LoggerConfig, set_config
 
 _logger = LoggerConfig.get_logger(__name__)
 

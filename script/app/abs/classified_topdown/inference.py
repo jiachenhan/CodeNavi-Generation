@@ -5,9 +5,9 @@ import re
 from pathlib import Path
 
 from app.communication import PatternInput
-from app.history import GlobalHistories, ElementHistory
-from app.prompt_state import (PromptState, InitialState, ExitState, NameState, NormalElementState,
-                              InsertElementState, InsertNameState, MoveNameState, MoveElementState)
+from app.abs.classified_topdown.history import GlobalHistories, ElementHistory
+from app.abs.classified_topdown.prompt_state import (PromptState, InitialState, ExitState, NameState, NormalElementState,
+                                                     InsertElementState, InsertNameState, MoveNameState, MoveElementState)
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import LoggerConfig, set_config, get_pattern_info_base_path
