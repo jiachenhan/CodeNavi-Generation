@@ -1,9 +1,10 @@
+import ast
 import json
 import re
 from pathlib import Path
 
 from app.abs.selected_topdown.history import GlobalHistories
-from app.abs.selected_topdown.prompt_state import PromptState, InitialState, ExitState
+from app.abs.selected_topdown.prompt_state import InitialState, ExitState
 from app.communication import PatternInput
 from interface.llm.llm_api import LLMAPI
 from utils.config import LoggerConfig
@@ -19,9 +20,9 @@ class Analyzer:
         self.pattern_input = _pattern_input
         self.retries = _retries
 
-        self.prompt_state: PromptState = InitialState(self)
+        self.prompt_state = InitialState(self)
         self.current_element = None
-        self.element_stack = list(reversed(Analyzer.get_top_stmts_from_tree(self.pattern_input.tree)))
+        self.element_stack = list()
 
         self.global_history = GlobalHistories()
         self.considered_elements = set()
@@ -41,12 +42,25 @@ class Analyzer:
                 return _["children"]
 
     @staticmethod
-    def check_valid_response(response: str) -> bool:
-        pass
+    def get_considered_nodes(response: str) -> (bool, list[int]):
+        pattern = re.compile(r"\[(\d+(?:,\s*\d+)*)]")
+        match = re.search(pattern, response)
+        if not match:
+            return False, []
+
+        list_content = match.group(0)
+        try:
+            parsed_list = ast.literal_eval(list_content)
+            return True, parsed_list
+        except (ValueError, SyntaxError) as e:
+            return False, []
 
     @staticmethod
-    def get_considered_nodes(response: str) -> list[int]:
-        pass
+    def single_consider(response: str) -> (bool, bool):
+        cleaned_response = re.sub(r'^[^a-zA-Z]*([a-zA-Z])', r'\1', response)
+        is_valid = cleaned_response.lower().startswith(("yes", "no"))
+        is_consider = cleaned_response.lower().startswith("yes")
+        return is_valid, is_consider
 
     def serialize(self, path: Path):
         histories = {"background": self.global_history.background_history, "task": self.global_history.task_history}
@@ -90,3 +104,7 @@ class Analyzer:
     def analysis(self):
         while not isinstance(self.prompt_state, ExitState):
             self.prompt_state.accept()
+
+if __name__ == "__main__":
+    analyzer = Analyzer(None, None)
+    print(analyzer)
