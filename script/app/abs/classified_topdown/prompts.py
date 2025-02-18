@@ -44,8 +44,8 @@ Note: According to the following template, please answer the question with 'yes'
 
 REGEX_NAME_PROMPT = """Does this name have to be literally equal to `{value}`? Please evaluate whether it must literally \
 equal to `{value}`, or it can be replace by another name with similarly semantic.
-'yes': If the name must literally equal to `{value}`
-'no': If the name can be replace by another name.
+'yes': If the name can be replace by another name. 
+'no': If the name must literally equal to `{value}`
 
 Note: 
 1. Normally, common function call names must be literally equal. \
