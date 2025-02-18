@@ -91,6 +91,7 @@ class Analyzer:
             "histories": histories,
             "considered_elements": list(self.considered_elements),
             "considered_attrs": self.considered_attrs,
+            "regex": self.regex_map,
             "insert_elements": self.considered_inserts,
             "move_elements": self.considered_moves
         }
