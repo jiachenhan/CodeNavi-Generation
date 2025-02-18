@@ -152,7 +152,7 @@ class RegEXState(PromptState):
             response = self.analyzer.llm.invoke(_round_prompt)
 
             if self.check_valid(response):
-                _element_history.regex_round.append({"role": "user", "content": _round_prompt})
+                _element_history.regex_round.append({"role": "user", "content": _reg_prompt})
                 _element_history.regex_round.append({"role": "assistant", "content": response})
                 has_reg, regex = self.get_regex(response)
                 if has_reg:
