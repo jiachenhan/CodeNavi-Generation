@@ -11,6 +11,9 @@ from utils.config import LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
 
+"""
+待测试，暂不使用
+"""
 class Analyzer:
     def __init__(self,
                  _llm: LLMAPI,

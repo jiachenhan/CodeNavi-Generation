@@ -138,7 +138,7 @@ def kirin_engine(timeout_sec: float,
                  language: str = "java"):
     work_dir = utils.config.get_root_project_path()
     cmd = ["java",
-           "-Dfile.encoding-utf-8",
+           "-Dfile.encoding=utf-8",
            "--add-opens=java.base/java.util=ALL-UNNAMED",
            "--add-opens=java.base/java.lang=ALL-UNNAMED",
            "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
