@@ -1,9 +1,12 @@
 import copy
+import re
+from typing import Optional
 
 from app.basic_modification_analysis import background_analysis
 from app.abs.classified_topdown.history import ElementHistory
-from app.abs.classified_topdown.prompts import NORMAL_ELEMENT_PROMPT, NAME_ELEMENT_PROMPT, STRUCTURE_ELEMENT_PROMPT, TASK_DESCRIPTION_PROMPT, \
-    AFTER_TREE_TASK_PROMPT, AFTER_TREE_ELEMENT_PROMPT, AFTER_TREE_NAME_PROMPT
+from app.abs.classified_topdown.prompts import NORMAL_ELEMENT_PROMPT, NAME_ELEMENT_PROMPT, STRUCTURE_ELEMENT_PROMPT, \
+    TASK_DESCRIPTION_PROMPT, \
+    AFTER_TREE_TASK_PROMPT, AFTER_TREE_ELEMENT_PROMPT, AFTER_TREE_NAME_PROMPT, REGEX_NAME_PROMPT
 from utils.config import LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
@@ -11,6 +14,10 @@ _logger = LoggerConfig.get_logger(__name__)
 STRUCTURE_RELATED_AST_NODE_TYPES = ["MoBlock", "MoDoStatement", "MoEnhancedForStatement", "MoForStatement",
                                     "MoIfStatement", "MoSwitchStatement", "MoSynchronizedStatement",
                                     "MoWhileStatement", "MoTryStatement", "MoTypeDeclarationStatement"]
+
+NAME_AST_NODE_TYPES = ["MoSimpleName", "MoQualifiedName",
+                       "MoBooleanLiteral", "MoCharacterLiteral", "MoNullLiteral",
+                       "MoNumberLiteral", "MoStringLiteral", "MoTypeLiteral"]
 
 class PromptState:
     def __init__(self, analyzer):
@@ -107,6 +114,49 @@ class NameState(PromptState):
                 if self.analyzer.check_true_response(response):
                     self.analyzer.considered_attrs["Name"].append(_element.get("id"))
                     self.analyzer.considered_elements.add(_element.get("id"))
+                    self.analyzer.prompt_state = RegEXState(self.analyzer)
+                    return
+                self.analyzer.prompt_state = ElementState(self.analyzer)
+                return
+
+class RegEXState(PromptState):
+    @staticmethod
+    def check_valid(response: str) -> bool:
+        pattern = r'^(yes)\|\|\|("(?:[^"\\]|\\.)*")$|^(no)\|\|\|""$'
+        match = re.fullmatch(pattern, response.strip())
+        return bool(match)
+
+    @staticmethod
+    def get_regex(response: str) -> (bool, Optional[str]):
+        pattern = r'^(yes)\|\|\|("(?:[^"\\]|\\.)*")$|^(no)\|\|\|""$'
+        match = re.fullmatch(pattern, response.strip())
+        if match:
+            if match.group(1) and match.group(1).lower() == "yes":
+                return True, match.group(2)
+            else:
+                return False, None
+        else:
+            _logger.error(f"should not happened after check valid")
+            return False, None
+
+    def accept(self):
+        _element = self.analyzer.current_element
+        _reg_prompt = REGEX_NAME_PROMPT.format(value=_element.get("value"))
+
+        for _ in range(self.analyzer.retries):
+            _element_history = self.analyzer.get_current_element_history()
+
+            _element_his_copy = copy.deepcopy(_element_history)
+            _element_his_copy.add_user_message_to_history(_reg_prompt)
+            _round_prompt = _element_his_copy.history
+            response = self.analyzer.llm.invoke(_round_prompt)
+
+            if self.check_valid(response):
+                _element_history.regex_round.append({"role": "user", "content": _round_prompt})
+                _element_history.regex_round.append({"role": "assistant", "content": response})
+                has_reg, regex = self.get_regex(response)
+                if has_reg:
+                    self.analyzer.regex_map[_element.get("id")] = regex
                 self.analyzer.current_element = None
                 self.analyzer.prompt_state = ElementState(self.analyzer)
                 return

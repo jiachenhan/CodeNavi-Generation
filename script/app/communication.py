@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import BaseModel, Field
 
@@ -9,6 +9,11 @@ _logger = LoggerConfig.get_logger(__name__)
 
 class PatternInput(BaseModel):
     path: str = Field(alias="FileName")
+    error_info: Optional[str] = Field(
+        default=None,
+        alias="ErrorInfo",
+        description="用户提供的错误信息"
+    )
     before_code: list[str] = Field(alias="BeforeCode")
     diff: list[dict[str, Union[str, int, list[str]]]] = Field(alias="Diff")
     tree: dict = Field(alias="Before0Tree")

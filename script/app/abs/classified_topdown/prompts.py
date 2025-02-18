@@ -42,6 +42,36 @@ Note: According to the following template, please answer the question with 'yes'
 [yes/no]: [Cause analysis]
 """
 
+REGEX_NAME_PROMPT = """Does this name have to be literally equal to `{value}`? Please evaluate whether it must literally \
+equal to `{value}`, or it can be replace by another name with similarly semantic.
+'yes': If the name must literally equal to `{value}`
+'no': If the name can be replace by another name.
+
+Note: 
+1. Normally, common function call names must be literally equal. \
+Customized function or variable names can be replaced by semantic like names.
+2. If it can be replaced, please summarize the possible regular expressions based on your knowledge
+
+Strictly follow the format below:
+1. First part: "yes" or "no"
+2. Second part (if yes): regex enclosed in double quotes ""
+3. Separate parts with triple vertical bars (|||)
+4. No explanations or formatting characters outside quotes
+
+Examples:
+Example1:
+Name: setex
+Output: yes|||"(setex|save|insert|update|put)"
+
+Example2:
+Name: excelFilePath
+Output: yes|||"(?i).*(path)$"
+
+Example3:
+Name: getenv
+Output: no|||""
+"""
+
 EXPRESSION_TYPE_ELEMENT_PROMPT = """
 """
 

@@ -11,7 +11,7 @@ from app.communication import PatternInput, pretty_print_history
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import get_pattern_info_base_path, LoggerConfig, set_config
-from utils.timer import Timer
+from utils.common import Timer
 
 _logger = LoggerConfig.get_logger(__name__)
 

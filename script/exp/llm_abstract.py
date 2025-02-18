@@ -8,7 +8,7 @@ from app.select_elements import ElementAnalysis
 from interface.llm.llm_dispatcher import LLMDispatcher
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import get_pattern_info_base_path, set_config
-from utils.timer import Timer
+from utils.common import Timer
 
 
 def execute_task(_llm,

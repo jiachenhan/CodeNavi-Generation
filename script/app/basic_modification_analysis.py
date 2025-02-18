@@ -1,5 +1,5 @@
 from app.communication import PatternInput, pretty_print_history
-from app.general_prompts import BACKGROUND_PROMPT
+from app.general_prompts import BACKGROUND_NO_ERROR_INFO_PROMPT, BACKGROUND_WITH_ERROR_INFO_PROMPT
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import get_pattern_info_base_path
@@ -26,12 +26,21 @@ def basic_change_info(input_schema: PatternInput) -> str:
 
 
 def background_analysis(_llm: LLMAPI, _global_schema: PatternInput) -> list:
-    _background_messages = [
-        {"role": "user", "content": BACKGROUND_PROMPT.format(original_code=original_code(_global_schema),
-                                                          change_info=basic_change_info(_global_schema))},
-    ]
-    _background_response1 = _llm.invoke(_background_messages)
+    if _global_schema.error_info:
+        _background_messages = [
+            {"role": "user",
+             "content": BACKGROUND_WITH_ERROR_INFO_PROMPT.format(original_code=original_code(_global_schema),
+                                                                 change_info=basic_change_info(_global_schema),
+                                                                 error_info=_global_schema.error_info)},
+        ]
+    else:
+        _background_messages = [
+            {"role": "user",
+             "content": BACKGROUND_NO_ERROR_INFO_PROMPT.format(original_code=original_code(_global_schema),
+                                                               change_info=basic_change_info(_global_schema))},
+        ]
 
+    _background_response1 = _llm.invoke(_background_messages)
     _background_messages.append({"role": "assistant", "content": _background_response1})
     return _background_messages
 

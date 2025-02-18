@@ -10,6 +10,7 @@ class ElementHistory:
         self.history = history
         self.element_round = list()
         self.structure_round = list()
+        self.regex_round = list()
 
     def get_round_history(self) -> List[Dict]:
         history_copy = copy.deepcopy(self.history)

@@ -39,6 +39,8 @@ class Analyzer:
         self.considered_inserts = {}
         self.considered_moves = {}
 
+        self.regex_map = {}
+
     @staticmethod
     def get_top_stmts_from_tree(tree: dict) -> list:
         for _ in tree["children"]:
