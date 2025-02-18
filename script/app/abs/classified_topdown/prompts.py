@@ -56,20 +56,20 @@ Strictly follow the format below:
 1. First part: "yes" or "no"
 2. Second part (if yes): regex enclosed in double quotes ""
 3. Separate parts with triple vertical bars (|||)
-4. No explanations or formatting characters outside quotes
+4. Follow your analysis after a line break
 
 Examples:
 Example1:
 Name: setex
-Output: yes|||"(setex|save|insert|update|put)"
+Output: yes|||"(setex|save|insert|update|put)" \n [analysis]
 
 Example2:
 Name: excelFilePath
-Output: yes|||"(?i).*(path)$"
+Output: yes|||"(?i).*(path)$" \n [analysis]
 
 Example3:
 Name: getenv
-Output: no|||""
+Output: no|||"" \n [analysis]
 """
 
 EXPRESSION_TYPE_ELEMENT_PROMPT = """

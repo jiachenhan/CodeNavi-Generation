@@ -74,7 +74,8 @@ class Analyzer:
             element_histories[_id] = {
                 "history": _element_history.history,
                 "round": _element_history.element_round,
-                "structure_round": _element_history.structure_round
+                "structure_round": _element_history.structure_round,
+                "regex_round": _element_history.regex_round
             }
         histories["elements"] = element_histories
 
@@ -83,8 +84,7 @@ class Analyzer:
             after_histories[_id] = {
                 "history": _element_history.history,
                 "round": _element_history.element_round,
-                "structure_round": _element_history.structure_round,
-                "regex_round": _element_history.regex_round
+                "structure_round": _element_history.structure_round
             }
         histories["afters"] = after_histories
 
