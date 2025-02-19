@@ -2,6 +2,7 @@ import multiprocessing
 import threading
 import time
 from functools import wraps, reduce
+from inspect import signature, Parameter
 from typing import Union, Optional, Callable
 
 from utils.config import LoggerConfig
@@ -129,10 +130,39 @@ def valid_with(validator: Union[Callable[..., bool], str] # 兼容类方法（�
             if isinstance(validator, str):
                 # 从实例或模块中获取
                 validator_func = getattr(args[0], validator)
+                if validator_func is None:
+                    raise AttributeError(f"cannot find validator: {validator}")
             else:
                 validator_func = validator
 
-            if not validator_func(result):
+            # 获取验证器函数的参数签名
+            sig = signature(validator_func)
+            params = sig.parameters
+
+            # 构建参数字典
+            validator_kwargs = {}
+            for name, param in params.items():
+                if name == 'response':
+                    validator_kwargs[name] = result
+                elif name == 'args':
+                    validator_kwargs[name] = args
+                elif name == 'kwargs':
+                    validator_kwargs[name] = kwargs
+                elif name == 'self' and args:
+                    validator_kwargs[name] = args[0]  # 类实例
+                else:
+                    # 尝试从原函数参数中获取
+                    if param.kind == Parameter.KEYWORD_ONLY:
+                        if name in kwargs:
+                            validator_kwargs[name] = kwargs[name]
+                    elif param.default != Parameter.empty:
+                        continue  # 使用默认值
+                    else:
+                        raise TypeError(
+                            f"validator {validator_func.__name__} need param: {name}"
+                        )
+
+            if not validator_func(**validator_kwargs):
                 raise InvalidOutputError(f"{func.__name__} returned invalid output: {result}")
             return result
         return wrapper
