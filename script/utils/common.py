@@ -129,38 +129,78 @@ def valid_with(validator: Union[Callable[..., bool], str] # 兼容类方法（�
             # 动态获取验证器
             if isinstance(validator, str):
                 # 从实例或模块中获取
-                validator_func = getattr(args[0], validator)
-                if validator_func is None:
-                    raise AttributeError(f"cannot find validator: {validator}")
+                validator_func = getattr(args[0], validator) if args else None
+                if not validator_func:
+                    raise AttributeError(f"Validator {validator} not found")
             else:
                 validator_func = validator
 
             # 获取验证器函数的参数签名
             sig = signature(validator_func)
-            params = sig.parameters
-
             # 构建参数字典
             validator_kwargs = {}
-            for name, param in params.items():
-                if name == 'response':
+
+            # 获取原函数参数上下文
+            func_sig = signature(func)
+            bound_args = func_sig.bind(*args, **kwargs)
+            bound_args.apply_defaults()
+            func_params = bound_args.arguments
+
+            # 构建可用参数池（优先级从高到低）
+            context = {
+                'result': result,          # 当前函数返回值
+                'self': args[0] if args else None,  # 实例对象
+                'args': args[1:] if args else [],   # 排除self的位置参数
+                'kwargs': kwargs,          # 原函数的关键字参数
+                **func_params              # 原函数的所有参数
+            }
+
+            # 智能参数匹配
+            for name, param in sig.parameters.items():
+                # 1. 特殊类型匹配
+                if param.annotation == type(result):
                     validator_kwargs[name] = result
-                elif name == 'args':
-                    validator_kwargs[name] = args
-                elif name == 'kwargs':
-                    validator_kwargs[name] = kwargs
-                elif name == 'self' and args:
-                    validator_kwargs[name] = args[0]  # 类实例
+                    continue
+
+                # 2. 上下文直接匹配
+                if name in context:
+                    validator_kwargs[name] = context[name]
+                    continue
+
+                # 3. 可变参数处理
+                if param.kind == Parameter.VAR_POSITIONAL:
+                    validator_kwargs[name] = context['args']
+                elif param.kwargs == Parameter.VAR_KEYWORD:
+                    validator_kwargs[name] = context['kwargs']
+
+                # 4. 默认值处理
+                elif param.default != Parameter.empty:
+                    continue  # 使用校验函数的默认值
+
+                # 5. 无法匹配的必填参数
                 else:
-                    # 尝试从原函数参数中获取
-                    if param.kind == Parameter.KEYWORD_ONLY:
-                        if name in kwargs:
-                            validator_kwargs[name] = kwargs[name]
-                    elif param.default != Parameter.empty:
-                        continue  # 使用默认值
-                    else:
-                        raise TypeError(
-                            f"validator {validator_func.__name__} need param: {name}"
-                        )
+                    raise TypeError(f"校验函数 {validator_func.__name__} 缺少必要参数: {name}")
+
+            # for name, param in params.items():
+            #     if name == 'response':
+            #         validator_kwargs[name] = result
+            #     elif name == 'args':
+            #         validator_kwargs[name] = args
+            #     elif name == 'kwargs':
+            #         validator_kwargs[name] = kwargs
+            #     elif name == 'self' and args:
+            #         validator_kwargs[name] = args[0]  # 类实例
+            #     else:
+            #         # 尝试从原函数参数中获取
+            #         if param.kind == Parameter.KEYWORD_ONLY:
+            #             if name in kwargs:
+            #                 validator_kwargs[name] = kwargs[name]
+            #         elif param.default != Parameter.empty:
+            #             continue  # 使用默认值
+            #         else:
+            #             raise TypeError(
+            #                 f"validator {validator_func.__name__} need param: {name}"
+            #             )
 
             if not validator_func(**validator_kwargs):
                 raise InvalidOutputError(f"{func.__name__} returned invalid output: {result}")
