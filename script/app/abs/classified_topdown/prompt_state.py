@@ -120,16 +120,36 @@ class NameState(PromptState):
                 return
 
 class RegEXState(PromptState):
-    @staticmethod
-    def check_valid(response: str) -> bool:
-        pattern = r'^(yes)\|\|\|("(?:[^"\\]|\\.)*")$|^(no)\|\|\|""$'
-        match = re.fullmatch(pattern, response.strip())
+    pattern = re.compile(r'''
+    # 格式1：以 "yes" 开头，捕获中间的内容
+    ^
+    (yes)                   # 匹配并捕获 "yes"
+    \|\|\|                  # 分隔符 "|||"
+    (                       # 捕获组：中间内容（允许转义字符）
+        (?:                 # 非捕获组（循环结构）
+            [^"\\]          # 普通字符：非双引号、非反斜杠的任意字符
+            |               # 或
+            \\.             # 转义字符（如 \" 或 \\）
+        )*                  # 重复0次或多次
+    )
+    \|\|\|                  # 分隔符 "|||"
+
+    |                       # 或
+
+    # 格式2：以 "no" 开头，固定内容 "None"
+    ^
+    (no)                    # 匹配并捕获 "no"
+    \|\|\|                  # 分隔符 "|||"
+    None                    # 固定内容 "None"（非捕获组）
+    \|\|\|                  # 分隔符 "|||"
+    ''', re.VERBOSE)
+
+    def check_valid(self, response: str) -> bool:
+        match = re.fullmatch(self.pattern, response.strip())
         return bool(match)
 
-    @staticmethod
-    def get_regex(response: str) -> (bool, Optional[str]):
-        pattern = r'^(yes)\|\|\|("(?:[^"\\]|\\.)*")$|^(no)\|\|\|""$'
-        match = re.fullmatch(pattern, response.strip())
+    def get_regex(self, response: str) -> (bool, Optional[str]):
+        match = re.fullmatch(self.pattern, response.strip())
         if match:
             if match.group(1) and match.group(1).lower() == "yes":
                 return True, match.group(2)

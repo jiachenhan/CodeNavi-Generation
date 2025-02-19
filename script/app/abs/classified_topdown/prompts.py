@@ -54,22 +54,22 @@ Customized function or variable names can be replaced by semantic like names.
 
 Strictly follow the format below:
 1. First part: "yes" or "no"
-2. Second part (if yes): regex enclosed in double quotes ""
-3. Separate parts with triple vertical bars (|||)
-4. Follow your analysis after a line break
+2. Second part (if yes): possible regular expression; (if no): None
+3. Follow your analysis after
+4. Separate parts with triple vertical bars (|||)
 
 Examples:
 Example1:
 Name: setex
-Output: yes|||"(setex|save|insert|update|put)" \n [analysis]
+Output: yes|||(setex|save|insert|update|put)||| \n [analysis]
 
 Example2:
 Name: excelFilePath
-Output: yes|||"(?i).*(path)$" \n [analysis]
+Output: yes|||(?i).*(path)$||| \n [analysis]
 
 Example3:
 Name: getenv
-Output: no|||"" \n [analysis]
+Output: no|||None||| \n [analysis]
 """
 
 EXPRESSION_TYPE_ELEMENT_PROMPT = """
