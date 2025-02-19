@@ -128,8 +128,7 @@ def valid_with(validator: Union[Callable[..., bool], str] # 兼容类方法（�
             # 动态获取验证器
             if isinstance(validator, str):
                 # 从实例或模块中获取
-                context = args[0].__dict__ if args and hasattr(args[0], validator) else globals()
-                validator_func = context[validator]
+                validator_func = getattr(args[0], validator)
             else:
                 validator_func = validator
 
