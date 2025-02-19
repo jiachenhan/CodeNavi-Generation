@@ -10,6 +10,7 @@ from app.abs.classified_topdown.prompt_state import (PromptState, InitialState, 
                                                      InsertElementState, InsertNameState, MoveNameState, MoveElementState)
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
+from utils.common import retry_times, valid_with
 from utils.config import LoggerConfig, set_config, get_pattern_info_base_path
 
 _logger = LoggerConfig.get_logger(__name__)
@@ -40,6 +41,11 @@ class Analyzer:
         self.considered_moves = {}
 
         self.regex_map = {}
+
+    @retry_times("retries")
+    @valid_with("check_valid_response")
+    def invoke_with_retry(self, messages) -> str:
+        return self.llm.invoke(messages)
 
     @staticmethod
     def get_top_stmts_from_tree(tree: dict) -> list:

@@ -1,5 +1,6 @@
 import copy
 import re
+from http.client import responses
 from typing import Optional
 
 from app.basic_modification_analysis import background_analysis
@@ -75,23 +76,42 @@ class NormalElementState(PromptState):
                                                        element=_element.get("value"),
                                                        elementType=_element.get("type"))
 
-        for _ in range(self.analyzer.retries):
-            _element_history = self.analyzer.get_current_element_history()
+        _element_history = self.analyzer.get_current_element_history()
+        _element_his_copy = copy.deepcopy(_element_history)
+        _element_his_copy.add_user_message_to_history(_element_prompt)
+        _round_prompt = _element_his_copy.history
+        valid, response = self.analyzer.invoke_with_retry(_round_prompt)
 
-            _element_his_copy = copy.deepcopy(_element_history)
-            _element_his_copy.add_user_message_to_history(_element_prompt)
-            _round_prompt = _element_his_copy.history
-            response = self.analyzer.llm.invoke(_round_prompt)
+        if valid:
+            _element_history.add_user_message_to_round(_element_prompt)
+            _element_history.add_assistant_message_to_round(response)
+            if self.analyzer.check_true_response(response):
+                self.analyzer.push(_element)
+                self.analyzer.prompt_state = StructureState(self.analyzer)
+            else:
+                self.analyzer.prompt_state = ElementState(self.analyzer)
+            return
+        else:
+            _logger.error(f"Invalid response: {response} After retry {self.analyzer.retries} times")
+            self.analyzer.prompt_state = ElementState(self.analyzer)
 
-            if self.analyzer.check_valid_response(response):
-                _element_history.add_user_message_to_round(_element_prompt)
-                _element_history.add_assistant_message_to_round(response)
-                if self.analyzer.check_true_response(response):
-                    self.analyzer.push(_element)
-                    self.analyzer.prompt_state = StructureState(self.analyzer)
-                else:
-                    self.analyzer.prompt_state = ElementState(self.analyzer)
-                return
+        # for _ in range(self.analyzer.retries):
+        #     _element_history = self.analyzer.get_current_element_history()
+        #
+        #     _element_his_copy = copy.deepcopy(_element_history)
+        #     _element_his_copy.add_user_message_to_history(_element_prompt)
+        #     _round_prompt = _element_his_copy.history
+        #     response = self.analyzer.llm.invoke(_round_prompt)
+        #
+        #     if self.analyzer.check_valid_response(response):
+        #         _element_history.add_user_message_to_round(_element_prompt)
+        #         _element_history.add_assistant_message_to_round(response)
+        #         if self.analyzer.check_true_response(response):
+        #             self.analyzer.push(_element)
+        #             self.analyzer.prompt_state = StructureState(self.analyzer)
+        #         else:
+        #             self.analyzer.prompt_state = ElementState(self.analyzer)
+        #         return
 
 
 class NameState(PromptState):
@@ -121,35 +141,35 @@ class NameState(PromptState):
 
 class RegEXState(PromptState):
     pattern = re.compile(r'''
-    # 格式1：以 "yes" 开头，捕获中间的内容
-    ^
-    (yes)                   # 匹配并捕获 "yes"
-    \|\|\|                  # 分隔符 "|||"
-    (                       # 捕获组：中间内容（允许转义字符）
-        (?:                 # 非捕获组（循环结构）
-            [^"\\]          # 普通字符：非双引号、非反斜杠的任意字符
-            |               # 或
-            \\.             # 转义字符（如 \" 或 \\）
-        )*                  # 重复0次或多次
-    )
-    \|\|\|                  # 分隔符 "|||"
-
-    |                       # 或
-
-    # 格式2：以 "no" 开头，固定内容 "None"
-    ^
-    (no)                    # 匹配并捕获 "no"
-    \|\|\|                  # 分隔符 "|||"
-    None                    # 固定内容 "None"（非捕获组）
-    \|\|\|                  # 分隔符 "|||"
+        # 格式1：以 "yes" 开头，捕获中间的内容
+        ^
+        (yes)                   # 匹配并捕获 "yes"
+        \|\|\|                  # 分隔符 "|||"
+        (                       # 捕获组：中间内容（允许转义字符）
+            (?:                 # 非捕获组（循环结构）
+                [^"\\]          # 普通字符：非双引号、非反斜杠的任意字符
+                |               # 或
+                \\.             # 转义字符（如 \" 或 \\）
+            )*                  # 重复0次或多次
+        )
+        \|\|\|                  # 分隔符 "|||"
+    
+        |                       # 或
+    
+        # 格式2：以 "no" 开头，固定内容 "None"
+        ^
+        (no)                    # 匹配并捕获 "no"
+        \|\|\|                  # 分隔符 "|||"
+        None                    # 固定内容 "None"（非捕获组）
+        \|\|\|                  # 分隔符 "|||"
     ''', re.VERBOSE)
 
     def check_valid(self, response: str) -> bool:
-        match = re.fullmatch(self.pattern, response.strip())
+        match = re.match(self.pattern, response.strip())
         return bool(match)
 
     def get_regex(self, response: str) -> (bool, Optional[str]):
-        match = re.fullmatch(self.pattern, response.strip())
+        match = re.match(self.pattern, response.strip())
         if match:
             if match.group(1) and match.group(1).lower() == "yes":
                 return True, match.group(2)

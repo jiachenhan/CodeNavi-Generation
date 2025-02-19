@@ -1,8 +1,8 @@
 import multiprocessing
 import threading
 import time
-from functools import wraps
-from typing import Union, Optional
+from functools import wraps, reduce
+from typing import Union, Optional, Callable
 
 from utils.config import LoggerConfig
 
@@ -75,6 +75,10 @@ def retry_post(max_interval=10):
                 try:
                     response = func(*args, **kwargs)
                     return response
+                except InvalidOutputError as e:
+                    _logger.error(f"{func.__name__}(Retrying {retry_interval}...): InvalidOutputError occurred: {e}")
+                    time.sleep(retry_interval)
+                    retry_interval = retry_interval * 2 if retry_interval < max_interval else 1
                 except Exception as e:
                     _logger.error(f"{func.__name__}(Retrying {retry_interval}...): An Exception occurred: {e}")
                     time.sleep(retry_interval)
@@ -82,14 +86,28 @@ def retry_post(max_interval=10):
         return wrapper
     return decorator
 
-def retry_times(max_retries=5):
+def retry_times(retries: Union[int, str] = 5 # 兼容类方法（动态绑定）和普通方法
+                ) -> Callable:
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs) -> (bool, Optional[any]):
+            # 动态解析重试次数
+            if isinstance(retries, str):
+                # 从实例中获取重试次数
+                context = args[0].__dict__ if args and hasattr(args[0], retries) else globals()
+                max_retries = context[retries]
+            else:
+                max_retries = retries
+
             for attempt in range(max_retries):
                 try:
                     result = func(*args, **kwargs)
                     return True, result
+                except InvalidOutputError as e:
+                    remaining = max_retries - (attempt + 1)
+                    _logger.error(f"{func.__name__} failed (attempt {attempt + 1}/{max_retries}), retrying... Error: {e}")
+                    if remaining > 0:
+                        time.sleep(1)  # 可选的间隔等待，可以按需调整或参数化
                 except Exception as e:
                     remaining = max_retries - (attempt + 1)
                     _logger.error(f"{func.__name__} failed (attempt {attempt + 1}/{max_retries}), retrying... Error: {e}")
@@ -97,5 +115,26 @@ def retry_times(max_retries=5):
                         time.sleep(1)  # 可选的间隔等待，可以按需调整或参数化
             _logger.error(f"{func.__name__} failed after {max_retries} attempts")
             return False, None
+        return wrapper
+    return decorator
+
+def valid_with(validator: Union[Callable[..., bool], str] # 兼容类方法（动态绑定）和普通方法
+               ) -> Callable:
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+
+            # 动态获取验证器
+            if isinstance(validator, str):
+                # 从实例或模块中获取
+                context = args[0].__dict__ if args and hasattr(args[0], validator) else globals()
+                validator_func = context[validator]
+            else:
+                validator_func = validator
+
+            if not validator_func(result):
+                raise InvalidOutputError(f"{func.__name__} returned invalid output: {result}")
+            return result
         return wrapper
     return decorator
