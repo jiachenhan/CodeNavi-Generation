@@ -6,7 +6,7 @@ from app.communication import PatternInput
 from app.abs.classified_topdown.inference import Analyzer
 from interface.java.run_java_api import java_abstract
 from interface.llm.llm_openai import LLMOpenAI
-from utils.config import LoggerConfig, set_config
+from utils.config import LoggerConfig, set_config, PipelineConfig
 
 _logger = LoggerConfig.get_logger(__name__)
 
@@ -21,6 +21,23 @@ def llm_abstract(_llm,
     except Exception as e:
         _logger.error(f"Error in {_output_path}: {e}")
         return
+
+
+def do_abstract():
+    set_config("huawei")
+    _llm = LLMOpenAI(base_url=os.environ.get("OPENAI_BASE_URL"),
+                    api_key=os.environ.get("OPENAI_API_KEY"),
+                    model_name=os.environ.get("MODEL_NAME"))
+
+    _pattern_input = PatternInput.from_file(PipelineConfig.pattern_info_path)
+    llm_abstract(_llm, _pattern_input, PipelineConfig.pattern_output_path)
+    java_abstract(10,
+                  PipelineConfig.pattern_ori_path,
+                  PipelineConfig.pattern_output_path,
+                  PipelineConfig.pattern_abs_path,
+                  PipelineConfig.jar_path
+                  )
+
 
 if __name__ == "__main__":
     set_config()

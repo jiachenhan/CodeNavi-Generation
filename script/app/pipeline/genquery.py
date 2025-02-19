@@ -1,5 +1,10 @@
 import utils.config
 from interface.java.run_java_api import java_generate_query
+from utils.config import PipelineConfig
+
+
+def do_generate_dsl(dsl_path):
+    java_generate_query(60, PipelineConfig.pattern_abs_path, dsl_path, PipelineConfig.jar_path)
 
 
 if __name__ == "__main__":

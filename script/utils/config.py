@@ -84,6 +84,15 @@ def get_dsl_base_path() -> Path:
 def get_random_seed() -> int:
     return 42
 
+class PipelineConfig:
+    dataset_name = "user_dataset"
+    group = "user_case"
+    jar_path = get_jar_path()
+    pattern_ori_path = get_pattern_base_path() / dataset_name / "ori" / f"{group}.ser"
+    pattern_abs_path = get_pattern_base_path() / dataset_name / "abs" / f"{group}.ser"
+    pattern_info_path = get_pattern_info_base_path() / dataset_name / "input" / f"{group}.ser"
+    pattern_output_path = get_pattern_info_base_path() / dataset_name / "output" / f"{group}.ser"
+
 
 if __name__ == "__main__":
     print(get_root_project_path())
