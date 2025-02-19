@@ -8,6 +8,7 @@ from app.abs.classified_topdown.history import ElementHistory
 from app.abs.classified_topdown.prompts import NORMAL_ELEMENT_PROMPT, NAME_ELEMENT_PROMPT, STRUCTURE_ELEMENT_PROMPT, \
     TASK_DESCRIPTION_PROMPT, \
     AFTER_TREE_TASK_PROMPT, AFTER_TREE_ELEMENT_PROMPT, AFTER_TREE_NAME_PROMPT, REGEX_NAME_PROMPT
+from utils.common import retry_times, valid_with
 from utils.config import LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
@@ -80,7 +81,7 @@ class NormalElementState(PromptState):
         _element_his_copy = copy.deepcopy(_element_history)
         _element_his_copy.add_user_message_to_history(_element_prompt)
         _round_prompt = _element_his_copy.history
-        valid, response = self.analyzer.invoke_with_retry(_round_prompt)
+        valid, response = self.analyzer.invoke_validate_retry(_round_prompt)
 
         if valid:
             _element_history.add_user_message_to_round(_element_prompt)
@@ -88,12 +89,11 @@ class NormalElementState(PromptState):
             if self.analyzer.check_true_response(response):
                 self.analyzer.push(_element)
                 self.analyzer.prompt_state = StructureState(self.analyzer)
-            else:
-                self.analyzer.prompt_state = ElementState(self.analyzer)
-            return
+                return
         else:
             _logger.error(f"Invalid response: {response} After retry {self.analyzer.retries} times")
-            self.analyzer.prompt_state = ElementState(self.analyzer)
+        self.analyzer.prompt_state = ElementState(self.analyzer)
+        return
 
         # for _ in range(self.analyzer.retries):
         #     _element_history = self.analyzer.get_current_element_history()
@@ -120,24 +120,43 @@ class NameState(PromptState):
         _element_prompt = NAME_ELEMENT_PROMPT.format(line=_element.get("startLine"),
                                                        element=_element.get("value"))
 
-        for _ in range(self.analyzer.retries):
-            _element_history = self.analyzer.get_current_element_history()
+        _element_history = self.analyzer.get_current_element_history()
+        _element_his_copy = copy.deepcopy(_element_history)
+        _element_his_copy.add_user_message_to_history(_element_prompt)
+        _round_prompt = _element_his_copy.history
+        valid, response = self.analyzer.invoke_validate_retry(_round_prompt)
 
-            _element_his_copy = copy.deepcopy(_element_history)
-            _element_his_copy.add_user_message_to_history(_element_prompt)
-            _round_prompt = _element_his_copy.history
-            response = self.analyzer.llm.invoke(_round_prompt)
-
-            if self.analyzer.check_valid_response(response):
-                _element_history.add_user_message_to_round(_element_prompt)
-                _element_history.add_assistant_message_to_round(response)
-                if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_attrs["Name"].append(_element.get("id"))
-                    self.analyzer.considered_elements.add(_element.get("id"))
-                    self.analyzer.prompt_state = RegEXState(self.analyzer)
-                    return
-                self.analyzer.prompt_state = ElementState(self.analyzer)
+        if valid:
+            _element_history.add_user_message_to_round(_element_prompt)
+            _element_history.add_assistant_message_to_round(response)
+            if self.analyzer.check_true_response(response):
+                self.analyzer.considered_attrs["Name"].append(_element.get("id"))
+                self.analyzer.considered_elements.add(_element.get("id"))
+                self.analyzer.prompt_state = RegEXState(self.analyzer)
                 return
+        else:
+            _logger.error(f"Invalid response: {response} After retry {self.analyzer.retries} times")
+        self.analyzer.prompt_state = ElementState(self.analyzer)
+        return
+
+        # for _ in range(self.analyzer.retries):
+        #     _element_history = self.analyzer.get_current_element_history()
+        #
+        #     _element_his_copy = copy.deepcopy(_element_history)
+        #     _element_his_copy.add_user_message_to_history(_element_prompt)
+        #     _round_prompt = _element_his_copy.history
+        #     response = self.analyzer.llm.invoke(_round_prompt)
+        #
+        #     if self.analyzer.check_valid_response(response):
+        #         _element_history.add_user_message_to_round(_element_prompt)
+        #         _element_history.add_assistant_message_to_round(response)
+        #         if self.analyzer.check_true_response(response):
+        #             self.analyzer.considered_attrs["Name"].append(_element.get("id"))
+        #             self.analyzer.considered_elements.add(_element.get("id"))
+        #             self.analyzer.prompt_state = RegEXState(self.analyzer)
+        #             return
+        #         self.analyzer.prompt_state = ElementState(self.analyzer)
+        #         return
 
 class RegEXState(PromptState):
     pattern = re.compile(r'''
@@ -168,6 +187,11 @@ class RegEXState(PromptState):
         match = re.match(self.pattern, response.strip())
         return bool(match)
 
+    @retry_times(5)
+    @valid_with(check_valid)
+    def invoke_validate_retry(self, messages) -> str:
+        return self.analyzer.llm.invoke(messages)
+
     def get_regex(self, response: str) -> (bool, Optional[str]):
         match = re.match(self.pattern, response.strip())
         if match:
@@ -183,23 +207,40 @@ class RegEXState(PromptState):
         _element = self.analyzer.current_element
         _reg_prompt = REGEX_NAME_PROMPT.format(value=_element.get("value"))
 
-        for _ in range(self.analyzer.retries):
-            _element_history = self.analyzer.get_current_element_history()
+        _element_history = self.analyzer.get_current_element_history()
 
-            _element_his_copy = copy.deepcopy(_element_history)
-            _element_his_copy.add_user_message_to_history(_reg_prompt)
-            _round_prompt = _element_his_copy.history
-            response = self.analyzer.llm.invoke(_round_prompt)
+        _element_his_copy = copy.deepcopy(_element_history)
+        _element_his_copy.add_user_message_to_history(_reg_prompt)
+        _round_prompt = _element_his_copy.history
 
-            if self.check_valid(response):
-                _element_history.regex_round.append({"role": "user", "content": _reg_prompt})
-                _element_history.regex_round.append({"role": "assistant", "content": response})
-                has_reg, regex = self.get_regex(response)
-                if has_reg:
-                    self.analyzer.regex_map[_element.get("id")] = regex
-                self.analyzer.current_element = None
-                self.analyzer.prompt_state = ElementState(self.analyzer)
-                return
+        valid, response = self.invoke_validate_retry(_round_prompt)
+
+        if valid:
+            _element_history.regex_round.append({"role": "user", "content": _reg_prompt})
+            _element_history.regex_round.append({"role": "assistant", "content": response})
+            has_reg, regex = self.get_regex(response)
+            if has_reg:
+                self.analyzer.regex_map[_element.get("id")] = regex
+        self.analyzer.prompt_state = ElementState(self.analyzer)
+        return
+
+        # for _ in range(self.analyzer.retries):
+        #     _element_history = self.analyzer.get_current_element_history()
+        #
+        #     _element_his_copy = copy.deepcopy(_element_history)
+        #     _element_his_copy.add_user_message_to_history(_reg_prompt)
+        #     _round_prompt = _element_his_copy.history
+        #     response = self.analyzer.llm.invoke(_round_prompt)
+        #
+        #     if self.check_valid(response):
+        #         _element_history.regex_round.append({"role": "user", "content": _reg_prompt})
+        #         _element_history.regex_round.append({"role": "assistant", "content": response})
+        #         has_reg, regex = self.get_regex(response)
+        #         if has_reg:
+        #             self.analyzer.regex_map[_element.get("id")] = regex
+        #         self.analyzer.current_element = None
+        #         self.analyzer.prompt_state = ElementState(self.analyzer)
+        #         return
 
 class StructureState(PromptState):
     def accept(self):
@@ -213,22 +254,36 @@ class StructureState(PromptState):
 
         _element_prompt = STRUCTURE_ELEMENT_PROMPT.format(element=_element.get("value"), elementType=_element_type)
 
-        for _ in range(self.analyzer.retries):
-            _element_history = self.analyzer.get_current_element_history()
+        _element_history = self.analyzer.get_current_element_history()
 
-            _element_his_copy = copy.deepcopy(_element_history)
-            _element_his_copy.add_user_message_to_history(_element_prompt)
-            _round_prompt = _element_his_copy.history
-            response = self.analyzer.llm.invoke(_round_prompt)
+        _element_his_copy = copy.deepcopy(_element_history)
+        _element_his_copy.add_user_message_to_history(_element_prompt)
+        _round_prompt = _element_his_copy.history
+        valid, response = self.analyzer.invoke_validate_retry(_round_prompt)
+        if valid:
+            _element_history.add_user_message_to_structure_round(_element_prompt)
+            _element_history.add_assistant_message_to_structure_round(response)
+            if self.analyzer.check_true_response(response):
+                self.analyzer.considered_elements.add(_element.get("id"))
+        self.analyzer.prompt_state = ElementState(self.analyzer)
+        return
 
-            if self.analyzer.check_valid_response(response):
-                _element_history.add_user_message_to_structure_round(_element_prompt)
-                _element_history.add_assistant_message_to_structure_round(response)
-                if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_elements.add(_element.get("id"))
-                self.analyzer.current_element = None
-                self.analyzer.prompt_state = ElementState(self.analyzer)
-                return
+        # for _ in range(self.analyzer.retries):
+        #     _element_history = self.analyzer.get_current_element_history()
+        #
+        #     _element_his_copy = copy.deepcopy(_element_history)
+        #     _element_his_copy.add_user_message_to_history(_element_prompt)
+        #     _round_prompt = _element_his_copy.history
+        #     response = self.analyzer.llm.invoke(_round_prompt)
+        #
+        #     if self.analyzer.check_valid_response(response):
+        #         _element_history.add_user_message_to_structure_round(_element_prompt)
+        #         _element_history.add_assistant_message_to_structure_round(response)
+        #         if self.analyzer.check_true_response(response):
+        #             self.analyzer.considered_elements.add(_element.get("id"))
+        #         self.analyzer.current_element = None
+        #         self.analyzer.prompt_state = ElementState(self.analyzer)
+        #         return
 
 
 class InsertNodeState(PromptState):
@@ -288,22 +343,37 @@ class InsertElementState(PromptState):
         _element_prompt = AFTER_TREE_ELEMENT_PROMPT.format(element=_element.get("value"),
                                                            elementType=_element.get("type"))
 
-        for _ in range(self.analyzer.retries):
-            _element_history = self.analyzer.get_action_current_element_history()
+        _element_history = self.analyzer.get_action_current_element_history()
 
-            _element_his_copy = copy.deepcopy(_element_history)
-            _element_his_copy.add_user_message_to_history(_element_prompt)
-            _round_prompt = _element_his_copy.history
-            response = self.analyzer.llm.invoke(_round_prompt)
+        _element_his_copy = copy.deepcopy(_element_history)
+        _element_his_copy.add_user_message_to_history(_element_prompt)
+        _round_prompt = _element_his_copy.history
+        valid, response = self.analyzer.invoke_validate_retry(_round_prompt)
+        if valid:
+            _element_history.add_user_message_to_round(_element_prompt)
+            _element_history.add_assistant_message_to_round(response)
+            if self.analyzer.check_true_response(response):
+                self.analyzer.considered_inserts.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
+                self.analyzer.push_action(_element)
+        self.analyzer.prompt_state = InsertNodeState(self.analyzer)
+        return
 
-            if self.analyzer.check_valid_response(response):
-                _element_history.add_user_message_to_round(_element_prompt)
-                _element_history.add_assistant_message_to_round(response)
-                if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_inserts.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
-                    self.analyzer.push_action(_element)
-                self.analyzer.prompt_state = InsertNodeState(self.analyzer)
-                return
+        # for _ in range(self.analyzer.retries):
+        #     _element_history = self.analyzer.get_action_current_element_history()
+        #
+        #     _element_his_copy = copy.deepcopy(_element_history)
+        #     _element_his_copy.add_user_message_to_history(_element_prompt)
+        #     _round_prompt = _element_his_copy.history
+        #     response = self.analyzer.llm.invoke(_round_prompt)
+        #
+        #     if self.analyzer.check_valid_response(response):
+        #         _element_history.add_user_message_to_round(_element_prompt)
+        #         _element_history.add_assistant_message_to_round(response)
+        #         if self.analyzer.check_true_response(response):
+        #             self.analyzer.considered_inserts.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
+        #             self.analyzer.push_action(_element)
+        #         self.analyzer.prompt_state = InsertNodeState(self.analyzer)
+        #         return
 
 
 class InsertNameState(PromptState):
@@ -311,22 +381,38 @@ class InsertNameState(PromptState):
         _element = self.analyzer.current_element
         _element_prompt = AFTER_TREE_NAME_PROMPT.format(element=_element.get("value"))
 
-        for _ in range(self.analyzer.retries):
-            _element_history = self.analyzer.get_action_current_element_history()
+        _element_history = self.analyzer.get_action_current_element_history()
 
-            _element_his_copy = copy.deepcopy(_element_history)
-            _element_his_copy.add_user_message_to_history(_element_prompt)
-            _round_prompt = _element_his_copy.history
-            response = self.analyzer.llm.invoke(_round_prompt)
+        _element_his_copy = copy.deepcopy(_element_history)
+        _element_his_copy.add_user_message_to_history(_element_prompt)
+        _round_prompt = _element_his_copy.history
+        valid, response = self.analyzer.invoke_validate_retry(_round_prompt)
+        if valid:
+            _element_history.add_user_message_to_round(_element_prompt)
+            _element_history.add_assistant_message_to_round(response)
+            if self.analyzer.check_true_response(response):
+                self.analyzer.considered_inserts.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
+        self.analyzer.current_element = None
+        self.analyzer.prompt_state = InsertNodeState(self.analyzer)
+        return
 
-            if self.analyzer.check_valid_response(response):
-                _element_history.add_user_message_to_round(_element_prompt)
-                _element_history.add_assistant_message_to_round(response)
-                if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_inserts.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
-                self.analyzer.current_element = None
-                self.analyzer.prompt_state = InsertNodeState(self.analyzer)
-                return
+        # for _ in range(self.analyzer.retries):
+        #     _element_history = self.analyzer.get_action_current_element_history()
+        #
+        #     _element_his_copy = copy.deepcopy(_element_history)
+        #     _element_his_copy.add_user_message_to_history(_element_prompt)
+        #     _round_prompt = _element_his_copy.history
+        #     response = self.analyzer.llm.invoke(_round_prompt)
+        #
+        #     if self.analyzer.check_valid_response(response):
+        #         _element_history.add_user_message_to_round(_element_prompt)
+        #         _element_history.add_assistant_message_to_round(response)
+        #         if self.analyzer.check_true_response(response):
+        #             self.analyzer.considered_inserts.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
+        #         self.analyzer.current_element = None
+        #         self.analyzer.prompt_state = InsertNodeState(self.analyzer)
+        #         return
+
 
 class MoveElementState(PromptState):
     def accept(self):
@@ -334,44 +420,73 @@ class MoveElementState(PromptState):
         _element_prompt = AFTER_TREE_ELEMENT_PROMPT.format(element=_element.get("value"),
                                                            elementType=_element.get("type"))
 
-        for _ in range(self.analyzer.retries):
-            _element_history = self.analyzer.get_action_current_element_history()
+        _element_history = self.analyzer.get_action_current_element_history()
 
-            _element_his_copy = copy.deepcopy(_element_history)
-            _element_his_copy.add_user_message_to_history(_element_prompt)
-            _round_prompt = _element_his_copy.history
-            response = self.analyzer.llm.invoke(_round_prompt)
+        _element_his_copy = copy.deepcopy(_element_history)
+        _element_his_copy.add_user_message_to_history(_element_prompt)
+        _round_prompt = _element_his_copy.history
+        valid, response = self.analyzer.invoke_validate_retry(_round_prompt)
+        if valid:
+            _element_history.add_user_message_to_round(_element_prompt)
+            _element_history.add_assistant_message_to_round(response)
+            if self.analyzer.check_true_response(response):
+                self.analyzer.considered_moves.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
+                self.analyzer.push_action(_element)
+        self.analyzer.prompt_state = MoveNodeState(self.analyzer)
+        return
 
-            if self.analyzer.check_valid_response(response):
-                _element_history.add_user_message_to_round(_element_prompt)
-                _element_history.add_assistant_message_to_round(response)
-                if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_moves.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
-                    self.analyzer.push_action(_element)
-                self.analyzer.prompt_state = MoveNodeState(self.analyzer)
-                return
+        # for _ in range(self.analyzer.retries):
+        #     _element_history = self.analyzer.get_action_current_element_history()
+        #
+        #     _element_his_copy = copy.deepcopy(_element_history)
+        #     _element_his_copy.add_user_message_to_history(_element_prompt)
+        #     _round_prompt = _element_his_copy.history
+        #     response = self.analyzer.llm.invoke(_round_prompt)
+        #
+        #     if self.analyzer.check_valid_response(response):
+        #         _element_history.add_user_message_to_round(_element_prompt)
+        #         _element_history.add_assistant_message_to_round(response)
+        #         if self.analyzer.check_true_response(response):
+        #             self.analyzer.considered_moves.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
+        #             self.analyzer.push_action(_element)
+        #         self.analyzer.prompt_state = MoveNodeState(self.analyzer)
+        #         return
 
 class MoveNameState(PromptState):
     def accept(self):
         _element = self.analyzer.current_element
         _element_prompt = AFTER_TREE_NAME_PROMPT.format(element=_element.get("value"))
 
-        for _ in range(self.analyzer.retries):
-            _element_history = self.analyzer.get_action_current_element_history()
+        _element_history = self.analyzer.get_action_current_element_history()
 
-            _element_his_copy = copy.deepcopy(_element_history)
-            _element_his_copy.add_user_message_to_history(_element_prompt)
-            _round_prompt = _element_his_copy.history
-            response = self.analyzer.llm.invoke(_round_prompt)
+        _element_his_copy = copy.deepcopy(_element_history)
+        _element_his_copy.add_user_message_to_history(_element_prompt)
+        _round_prompt = _element_his_copy.history
+        valid, response = self.analyzer.invoke_validate_retry(_round_prompt)
+        if valid:
+            _element_history.add_user_message_to_round(_element_prompt)
+            _element_history.add_assistant_message_to_round(response)
+            if self.analyzer.check_true_response(response):
+                self.analyzer.considered_moves.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
+        self.analyzer.prompt_state = MoveNodeState(self.analyzer)
+        return
 
-            if self.analyzer.check_valid_response(response):
-                _element_history.add_user_message_to_round(_element_prompt)
-                _element_history.add_assistant_message_to_round(response)
-                if self.analyzer.check_true_response(response):
-                    self.analyzer.considered_moves.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
-                self.analyzer.current_element = None
-                self.analyzer.prompt_state = MoveNodeState(self.analyzer)
-                return
+        # for _ in range(self.analyzer.retries):
+        #     _element_history = self.analyzer.get_action_current_element_history()
+        #
+        #     _element_his_copy = copy.deepcopy(_element_history)
+        #     _element_his_copy.add_user_message_to_history(_element_prompt)
+        #     _round_prompt = _element_his_copy.history
+        #     response = self.analyzer.llm.invoke(_round_prompt)
+        #
+        #     if self.analyzer.check_valid_response(response):
+        #         _element_history.add_user_message_to_round(_element_prompt)
+        #         _element_history.add_assistant_message_to_round(response)
+        #         if self.analyzer.check_true_response(response):
+        #             self.analyzer.considered_moves.setdefault(self.analyzer.current_action_node.get("id"), []).append(_element.get("id"))
+        #         self.analyzer.current_element = None
+        #         self.analyzer.prompt_state = MoveNodeState(self.analyzer)
+        #         return
 
 # class AttrState(PromptState):
 #     def accept(self):

@@ -42,11 +42,6 @@ class Analyzer:
 
         self.regex_map = {}
 
-    @retry_times("retries")
-    @valid_with("check_valid_response")
-    def invoke_with_retry(self, messages) -> str:
-        return self.llm.invoke(messages)
-
     @staticmethod
     def get_top_stmts_from_tree(tree: dict) -> list:
         for _ in tree["children"]:
@@ -61,6 +56,11 @@ class Analyzer:
         if not is_valid:
             _logger.error(f"Retry! Invalid response: {response}")
         return is_valid
+
+    @retry_times("retries")
+    @valid_with(check_valid_response)
+    def invoke_validate_retry(self, messages) -> str:
+        return self.llm.invoke(messages)
 
     @staticmethod
     def check_true_response(response: str) -> bool:
