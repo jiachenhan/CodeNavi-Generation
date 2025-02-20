@@ -101,10 +101,6 @@ public class QueryGenerator {
         List<NodePath> nodePaths = consideredNodes.stream()
                 .filter(node -> node != insertedNode)
                 .map(node -> NodePath.computeNodePath(insertedNode, node, consideredNodes))
-                .filter(nodePath -> nodePath.getConsiderNode() instanceof MoIfStatement
-                        || nodePath.getConsiderNode() instanceof MoForStatement
-                        || nodePath.getConsiderNode() instanceof MoTryStatement
-                        || nodePath.getNodePath().size() > 5) // experience based
                 .toList();
 
         List<DSLRole> roleList = new ArrayList<>();
@@ -143,10 +139,6 @@ public class QueryGenerator {
         List<NodePath> nodePaths = consideredNodes.stream()
                 .filter(node -> node != moveParent)
                 .map(node -> NodePath.computeNodePath(moveParent, node, consideredNodes))
-                .filter(nodePath -> nodePath.getConsiderNode() instanceof MoIfStatement
-                        || nodePath.getConsiderNode() instanceof MoForStatement
-                        || nodePath.getConsiderNode() instanceof MoTryStatement
-                        || nodePath.getNodePath().size() > 5) // experience based
                 .toList();
 
         if (queryMap.containsKey(movedNode)) {
