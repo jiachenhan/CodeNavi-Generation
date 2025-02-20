@@ -184,7 +184,9 @@ class RegEXState(PromptState):
     ''', re.VERBOSE)
 
     def check_valid(self, response: str) -> bool:
-        match = re.match(self.pattern, response.strip())
+        parts = response.rsplit('\n', 1)
+        part = parts[0] if len(parts) > 1 else response
+        match = re.match(self.pattern, part.strip())
         return bool(match)
 
     @retry_times(5)
@@ -193,7 +195,9 @@ class RegEXState(PromptState):
         return self.analyzer.llm.invoke(messages)
 
     def get_regex(self, response: str) -> (bool, Optional[str]):
-        match = re.match(self.pattern, response.strip())
+        parts = response.rsplit('\n', 1)
+        part = parts[0] if len(parts) > 1 else response
+        match = re.match(self.pattern, part.strip())
         if match:
             if match.group(1) and match.group(1).lower() == "yes":
                 return True, match.group(2)
