@@ -266,7 +266,7 @@ public class QueryGenerator {
                 BinaryCondition binaryCondition;
                 boolean isSimpleType = currentNodeBundle.getOriginalNode().getParent() instanceof MoSimpleType;
                 if (isSimpleType) {
-                    Rhs rhs = new StringExpr(".*\\." + nameAttr.valueName());
+                    Rhs rhs = new StringExpr(".*" + finalName); // 可能的正则泛化
                     binaryCondition = new BinaryCondition(BinaryCondition.Predicate.MATCH, new NameAttrExpr(roleListExpr, nameAttr.keyName()), rhs);
                 } else if (currentNodeBundle.getOriginalNode() instanceof MoPrimitiveType) {
                     Rhs rhs = new StringExpr(nameAttr.valueName());
