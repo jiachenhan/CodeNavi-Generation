@@ -3,7 +3,11 @@ package repair.dsl.kirin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
+import repair.ast.code.expression.MoName;
 import repair.ast.code.statement.MoBlock;
+import repair.ast.code.statement.MoForStatement;
+import repair.ast.code.statement.MoIfStatement;
+import repair.ast.code.statement.MoTryStatement;
 import repair.ast.code.type.MoPrimitiveType;
 import repair.ast.code.type.MoSimpleType;
 import repair.dsl.kirin.condition.BinaryCondition;
@@ -15,6 +19,7 @@ import repair.dsl.kirin.map.code.KeyWord;
 import repair.dsl.kirin.map.code.KeyWordFactory;
 import repair.dsl.kirin.map.code.Nameable;
 import repair.dsl.kirin.map.code.node.DSLNode;
+import repair.dsl.kirin.map.code.node.DSLUnSupportNode;
 import repair.dsl.kirin.map.code.role.DSLRole;
 import repair.dsl.kirin.map.code.role.RoleAction;
 import repair.dsl.kirin.query.AliasQuery;
@@ -96,6 +101,10 @@ public class QueryGenerator {
         List<NodePath> nodePaths = consideredNodes.stream()
                 .filter(node -> node != insertedNode)
                 .map(node -> NodePath.computeNodePath(insertedNode, node, consideredNodes))
+                .filter(nodePath -> nodePath.getConsiderNode() instanceof MoIfStatement
+                        || nodePath.getConsiderNode() instanceof MoForStatement
+                        || nodePath.getConsiderNode() instanceof MoTryStatement
+                        || nodePath.getNodePath().size() > 5) // experience based
                 .toList();
 
         List<DSLRole> roleList = new ArrayList<>();
@@ -134,6 +143,10 @@ public class QueryGenerator {
         List<NodePath> nodePaths = consideredNodes.stream()
                 .filter(node -> node != moveParent)
                 .map(node -> NodePath.computeNodePath(moveParent, node, consideredNodes))
+                .filter(nodePath -> nodePath.getConsiderNode() instanceof MoIfStatement
+                        || nodePath.getConsiderNode() instanceof MoForStatement
+                        || nodePath.getConsiderNode() instanceof MoTryStatement
+                        || nodePath.getNodePath().size() > 5) // experience based
                 .toList();
 
         if (queryMap.containsKey(movedNode)) {
@@ -158,6 +171,10 @@ public class QueryGenerator {
     private void setConditionsTopdown(Pattern graphPattern, Query query, List<NodePath> nodePaths, Map<MoNode, Query> queryMap) {
         for (NodePath nodePath : nodePaths) {
             if (nodePath.getRolePath().stream().anyMatch(role -> role.getRoleAction() == RoleAction.Interrupt)) {
+                continue;
+            }
+
+            if (nodePath.getNodePath().get(nodePaths.size() - 1).getDslNode() instanceof DSLUnSupportNode) {
                 continue;
             }
 
