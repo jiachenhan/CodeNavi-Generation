@@ -44,9 +44,12 @@ class Analyzer:
 
     @staticmethod
     def get_top_stmts_from_tree(tree: dict) -> list:
-        for _ in tree["children"]:
-            if _["type"] == "MoBlock":
-                return _["children"]
+        for sub_tree in tree["children"]:
+            if sub_tree["type"] == "MoBlock":
+                if "children" in sub_tree:
+                    return sub_tree["children"]
+                else:
+                    return []
 
     @staticmethod
     def check_valid_response(response: str) -> bool:
