@@ -166,7 +166,7 @@ public class QueryGenerator {
                 continue;
             }
 
-            if (nodePath.getNodePath().get(nodePaths.size() - 1).getDslNode() instanceof DSLUnSupportNode) {
+            if (nodePath.getNodePath().get(nodePath.getNodePath().size() - 1).getDslNode() instanceof DSLUnSupportNode) {
                 continue;
             }
 
