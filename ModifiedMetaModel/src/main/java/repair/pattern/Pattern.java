@@ -110,6 +110,17 @@ public class Pattern implements Serializable {
         return Optional.ofNullable(notLogicManager);
     }
 
+    /**
+     * this field is used to store guessed regex for name node by LLM
+     */
+    private Map<String, String> nodeIdToRegex = null;
+    public void setNodeIdToRegex(Map<String, String> nodeIdToRegex) {
+        this.nodeIdToRegex = nodeIdToRegex;
+    }
+
+    public Optional<Map<String, String>> getNodeIdToRegex() {
+        return Optional.ofNullable(nodeIdToRegex);
+    }
 
 
     /**

@@ -55,7 +55,7 @@ public class QueryGenerator {
         TemplateQuery templateQuery = new TemplateQuery(patternBefore0);
         Map<MoNode, Query> queryMap = new HashMap<>();
         queryMap.put(patternBefore0, templateQuery);
-        setConditionsTopdown(templateQuery, nodePaths, queryMap);
+        setConditionsTopdown(graphPattern, templateQuery, nodePaths, queryMap);
 
         Optional<NotLogicManager> notLogicManagerOpt = graphPattern.getNotLogicManager();
         if (notLogicManagerOpt.isEmpty()) {
@@ -63,11 +63,11 @@ public class QueryGenerator {
         }
         NotLogicManager notLogicManager = notLogicManagerOpt.get();
         for (InsertNode insertNode : notLogicManager.getInsertNodes()) {
-            generateInsertNotConditions(insertNode, queryMap);
+            generateInsertNotConditions(graphPattern, insertNode, queryMap);
         }
 
         for (MoveNode moveNode : notLogicManager.getMoveNodes()) {
-            generateMoveNotConditions(moveNode, queryMap);
+            generateMoveNotConditions(graphPattern, moveNode, queryMap);
         }
 
         return templateQuery;
@@ -80,7 +80,7 @@ public class QueryGenerator {
                 .toList();
     }
 
-    private void generateInsertNotConditions(InsertNode insertNode, Map<MoNode, Query> queryMap) {
+    private void generateInsertNotConditions(Pattern graphPattern, InsertNode insertNode, Map<MoNode, Query> queryMap) {
         MoNode insertParent = insertNode.insertParent();
         MoNode insertedNode = insertNode.insertNode();
 
@@ -109,7 +109,7 @@ public class QueryGenerator {
             Query query = queryMap.get(insertParent);
 
             Query notQuery = new NormalQuery(insertedNode, dslNode);
-            setConditionsTopdown(notQuery, nodePaths, queryMap);
+            setConditionsTopdown(graphPattern, notQuery, nodePaths, queryMap);
 
             RoleListExpr aliasExpr = new RoleListExpr(query.getAlias(), roleList);
             BinaryCondition containCondition = new BinaryCondition(BinaryCondition.Predicate.CONTAIN, aliasExpr, notQuery);
@@ -118,7 +118,7 @@ public class QueryGenerator {
         }
     }
 
-    private void generateMoveNotConditions(MoveNode moveNode, Map<MoNode, Query> queryMap) {
+    private void generateMoveNotConditions(Pattern graphPattern, MoveNode moveNode, Map<MoNode, Query> queryMap) {
         MoNode movedNode = moveNode.moveNode();
         MoNode moveParent = moveNode.moveParent();
 
@@ -141,7 +141,7 @@ public class QueryGenerator {
             Lhs aliasExpr = new AliasExpr(query.getAlias());
 
             NormalQuery notQuery = new NormalQuery(moveParent, dslNode);
-            setConditionsTopdown(notQuery, nodePaths, queryMap);
+            setConditionsTopdown(graphPattern, notQuery, nodePaths, queryMap);
 
             if (notQuery.getCondition().isEmpty()) {
                 // 特殊处理5d4d2ae10d54444ab74a6faec78acaa2 多notin相同节点，如果不生成具体条件，不能使用别名
@@ -155,7 +155,7 @@ public class QueryGenerator {
         }
     }
 
-    private void setConditionsTopdown(Query query, List<NodePath> nodePaths, Map<MoNode, Query> queryMap) {
+    private void setConditionsTopdown(Pattern graphPattern, Query query, List<NodePath> nodePaths, Map<MoNode, Query> queryMap) {
         for (NodePath nodePath : nodePaths) {
             if (nodePath.getRolePath().stream().anyMatch(role -> role.getRoleAction() == RoleAction.Interrupt)) {
                 continue;
@@ -233,6 +233,17 @@ public class QueryGenerator {
                 MoNode moNode = currentNodeBundle.getOriginalNode();
                 Nameable.NameAttr nameAttr = nameable.getNameAttr(moNode);
 
+                // 如果存在nodeIdToRegex，则使用name对应的正则泛化
+                String finalName = nameAttr.valueName();
+
+                if (graphPattern.getNodeIdToRegex().isPresent()) {
+                    Map<String, String> nodeIdToRegex = graphPattern.getNodeIdToRegex().get();
+                    String stringId = String.valueOf(moNode.getId());
+                    if (nodeIdToRegex.containsKey(stringId)) {
+                        finalName = nodeIdToRegex.get(stringId);
+                    }
+                }
+
                 BinaryCondition binaryCondition;
                 boolean isSimpleType = currentNodeBundle.getOriginalNode().getParent() instanceof MoSimpleType;
                 if (isSimpleType) {
@@ -243,7 +254,7 @@ public class QueryGenerator {
                     binaryCondition = new BinaryCondition(BinaryCondition.Predicate.MATCH, new NameAttrExpr(roleListExpr, nameAttr.keyName()), rhs);
                 } else {
                     if (nameAttr.hasQuotationMark()) {
-                        Rhs rhs = new StringExpr(nameAttr.valueName());
+                        Rhs rhs = new StringExpr(finalName); // 正则泛化
                         binaryCondition = new BinaryCondition(BinaryCondition.Predicate.EQ, new NameAttrExpr(roleListExpr, nameAttr.keyName()), rhs);
                     } else {
                         Rhs rhs = new DSLNodeExpr(nameAttr.valueName());

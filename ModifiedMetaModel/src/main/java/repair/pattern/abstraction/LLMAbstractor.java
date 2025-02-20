@@ -20,6 +20,8 @@ public class LLMAbstractor implements Abstractor {
     private final List<String> LLMConsideredElements;
     private final Map<String, List<String>> LLMConsideredAttrs;
 
+    private final Map<String, String> LLMGuessRegexMap;
+
     private final Map<String, List<String>> LLMConsideredInsertElement;
     private final Map<String, List<String>> LLMConsideredMoveElement;
 
@@ -28,6 +30,7 @@ public class LLMAbstractor implements Abstractor {
         this.LLMConsideredElements = new ArrayList<>();
         this.LLMConsideredAttrs = new HashMap<>();
 
+        this.LLMGuessRegexMap = new HashMap<>();
         this.LLMConsideredInsertElement = new HashMap<>();
         this.LLMConsideredMoveElement = new HashMap<>();
         parseAbstractInfo();
@@ -36,8 +39,8 @@ public class LLMAbstractor implements Abstractor {
     @Override
     public boolean shouldConsider(MoNode node) {
         // 包含了action相关的节点以及LLM考虑语义的节点
-//        return LLMConsideredElements.contains(String.valueOf(node.getId())) || actionRelatedConsiderNodes.contains(node);
-        return LLMConsideredElements.contains(String.valueOf(node.getId()));
+        return LLMConsideredElements.contains(String.valueOf(node.getId())) || actionRelatedConsiderNodes.contains(node);
+//        return LLMConsideredElements.contains(String.valueOf(node.getId()));
     }
 
     @Override
@@ -79,28 +82,27 @@ public class LLMAbstractor implements Abstractor {
         // expand action nodes
         actionsRelatedNodes.forEach(node -> {
             actionRelatedConsiderNodes.add(node);
-            MoNode parent = node.getParent();
-            // expand parent k=1
-            if(parent != null) {
-                actionRelatedConsiderNodes.add(parent);
-            }
-            // expand children k=1
-            if(!node.isLeaf()) {
-                actionRelatedConsiderNodes.addAll(node.getChildren());
-            }
-
-            // data flow
-            if (node.context.getDataDependency() != null) {
-                actionRelatedConsiderNodes.add(node.context.getDataDependency());
-            }
-            MoNode nodeAfter = pattern.getBeforeToAfterMap().get(node);
-            if(nodeAfter != null) {
-                if (nodeAfter.context.getDataDependency() != null) {
-                    MoNode dataDepBefore = pattern.getBeforeToAfterMap().getKey(nodeAfter.context.getDataDependency());
-                    actionRelatedConsiderNodes.add(dataDepBefore);
-                }
-            }
-
+//            MoNode parent = node.getParent();
+//            // expand parent k=1
+//            if(parent != null) {
+//                actionRelatedConsiderNodes.add(parent);
+//            }
+//            // expand children k=1
+//            if(!node.isLeaf()) {
+//                actionRelatedConsiderNodes.addAll(node.getChildren());
+//            }
+//
+//            // data flow
+//            if (node.context.getDataDependency() != null) {
+//                actionRelatedConsiderNodes.add(node.context.getDataDependency());
+//            }
+//            MoNode nodeAfter = pattern.getBeforeToAfterMap().get(node);
+//            if(nodeAfter != null) {
+//                if (nodeAfter.context.getDataDependency() != null) {
+//                    MoNode dataDepBefore = pattern.getBeforeToAfterMap().getKey(nodeAfter.context.getDataDependency());
+//                    actionRelatedConsiderNodes.add(dataDepBefore);
+//                }
+//            }
         });
 
         nodeToConsidered.forEach((node, value) -> {
@@ -113,6 +115,10 @@ public class LLMAbstractor implements Abstractor {
                 });
             }
         });
+
+        if (! LLMGuessRegexMap.isEmpty()) {
+            pattern.setNodeIdToRegex(LLMGuessRegexMap);
+        }
 
         // insert or move nodes abstraction
         pattern.getNotLogicManager().ifPresent(notLogicManager -> {
@@ -161,6 +167,8 @@ public class LLMAbstractor implements Abstractor {
             // 解析 considered_attrs
             extractAttrs(rootNode.get("considered_attrs"));
 
+            // 解析 regex
+            extractGuessRegex(rootNode.get("regex"));
             // 解析 insert_considered_elements
             extractInsertElements(rootNode.get("insert_elements"));
             // 解析 move_considered_elements
@@ -187,6 +195,14 @@ public class LLMAbstractor implements Abstractor {
         // 解析 considered_elements
         for (JsonNode element : consideredElementsNode) {
             LLMConsideredElements.add(element.asText());
+        }
+    }
+
+    private void extractGuessRegex(JsonNode regexNode) {
+        Iterator<Map.Entry<String, JsonNode>> regexNames = regexNode.fields();
+        while (regexNames.hasNext()) {
+            Map.Entry<String, JsonNode> regexName = regexNames.next();
+            LLMGuessRegexMap.put(regexName.getKey(), regexName.getValue().asText());
         }
     }
 
