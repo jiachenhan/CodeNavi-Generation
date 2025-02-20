@@ -234,6 +234,7 @@ public class QueryGenerator {
                 Nameable.NameAttr nameAttr = nameable.getNameAttr(moNode);
 
                 // 如果存在nodeIdToRegex，则使用name对应的正则泛化
+                boolean isRegex = false;
                 String finalName = nameAttr.valueName();
 
                 if (graphPattern.getNodeIdToRegex().isPresent()) {
@@ -241,6 +242,7 @@ public class QueryGenerator {
                     String stringId = String.valueOf(moNode.getId());
                     if (nodeIdToRegex.containsKey(stringId)) {
                         finalName = nodeIdToRegex.get(stringId);
+                        isRegex = true;
                     }
                 }
 
@@ -255,7 +257,11 @@ public class QueryGenerator {
                 } else {
                     if (nameAttr.hasQuotationMark()) {
                         Rhs rhs = new StringExpr(finalName); // 正则泛化
-                        binaryCondition = new BinaryCondition(BinaryCondition.Predicate.EQ, new NameAttrExpr(roleListExpr, nameAttr.keyName()), rhs);
+                        if (isRegex) {
+                            binaryCondition = new BinaryCondition(BinaryCondition.Predicate.MATCH, new NameAttrExpr(roleListExpr, nameAttr.keyName()), rhs);
+                        } else {
+                            binaryCondition = new BinaryCondition(BinaryCondition.Predicate.EQ, new NameAttrExpr(roleListExpr, nameAttr.keyName()), rhs);
+                        }
                     } else {
                         Rhs rhs = new DSLNodeExpr(nameAttr.valueName());
                         binaryCondition = new BinaryCondition(BinaryCondition.Predicate.EQ, new NameAttrExpr(roleListExpr, nameAttr.keyName()), rhs);
