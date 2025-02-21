@@ -57,8 +57,7 @@ def timeout(seconds):
 
             process = multiprocessing.Process(
                 target=_global_target,
-                args=(queue, func, *args),
-                kwargs=kwargs,
+                args=(queue, func, args, kwargs),
                 daemon=True
             )
 
