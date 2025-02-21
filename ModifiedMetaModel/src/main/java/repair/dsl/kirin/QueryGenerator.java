@@ -4,13 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
 import repair.ast.code.expression.MoName;
+import repair.ast.code.expression.MoSimpleName;
 import repair.ast.code.statement.MoBlock;
 import repair.ast.code.statement.MoForStatement;
 import repair.ast.code.statement.MoIfStatement;
 import repair.ast.code.statement.MoTryStatement;
 import repair.ast.code.type.MoPrimitiveType;
 import repair.ast.code.type.MoSimpleType;
+import repair.ast.declaration.MoMethodDeclaration;
 import repair.dsl.kirin.condition.BinaryCondition;
+import repair.dsl.kirin.condition.Condition;
 import repair.dsl.kirin.condition.NotCondition;
 import repair.dsl.kirin.expr.*;
 import repair.dsl.kirin.map.DSLNodeMapping;
@@ -20,6 +23,7 @@ import repair.dsl.kirin.map.code.KeyWordFactory;
 import repair.dsl.kirin.map.code.Nameable;
 import repair.dsl.kirin.map.code.node.DSLNode;
 import repair.dsl.kirin.map.code.node.DSLUnSupportNode;
+import repair.dsl.kirin.map.code.node.Name;
 import repair.dsl.kirin.map.code.role.DSLRole;
 import repair.dsl.kirin.map.code.role.RoleAction;
 import repair.dsl.kirin.query.AliasQuery;
@@ -73,6 +77,17 @@ public class QueryGenerator {
 
         for (MoveNode moveNode : notLogicManager.getMoveNodes()) {
             generateMoveNotConditions(graphPattern, moveNode, queryMap);
+        }
+
+        // 如果没有条件，则默认生成名字
+        if (templateQuery.getCondition().isEmpty()) {
+            if (patternBefore0 instanceof MoMethodDeclaration methodDeclaration) {
+                MoSimpleName simpleName = ((MoSimpleName) methodDeclaration.getStructuralProperty("name"));
+                String nameStr = simpleName.toSrcString();
+                Rhs rhs = new DSLNodeExpr(nameStr);
+                RoleListExpr aliasExpr = new RoleListExpr(templateQuery.getAlias(), List.of());
+                templateQuery.addCondition(new BinaryCondition(BinaryCondition.Predicate.EQ, new NameAttrExpr(aliasExpr, "name"), rhs));
+            }
         }
 
         return templateQuery;
