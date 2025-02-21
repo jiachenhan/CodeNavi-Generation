@@ -158,3 +158,18 @@ def kirin_engine(timeout_sec: float,
            ]
 
     start_process(cmd, work_dir, timeout_sec)
+
+
+def genpat_detect(timeout_sec: float,
+                  pattern_before: Path,
+                  pattern_after: Path,
+                  test_file: Path,
+                  jar_path: Path) -> bool:
+    work_dir = jar_path.parent
+
+    cmd = ["java",
+           "-Dfile.encoding=utf-8",
+           "-jar", str(jar_path), "match", str(pattern_before), str(pattern_after), str(test_file)]
+
+    sout = start_process(cmd, work_dir, timeout_sec)
+    return "YES" in sout.strip().upper()

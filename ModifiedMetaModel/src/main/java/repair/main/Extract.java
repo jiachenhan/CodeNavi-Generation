@@ -24,7 +24,8 @@ public class Extract {
     private final static List<Pair<String, String>> possibleNamePairs = List.of(
             Pair.of("before.java", "after.java"),
             Pair.of("error.java", "correct.java"),
-            Pair.of("left.java", "right.java")
+            Pair.of("left.java", "right.java"),
+            Pair.of("buggy.java", "fixed.java")
     );
 
     public static void main(String[] args) {
@@ -38,7 +39,8 @@ public class Extract {
         Path jsonSerializePath = Path.of(args[3]);
 
         Pattern pattern;
-        Path patternInfoPath = patternPath.resolve("info.json");
+//        Path patternInfoPath = patternPath.resolve("info.json");
+        Path patternInfoPath = patternPath.resolve("conflict"); // 妈的都叫这弱智名字重复了
         if (patternInfoPath.toFile().exists()) {
             CodeChangeInfo patternInfo = CodeChangeInfoReader.readCCInfo(patternInfoPath);
             if (patternInfo == null) {

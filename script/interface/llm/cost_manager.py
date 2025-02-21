@@ -8,6 +8,7 @@ _logger = LoggerConfig.get_logger(__name__)
 # $x / 1M tokens
 TOKEN_COSTS = {
     "CodeLlama-34b": {"prompt": 0.0, "completion": 0.0},
+    "deepseek-ai/DeepSeek-V2.5": {"prompt": 1.33, "completion": 1.33},
 
     "gpt-3.5-turbo-instruct": {"prompt": 1.5, "completion": 2.0},
     "gpt-4-turbo": {"prompt": 10.0, "completion": 30.0},

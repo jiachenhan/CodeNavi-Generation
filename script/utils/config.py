@@ -37,11 +37,15 @@ class YamlConfig(metaclass=SingletonMeta):
 
 _config = YamlConfig().get_config()
 
-def set_config(tag: str = "deepseek"):
+def set_config(tag: str = "silicon"):
     if tag == "huawei":
         huawei_config()
     elif tag == "deepseek":
         deepseek_config()
+    elif tag == "silicon":
+        silicon_config()
+    elif tag == "ppinfra":
+        ppinfra_config()
 
 def huawei_config():
     os.environ["OPENAI_API_KEY"] = _config["huawei"]["API_KEY"][0]
@@ -49,15 +53,38 @@ def huawei_config():
     os.environ["MODEL_NAME"] = _config["huawei"]["MODEL_NAME"]
     os.environ["NO_PROXY"] = _config["huawei"]["NO_PROXY"]
 
+    os.environ['jar_path'] = _config["jar_path"]
+
 def deepseek_config():
-    os.environ["OPENAI_API_KEY"] = _config["deepseek"]["API_KEY"][0]
-    os.environ["OPENAI_BASE_URL"] = _config["deepseek"]["BASE_URL"]
-    os.environ["MODEL_NAME"] = _config["deepseek"]["MODEL_NAME"]
-    os.environ['HTTP_PROXY'] = _config["deepseek"]["HTTP_PROXY"]
-    os.environ['HTTPS_PROXY'] = _config["deepseek"]["HTTPS_PROXY"]
+    os.environ["OPENAI_API_KEY"] = _config["tju"]["deepseek"]["API_KEY"][0]
+    os.environ["OPENAI_BASE_URL"] = _config["tju"]["deepseek"]["BASE_URL"]
+    os.environ["MODEL_NAME"] = _config["tju"]["deepseek"]["MODEL_NAME"]
+    os.environ['HTTP_PROXY'] = _config["tju"]["HTTP_PROXY"]
+    os.environ['HTTPS_PROXY'] = _config["tju"]["HTTPS_PROXY"]
+
+    os.environ['jar_path'] = _config["tju"]["jar_path"]
+
+
+def silicon_config():
+    os.environ["OPENAI_API_KEY"] = _config["tju"]["silicon_flow"]["API_KEY"][0]
+    os.environ["OPENAI_BASE_URL"] = _config["tju"]["silicon_flow"]["BASE_URL"]
+    os.environ["MODEL_NAME"] = _config["tju"]["silicon_flow"]["MODEL_NAME"]
+    os.environ['HTTP_PROXY'] = _config["tju"]["HTTP_PROXY"]
+    os.environ['HTTPS_PROXY'] = _config["tju"]["HTTPS_PROXY"]
+
+    os.environ['jar_path'] = _config["tju"]["jar_path"]
+
+def ppinfra_config():
+    os.environ["OPENAI_API_KEY"] = _config["tju"]["ppinfra"]["API_KEY"][0]
+    os.environ["OPENAI_BASE_URL"] = _config["tju"]["ppinfra"]["BASE_URL"]
+    os.environ["MODEL_NAME"] = _config["tju"]["ppinfra"]["MODEL_NAME"]
+    os.environ['HTTP_PROXY'] = _config["tju"]["HTTP_PROXY"]
+    os.environ['HTTPS_PROXY'] = _config["tju"]["HTTPS_PROXY"]
+
+    os.environ['jar_path'] = _config["tju"]["jar_path"]
 
 def get_jar_path() -> str:
-    return _config["jar_path"]
+    return os.environ.get("jar_path")
 
 
 # 指代FixGen

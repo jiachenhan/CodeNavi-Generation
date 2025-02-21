@@ -70,7 +70,8 @@ class LLMOpenAI(LLMAPI):
 
 
 if __name__ == "__main__":
-    set_config("deepseek")
+    set_config("ppinfra")
+    print(f"base_url: {os.environ.get('OPENAI_BASE_URL')}")
     deepseek = LLMOpenAI(base_url=os.environ.get("OPENAI_BASE_URL"), api_key=os.environ.get("OPENAI_API_KEY"),
                          model_name=os.environ.get("MODEL_NAME"))
     # codeLlama = LLMOpenAI(base_url="http://localhost:8001/v1", api_key="empty", model_name="CodeLlama")
