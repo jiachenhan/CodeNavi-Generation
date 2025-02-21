@@ -40,7 +40,8 @@ def timeout(seconds):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            queue = multiprocessing.Queue()
+            manager = multiprocessing.Manager()
+            queue = manager.Queue()
 
             def target(_queue, *_args, **_kwargs):
                 try:
@@ -49,7 +50,7 @@ def timeout(seconds):
                 except Exception as e:
                     _queue.put((False, e))
 
-            process = multiprocessing.Process(target=target, args=(queue, *args), kwargs=kwargs)
+            process = multiprocessing.Process(target=target, args=(queue, *args), kwargs=kwargs, daemon=True)
             process.start()
             process.join(seconds)
 
@@ -57,12 +58,12 @@ def timeout(seconds):
                 process.terminate()
                 process.join()
                 raise TimeoutException(f"Function '{func.__name__}' timed out after {seconds} seconds")
-
-            success, value = queue.get()
-            if success:
-                return value
             else:
-                raise value
+                success, value = queue.get()
+                if success:
+                    return value
+                else:
+                    raise value
         return wrapper
     return decorator
 
@@ -168,3 +169,34 @@ def valid_with(validator: Union[Callable[..., bool], str] # 兼容类方法（�
             return result
         return wrapper
     return decorator
+
+if __name__ == "__main__":
+    # 测试代码
+    @timeout(2)
+    def normal_task():
+        return "Success"
+
+    @timeout(2)
+    def timeout_task():
+        import time
+        time.sleep(3)
+        return "Never Reached"
+
+    @timeout(2)
+    def error_task():
+        raise ValueError("Something wrong")
+
+    # 测试正常情况
+    print(normal_task())  # 输出: "Success"
+
+    # 测试超时
+    try:
+        print(timeout_task())
+    except TimeoutException as e:
+        print(e)  # 输出: "Function 'timeout_task' timed out after 2 seconds"
+
+    # 测试子进程异常
+    try:
+        error_task()
+    except ValueError as e:
+        print(e)  # 输出: "Something wrong"

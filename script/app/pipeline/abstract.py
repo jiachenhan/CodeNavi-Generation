@@ -6,6 +6,7 @@ from app.communication import PatternInput
 from app.abs.classified_topdown.inference import Analyzer
 from interface.java.run_java_api import java_abstract
 from interface.llm.llm_openai import LLMOpenAI
+from utils.common import timeout
 from utils.config import LoggerConfig, set_config, PipelineConfig
 
 _logger = LoggerConfig.get_logger(__name__)
@@ -15,12 +16,19 @@ def llm_abstract(_llm,
                  _pattern_input: PatternInput,
                  _output_path: Path) -> None:
     try:
-        analyzer = Analyzer(_llm, _pattern_input)
-        analyzer.analysis()
-        analyzer.serialize(_output_path)
+        run_llm_analysis(_llm, _pattern_input, _output_path)
     except Exception as e:
         _logger.error(f"Error in {_output_path}: {e}")
         return
+
+
+@timeout(30 * 60)
+def run_llm_analysis(_llm,
+                     _pattern_input: PatternInput,
+                     _output_path: Path):
+    analyzer = Analyzer(_llm, _pattern_input)
+    analyzer.analysis()
+    analyzer.serialize(_output_path)
 
 
 def do_abstract():
