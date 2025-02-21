@@ -35,6 +35,18 @@ class InvalidOutputError(BusinessException):
     """输出校验失败"""
     pass
 
+
+def _global_target(queue, func, args, kwargs):
+    """helpful func timeout decorator,
+        If closure, a spawn error occurs on Windows platform
+    """
+    try:
+        result = func(*args, **kwargs)
+        queue.put((True, result))
+    except Exception as e:
+        queue.put((False, e))
+
+
 def timeout(seconds):
     """Decorator to enforce a timeout on a function using multiprocessing"""
     def decorator(func):
@@ -43,14 +55,13 @@ def timeout(seconds):
             manager = multiprocessing.Manager()
             queue = manager.Queue()
 
-            def target(_queue, *_args, **_kwargs):
-                try:
-                    result = func(*_args, **_kwargs)
-                    _queue.put((True, result))
-                except Exception as e:
-                    _queue.put((False, e))
+            process = multiprocessing.Process(
+                target=_global_target,
+                args=(queue, func, *args),
+                kwargs=kwargs,
+                daemon=True
+            )
 
-            process = multiprocessing.Process(target=target, args=(queue, *args), kwargs=kwargs, daemon=True)
             process.start()
             process.join(seconds)
 
