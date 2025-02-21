@@ -28,6 +28,7 @@ class Analyzer:
         self.prompt_state: PromptState = InitialState(self)
         self.current_element = None
         self.element_stack = list(reversed(Analyzer.get_top_stmts_from_tree(self.pattern_input.tree)))
+        self.important_lines = []
 
         self.global_history = GlobalHistories()
         self.considered_elements = set()
@@ -76,7 +77,9 @@ class Analyzer:
         return _element.get("type") in ("MoSimpleName", "MoQualifiedName")
 
     def serialize(self, path: Path):
-        histories = {"background": self.global_history.background_history, "task": self.global_history.task_history}
+        histories = {"background": self.global_history.background_history,
+                     "task": self.global_history.task_history,
+                     "roughly_line": self.global_history.roughly_line_history}
 
         element_histories = {}
         for _id, _element_history in self.global_history.element_histories.items():

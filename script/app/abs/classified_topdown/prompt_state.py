@@ -1,3 +1,4 @@
+import ast
 import copy
 import re
 from typing import Optional
@@ -59,7 +60,54 @@ class BackGroundState(PromptState):
         self.analyzer.global_history.background_history = background_history
         self.task_prompt()
         self.init_history()
+        self.analyzer.prompt_state = AttentionLineState(self.analyzer)
+
+
+class AttentionLineState(PromptState):
+    """This state allows the model to roughly select important rows"""
+    pattern = re.compile(r"""
+        # 匹配固定起始标记[critical lines]
+        \[critical\ lines]  
+        \s*                  # 允许起始标记后的任意空白（包括换行）
+        \|\|\|               # 匹配第一个分隔符
+        # 捕获关键行号列表部分
+        (                    # 开始捕获组group(1)
+          \[\s*(:?\d+(?:\s*,\s*\d+)*)?\s*]
+        )                    # 结束捕获组
+        \s*                  # 允许列表后的空白
+        \|\|\|               # 匹配第二个分隔符
+        .*                   # 匹配后续所有内容（分析部分）
+    """, re.VERBOSE | re.IGNORECASE)
+
+    def check_valid(self, response: str) -> bool:
+        match = re.match(self.pattern, response)
+        return bool(match)
+
+    def get_attention_lines(self, response: str) -> list:
+        match = re.match(self.pattern, response)
+        try:
+            return ast.literal_eval(match.group(1))  # 直接返回列表
+        except SyntaxError:
+            _logger.error(f"can't trans to list: {match.group(1)}")
+            return []
+
+    @retry_times(retries=5)
+    @valid_with(check_valid)
+    def invoke_validate_retry(self, messages: list) -> str:
+        return self.analyzer.llm.invoke(messages)
+
+    def accept(self):
+        _background_messages_copy = copy.deepcopy(self.analyzer.global_history.background_history)
+        _select_lines_prompt = [{"role": "user", "content": AFTER_TREE_TASK_PROMPT}]
+        _background_messages_copy.extend(_select_lines_prompt)
+        valid, response = self.invoke_validate_retry(_background_messages_copy)
+        if valid:
+            _select_lines_prompt.append({"role": "assistant", "content": response})
+            self.analyzer.global_history.roughly_line_history = _select_lines_prompt
+            attention_lines = self.get_attention_lines(response)
+            self.analyzer.important_lines = attention_lines
         self.analyzer.prompt_state = ElementState(self.analyzer)
+        return
 
 
 class ElementState(PromptState):
@@ -72,6 +120,12 @@ class ElementState(PromptState):
 class NormalElementState(PromptState):
     def accept(self):
         _element = self.analyzer.current_element
+        # 如果这个元素不在重要行中，则跳过
+        start_line, end_line = _element.get("startLine"), _element.get("endLine")
+        if not any(start_line <= num <= end_line for num in self.analyzer.important_lines):
+            self.analyzer.prompt_state = ElementState(self.analyzer)
+            return
+
         _element_prompt = NORMAL_ELEMENT_PROMPT.format(line=_element.get("startLine"),
                                                        element=_element.get("value"),
                                                        elementType=_element.get("type"))

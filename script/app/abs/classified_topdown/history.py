@@ -48,6 +48,7 @@ class ElementHistory:
 class GlobalHistories:
     def __init__(self):
         self.background_history = []
+        self.roughly_line_history = []
         self.task_history = []
         self.element_histories: Dict[int, ElementHistory] = {}
         self.after_task_history = []

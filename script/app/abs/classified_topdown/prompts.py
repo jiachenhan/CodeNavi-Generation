@@ -13,6 +13,25 @@ Note: A code element is considered representative if:
 Note: You should NOT attempt to split AST by yourself.
 """
 
+ROUGH_SELECT_LINES_PROMPT = """Based on your analysis, Please select which lines are critical\
+for this violation and record their line numbers.
+ 
+Note: A code line is critical if:
+1. This line has been directly modified.
+2. This line contains contextual features related to the violation.
+3. This line contains code elements that may appear in similar patterns.
+
+Strictly follow the format below:
+1. First part: [critical lines]
+2. Second part: A number list wrapped in a pair of square brackets.
+3. Third part: your analysis
+Each part
+Use ||| segmentation between three parts
+
+Example output:
+[critical lines] ||| [3, 4, 6, 7, 8, 10] ||| \n your analysis
+"""
+
 NORMAL_ELEMENT_PROMPT = """For AST type `{elementType}` code element `{element}` in line `{line}`, please \
 analyze whether it contains representative code elements for above violations(s).
 'Yes': If the code snippet contains representative code element for above violation(s).
