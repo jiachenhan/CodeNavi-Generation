@@ -102,6 +102,7 @@ class Analyzer:
 
         data = {
             "histories": histories,
+            "roughly_line": self.global_history.roughly_line_history,
             "considered_elements": list(self.considered_elements),
             "considered_attrs": self.considered_attrs,
             "regex": self.regex_map,
