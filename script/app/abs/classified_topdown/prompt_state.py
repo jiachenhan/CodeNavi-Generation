@@ -68,24 +68,25 @@ class AttentionLineState(PromptState):
     """This state allows the model to roughly select important rows"""
     pattern = re.compile(r"""
         # 匹配固定起始标记[critical lines]
-        \[critical\ lines]  
+        \[critical\s*lines]  
         \s*                  # 允许起始标记后的任意空白（包括换行）
         \|\|\|               # 匹配第一个分隔符
+        \s*
         # 捕获关键行号列表部分
         (                    # 开始捕获组group(1)
-          \[\s*(:?\d+(?:\s*,\s*\d+)*)?\s*]
+          \[\s*(?:\d+(?:\s*,\s*\d+)*)?\s*]
         )                    # 结束捕获组
         \s*                  # 允许列表后的空白
         \|\|\|               # 匹配第二个分隔符
-        .*                   # 匹配后续所有内容（分析部分）
+        [\s\S]*                   # 匹配后续所有内容（分析部分）
     """, re.VERBOSE | re.IGNORECASE)
 
     def check_valid(self, response: str) -> bool:
-        match = re.match(self.pattern, response)
+        match = re.search(self.pattern, response)
         return bool(match)
 
     def get_attention_lines(self, response: str) -> list:
-        match = re.match(self.pattern, response)
+        match = re.search(self.pattern, response)
         try:
             return ast.literal_eval(match.group(1))  # 直接返回列表
         except SyntaxError:
@@ -204,7 +205,7 @@ class RegEXState(PromptState):
     def check_valid(self, response: str) -> bool:
         parts = response.rsplit('\n', 1)
         part = parts[0] if len(parts) > 1 else response
-        match = re.match(self.pattern, part.strip())
+        match = re.search(self.pattern, part.strip())
         return bool(match)
 
     @retry_times(5)
@@ -215,7 +216,7 @@ class RegEXState(PromptState):
     def get_regex(self, response: str) -> (bool, Optional[str]):
         parts = response.rsplit('\n', 1)
         part = parts[0] if len(parts) > 1 else response
-        match = re.match(self.pattern, part.strip())
+        match = re.search(self.pattern, part.strip())
         if match:
             if match.group(1) and match.group(1).lower() == "yes":
                 return True, match.group(2)
