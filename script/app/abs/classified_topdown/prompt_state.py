@@ -7,7 +7,8 @@ from app.basic_modification_analysis import background_analysis
 from app.abs.classified_topdown.history import ElementHistory
 from app.abs.classified_topdown.prompts import NORMAL_ELEMENT_PROMPT, NAME_ELEMENT_PROMPT, STRUCTURE_ELEMENT_PROMPT, \
     TASK_DESCRIPTION_PROMPT, \
-    AFTER_TREE_TASK_PROMPT, AFTER_TREE_ELEMENT_PROMPT, AFTER_TREE_NAME_PROMPT, REGEX_NAME_PROMPT
+    AFTER_TREE_TASK_PROMPT, AFTER_TREE_ELEMENT_PROMPT, AFTER_TREE_NAME_PROMPT, REGEX_NAME_PROMPT, \
+    ROUGH_SELECT_LINES_PROMPT
 from utils.common import retry_times, valid_with
 from utils.config import LoggerConfig
 
@@ -98,7 +99,7 @@ class AttentionLineState(PromptState):
 
     def accept(self):
         _background_messages_copy = copy.deepcopy(self.analyzer.global_history.background_history)
-        _select_lines_prompt = [{"role": "user", "content": AFTER_TREE_TASK_PROMPT}]
+        _select_lines_prompt = [{"role": "user", "content": ROUGH_SELECT_LINES_PROMPT}]
         _background_messages_copy.extend(_select_lines_prompt)
         valid, response = self.invoke_validate_retry(_background_messages_copy)
         if valid:
