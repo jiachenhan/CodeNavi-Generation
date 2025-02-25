@@ -49,7 +49,7 @@ public class NodePath {
 
         MoNode parent = subConsiderNode.getParent();
         // 保证一条路径上至少有一个末端节点可以映射成DSL代码
-        boolean isSubQueryConsider = false;
+        boolean isSubQueryConsider = dslNode instanceof KeyWord;
         while (parent != null && !parent.isSame(funcDecl)) {
             boolean considerParent = consideredNodes.contains(parent);
             DSLNode parentDSLNode = DSLNodeMapping.convertMoNode2DSLNode(parent);

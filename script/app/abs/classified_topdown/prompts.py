@@ -25,8 +25,7 @@ Strictly follow the format below:
 1. First part: [critical lines]
 2. Second part: A number list wrapped in a pair of square brackets.
 3. Third part: your analysis
-Each part
-Use ||| segmentation between three parts
+Each part use ||| segmentation between three parts
 
 Example output:
 [critical lines] ||| [3, 4, 6, 7, 8, 10] ||| \n your analysis
@@ -74,21 +73,21 @@ Customized function or variable names can be replaced by semantic like names.
 Strictly follow the format below:
 1. First part: "yes" or "no"
 2. Second part (if yes): possible regular expression; (if no): None
-3. Follow your analysis after
-4. Separate parts with triple vertical bars (|||)
+3. Third part: your analysis
+Each part use ||| segmentation between three parts
 
 Examples:
 Example1:
 Name: setex
-Output: yes|||(setex|save|insert|update|put)||| \n [analysis]
+Output: yes|||(setex|save|insert|update|put)||| \n your analysis
 
 Example2:
 Name: excelFilePath
-Output: yes|||(?i).*(path)$||| \n [analysis]
+Output: yes|||(?i).*(path)$||| \n your analysis
 
 Example3:
 Name: getenv
-Output: no|||None||| \n [analysis]
+Output: no|||None||| \n your analysis
 """
 
 EXPRESSION_TYPE_ELEMENT_PROMPT = """
