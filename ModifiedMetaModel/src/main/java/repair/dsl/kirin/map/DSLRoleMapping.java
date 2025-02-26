@@ -245,6 +245,7 @@ public class DSLRoleMapping {
         // 针对函数定义和形参位置annotation的特殊处理
         if (parent instanceof MoAnnotation) {
             if (child instanceof MoName) {
+                // 因为name的DSL生成依靠name节点，所以role要skip
                 if ("typeName".equals(description.role())) {
                     return SkipRole.class;
                 }
