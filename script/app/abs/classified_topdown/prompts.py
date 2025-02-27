@@ -63,8 +63,12 @@ classify its violation relevance by selecting ALL applicable types from these ca
 Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
 If no type is applicable, select 0.
 
+Your response should be formatted as follows:
 [Response Format]
 [Type number]: [Corresponding analysis]
+
+Example output:
+[1]: [your analysis]
 """
 
 NAME_ELEMENT_PROMPT = """Please evaluate whether the name of the element `{element}` in line {line} is representative \
