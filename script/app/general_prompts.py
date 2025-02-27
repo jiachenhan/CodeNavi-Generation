@@ -38,7 +38,7 @@ Here is the modification information:
 ```
 
 Here is error information about this code modification, \
-which prompts for information related to code security, bug fixes, and more.
+which provides details on issues such as security vulnerabilities, bug fixes, and more:
 ```
 {error_info}
 ```

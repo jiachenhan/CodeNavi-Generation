@@ -1,4 +1,5 @@
 import os
+import json
 from pathlib import Path
 from typing import Generator
 
@@ -12,6 +13,7 @@ from utils.config import set_config, LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
 
+
 def extract_pattern(_jar: str, _case_path: Path, _pattern_path: Path, _pattern_info_path: Path):
     group_name = _case_path.parent.stem
     pattern_ori_path = _pattern_path / "ori" / group_name / f"{_case_path.stem}.ser"
@@ -21,15 +23,16 @@ def extract_pattern(_jar: str, _case_path: Path, _pattern_path: Path, _pattern_i
 
 def abstract_pattern(_llm: LLMAPI, _jar: str, _case_path: Path, _pattern_path: Path, _pattern_info_path: Path):
     group_name = _case_path.parent.stem
+    case_info = json.load(open(_case_path / "info.json", 'r'))["may_be_fixed_violations"].strip()
     pattern_ori_path = _pattern_path / "ori" / group_name / f"{_case_path.stem}.ser"
     pattern_abs_path = _pattern_path / "abs" / group_name / f"{_case_path.stem}.ser"
     pattern_info_input_path = _pattern_info_path / "input" / group_name / f"{_case_path.stem}.json"
     pattern_info_output_path = _pattern_info_path / "output" / group_name / f"{_case_path.stem}.json"
-
     if pattern_abs_path.exists():
         return
 
     pattern_input = PatternInput.from_file(pattern_info_input_path)
+    pattern_input.set_error_info(case_info)
     llm_abstract(_llm, pattern_input, pattern_info_output_path)
     java_abstract(10, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
 
@@ -59,13 +62,13 @@ if __name__ == "__main__":
 
     dataset_name = "codeql_hiera_60"
     dataset_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / dataset_name
+    # dataset_path = Path("/Users/ffengjay/Postgraduate/CodeNavi-Generation/") / dataset_name
 
     pattern_path = utils.config.get_pattern_base_path() / dataset_name
     pattern_info_path = utils.config.get_pattern_info_base_path() / dataset_name
     dsl_path = utils.config.get_dsl_base_path() / dataset_name
 
     cases = get_code_pair(dataset_path, "0")
-
     for case in cases:
         _logger.info(f"group: {case.parent}")
         # extract_pattern(jar_path, case, pattern_path, pattern_info_path)

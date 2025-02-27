@@ -7,6 +7,7 @@ from utils.config import get_pattern_info_base_path, LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
 
+
 class PatternInput(BaseModel):
     path: str = Field(alias="FileName")
     error_info: Optional[str] = Field(
@@ -34,6 +35,8 @@ class PatternInput(BaseModel):
             _logger.error(f"Error parsing file {_file_path}: {e}")
             raise
 
+    def set_error_info(self, error_info: str):
+        self.error_info = error_info
 
 def pretty_print_history(history: list):
     for message in history:
