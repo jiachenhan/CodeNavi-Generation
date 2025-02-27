@@ -61,9 +61,23 @@ class Analyzer:
             _logger.error(f"Retry! Invalid response: {response}")
         return is_valid
 
+    @staticmethod
+    def check_classified_response(response: str) -> bool:
+        pattern = r'\[(\d+)\]:'
+        match = re.search(pattern, response)
+        if not match:
+            _logger.error(f"Retry! Invalid response: {response}")
+            return False
+        return True
+
     @retry_times("retries")
     @valid_with(check_valid_response)
     def invoke_validate_retry(self, messages) -> str:
+        return self.llm.invoke(messages)
+
+    @retry_times("retries")
+    @valid_with(check_classified_response)
+    def invoke_classify_retry(self, messages) -> str:
         return self.llm.invoke(messages)
 
     @staticmethod
@@ -71,6 +85,18 @@ class Analyzer:
         # 使用正则表达式删除第一个字母之前的所有符号，并保留整个字符串
         cleaned_response = re.sub(r'^[^a-zA-Z]*([a-zA-Z])', r'\1', response)
         return cleaned_response.lower().startswith("yes")
+
+    @staticmethod
+    def check_classified_num_response(response: str) -> int:
+        pattern = r'\[(\d+)\]:'
+        # print(response)
+        match = re.search(pattern, response)
+        if not match:
+            return 0
+        elif not match.group(1).isdigit():
+            return 0
+        else:
+            return int(match.group(1))
 
     @staticmethod
     def is_name_element(_element: dict) -> bool:

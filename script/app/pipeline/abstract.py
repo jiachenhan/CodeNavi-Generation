@@ -18,6 +18,8 @@ def llm_abstract(_llm,
     try:
         run_llm_analysis(_llm, _pattern_input, _output_path)
     except Exception as e:
+        # import traceback
+        # traceback.print_exc()
         _logger.error(f"Error in {_output_path}: {e}")
         return
 

@@ -31,18 +31,40 @@ Example output:
 [critical lines] ||| [3, 4, 6, 7, 8, 10] ||| \n your analysis
 """
 
-NORMAL_ELEMENT_PROMPT = """For AST type `{elementType}` code element `{element}` in line `{line}`, please \
-analyze whether it contains representative code elements for above violations(s).
-'Yes': If the code snippet contains representative code element for above violation(s).
-'No': If the code snippet does not contain representative code element for above violation(s).
+# NORMAL_ELEMENT_PROMPT = """For AST type `{elementType}` code element `{element}` in line `{line}`, please \
+# analyze whether it contains representative code elements for above violations(s).
+# 'Yes': If the code snippet contains representative code element for above violation(s).
+# 'No': If the code snippet does not contain representative code element for above violation(s).
+#
+# Note: A code element is considered representative if it meets any of the following criteria:
+# 1. Direct Contribution: It directly contributes to triggering the violation(s).
+# 2. Include violated code: It contains the code triggering the violation(s).
+# 3. Key features: It contains relevant features that may appear in the context of this violation(s).
+# 4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
+# Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
+# [yes/no]: [Cause analysis]
+# """
 
-Note: A code element is considered representative if it meets any of the following criteria:
-1. Direct Contribution: It directly contributes to triggering the violation(s).
-2. Include violated code: It contains the code triggering the violation(s).
-3. Key features: It contains relevant features that may appear in the context of this violation(s).
-4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
-Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
-[yes/no]: [Cause analysis]
+NORMAL_ELEMENT_PROMPT = """For AST type {elementType} code element {element} in line {line}, please
+classify its violation relevance by selecting ALL applicable types from these categories:
+
+[Category Options]
+ 1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
+    a. it directly contributes to triggering the violation(s).
+    b. it contains the code triggering the violation(s) and itself is also crucial.
+    c. it contains relevant features that may appear in the context of this violation(s). 
+    d. it is commonly observed in similar violation patterns based on your knowledge.
+ 2. Structural Relevant: One code element is classified as relevant if it meets any of the following criteria:
+    a. it is a control flow structure that is crucial for the violation(s).
+    b. it is commonly observed in similar violation patterns based on your knowledge.
+ 3. Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria \
+    or it only contains the related code elements while itself is not crucial for this violation.
+[Response Requirements]
+Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
+If no type is applicable, select 0.
+
+[Response Format]
+[Type number]: [Corresponding analysis]
 """
 
 NAME_ELEMENT_PROMPT = """Please evaluate whether the name of the element `{element}` in line {line} is representative \
