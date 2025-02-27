@@ -49,6 +49,8 @@ def get_code_pair(_path: Path, _case_name) -> Generator[Path, None, None]:
     for group in _path.iterdir():
         if not group.is_dir():
             continue
+        # if not group.stem == "3":
+        #     continue
         case_path = group / _case_name
         yield case_path
 
@@ -73,5 +75,6 @@ if __name__ == "__main__":
         _logger.info(f"group: {case.parent}")
         # extract_pattern(jar_path, case, pattern_path, pattern_info_path)
         abstract_pattern(llm, jar_path, case, pattern_path, pattern_info_path)
+        # break
         generate_query(jar_path, case, pattern_path, dsl_path)
     pass
