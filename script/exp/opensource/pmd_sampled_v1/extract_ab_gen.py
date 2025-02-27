@@ -100,7 +100,7 @@ async def main():
     # 创建并行任务（限制最大并发数）
     sem = asyncio.Semaphore(5)  # 根据API总限制调整
 
-    dataset_name = "codeql_sampled_v1"
+    dataset_name = "pmd_sampled_v1"
     dataset_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / dataset_name
 
     pattern_path = utils.config.get_pattern_base_path() / dataset_name

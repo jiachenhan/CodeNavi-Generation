@@ -117,6 +117,7 @@ def java_extract_pattern(timeout_sec: float,
     work_dir = utils.config.get_root_project_path()
     cmd = ["java", "-jar", java_program, "extract",
            str(pattern_pair_path), str(pattern_ser_path), str(pattern_json_path)]
+    print(f"cmd: {cmd}")
     start_process(cmd, work_dir, timeout_sec)
 
 def java_generate_query(timeout_sec: float,
