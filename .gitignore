@@ -22,6 +22,9 @@ target/
 07dsl/
 artifacts/
 
+# python
+**/__pycache__/
+
 ### Eclipse ###
 .apt_generated
 .classpath
