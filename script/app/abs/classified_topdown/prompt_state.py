@@ -119,6 +119,7 @@ class ElementState(PromptState):
         else:
             self.analyzer.prompt_state = InsertNodeState(self.analyzer)
 
+
 class NormalElementState(PromptState):
     def accept(self):
         _element = self.analyzer.current_element
@@ -131,6 +132,7 @@ class NormalElementState(PromptState):
         _element_prompt = NORMAL_ELEMENT_PROMPT.format(line=_element.get("startLine"),
                                                        element=_element.get("value"),
                                                        elementType=_element.get("type"))
+        _logger.debug(_element_prompt)
         _element_history = self.analyzer.get_current_element_history()
         _element_his_copy = copy.deepcopy(_element_history)
         _element_his_copy.add_user_message_to_history(_element_prompt)
@@ -141,10 +143,13 @@ class NormalElementState(PromptState):
             _element_history.add_user_message_to_round(_element_prompt)
             _element_history.add_assistant_message_to_round(response)
             classified_res = self.analyzer.check_classified_num_response(response)
-            if classified_res != 3 and classified_res != 0:
+            if classified_res != 0:
             # if self.analyzer.check_true_response(response):
                 self.analyzer.push(_element)
                 # self.analyzer.prompt_state = StructureState(self.analyzer)
+                self.analyzer.prompt_state = ElementState(self.analyzer)
+                if classified_res != 3:
+                    self.analyzer.considered_elements.add(_element.get("id"))
                 return
         else:
             _logger.error(f"Invalid response: {response} After retry {self.analyzer.retries} times")
