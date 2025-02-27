@@ -77,7 +77,7 @@ async def process_single_case(
         dsl_path: Path,
         pattern_info_path: Path
 ):
-    # extract_pattern(jar, case, pattern_path, pattern_info_path)
+    extract_pattern(jar, case, pattern_path, pattern_info_path)
 
     # 异步执行核心步骤
     await async_abstract_pattern(llm_pool, jar, case, pattern_path, pattern_info_path)
