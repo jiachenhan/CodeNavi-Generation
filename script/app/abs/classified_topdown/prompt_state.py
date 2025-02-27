@@ -8,7 +8,7 @@ from app.abs.classified_topdown.history import ElementHistory
 from app.abs.classified_topdown.prompts import NORMAL_ELEMENT_PROMPT, NAME_ELEMENT_PROMPT, STRUCTURE_ELEMENT_PROMPT, \
     TASK_DESCRIPTION_PROMPT, \
     AFTER_TREE_TASK_PROMPT, AFTER_TREE_ELEMENT_PROMPT, AFTER_TREE_NAME_PROMPT, REGEX_NAME_PROMPT, \
-    ROUGH_SELECT_LINES_PROMPT
+    ROUGH_SELECT_LINES_PROMPT, LITERAL_ELEMENT_PROMPT, REGEX_LITERAL_PROMPT
 from utils.common import retry_times, valid_with
 from utils.config import LoggerConfig
 
@@ -154,8 +154,12 @@ class NormalElementState(PromptState):
 class NameState(PromptState):
     def accept(self):
         _element = self.analyzer.current_element
-        _element_prompt = NAME_ELEMENT_PROMPT.format(line=_element.get("startLine"),
-                                                       element=_element.get("value"))
+        if _element.get("type") in ("MoSimpleName", "MoQualifiedName"):
+            _element_prompt = NAME_ELEMENT_PROMPT.format(line=_element.get("startLine"),
+                                                           element=_element.get("value"))
+        else:
+            _element_prompt = LITERAL_ELEMENT_PROMPT.format(line=_element.get("startLine"),
+                                                           element=_element.get("value"))
 
         _element_history = self.analyzer.get_current_element_history()
         _element_his_copy = copy.deepcopy(_element_history)
@@ -167,7 +171,6 @@ class NameState(PromptState):
             _element_history.add_user_message_to_round(_element_prompt)
             _element_history.add_assistant_message_to_round(response)
             if self.analyzer.check_true_response(response):
-                self.analyzer.considered_attrs["Name"].append(_element.get("id"))
                 self.analyzer.considered_elements.add(_element.get("id"))
                 self.analyzer.prompt_state = RegEXState(self.analyzer)
                 return
@@ -232,7 +235,10 @@ class RegEXState(PromptState):
 
     def accept(self):
         _element = self.analyzer.current_element
-        _reg_prompt = REGEX_NAME_PROMPT.format(value=_element.get("value"))
+        if _element.get("type") in ("MoSimpleName", "MoQualifiedName"):
+            _reg_prompt = REGEX_NAME_PROMPT.format(value=_element.get("value"))
+        else:
+            _reg_prompt = REGEX_LITERAL_PROMPT.format(value=_element.get("value"))
 
         _element_history = self.analyzer.get_current_element_history()
 

@@ -74,7 +74,7 @@ class Analyzer:
 
     @staticmethod
     def is_name_element(_element: dict) -> bool:
-        return _element.get("type") in ("MoSimpleName", "MoQualifiedName")
+        return _element.get("type") in ("MoSimpleName", "MoQualifiedName", "MoStringLiteral")
 
     def serialize(self, path: Path):
         histories = {"background": self.global_history.background_history,

@@ -60,6 +60,18 @@ Note: According to the following template, please answer the question with 'yes'
 [yes/no]: [Cause analysis]
 """
 
+LITERAL_ELEMENT_PROMPT = """Please evaluate whether the string literal `{element}` in line {line} is representative \
+for above violation(s).
+'Yes': If the string literal is representative for above violation(s).
+'No': If the string literal is not representative for above violation(s).
+
+Note: A string literal is considered representative if it meets any of the following criteria:
+1. Key features: A certain part of this string literal is related to the violation(s).
+2. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
+Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
+[yes/no]: [Cause analysis]
+"""
+
 REGEX_NAME_PROMPT = """Does this name have to be literally equal to `{value}`? Please evaluate whether it must literally \
 equal to `{value}`, or it can be replace by another name with similarly semantic.
 'yes': If the name can be replace by another name. 
@@ -68,7 +80,8 @@ equal to `{value}`, or it can be replace by another name with similarly semantic
 Note: 
 1. Normally, common function call names must be literally equal. \
 Customized function or variable names can be replaced by semantic like names.
-2. If it can be replaced, please summarize the possible regular expressions based on your knowledge
+2. If it can be replaced, please summarize the possible regular expressions based on your knowledge\
+(Ensure the original name can be matched with regular expressions)
 
 Strictly follow the format below:
 1. First part: "yes" or "no"
@@ -87,6 +100,38 @@ Output: yes|||(?i).*(path)$||| \n your analysis
 
 Example3:
 Name: getenv
+Output: no|||None||| \n your analysis
+"""
+
+REGEX_LITERAL_PROMPT = """Does this string literal have to be literally equal to `{value}`? \
+Please evaluate whether it must literally equal to `{value}`, or it can be represented by a regular expression
+
+'yes': If the string literal can be represented by a regular expression
+'no': If the string literal must literally equal to `{value}`
+
+Note: 
+1. Normally, most string literals have key parts related to violation, the given regular expression \
+should generalize the key parts and arbitrary match the remaining parts
+2. If it can be represented, please summarize the possible regular expressions based on your knowledge\
+(Ensure the original string literals can be matched with regular expressions)
+
+Strictly follow the format below:
+1. First part: "yes" or "no"
+2. Second part (if yes): possible regular expression; (if no): None
+3. Third part: your analysis
+Each part use ||| segmentation between three parts
+
+Examples:
+Example1:
+String literal: pkgArrayList
+Output: yes|||(?i)(pkg|package).*(list)||| \n your analysis
+
+Example2:
+String literal: System error
+Output: yes|||(?i).*(error|warn)||| \n your analysis
+
+Example3:
+String literal: /**
 Output: no|||None||| \n your analysis
 """
 
