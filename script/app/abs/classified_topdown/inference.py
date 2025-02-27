@@ -63,7 +63,7 @@ class Analyzer:
 
     @staticmethod
     def check_classified_response(response: str) -> bool:
-        pattern = r'\[(\d+)\]:'
+        pattern = re.compile(r'\[\s*(Type|Category|Type\snumber)?\s*(\d+)\s*\]:\s*.*', re.VERBOSE | re.IGNORECASE)
         match = re.search(pattern, response)
         if not match:
             _logger.error(f"Retry! Invalid response: {response}")
@@ -88,15 +88,15 @@ class Analyzer:
 
     @staticmethod
     def check_classified_num_response(response: str) -> int:
-        pattern = r'\[(\d+)\]:'
+        pattern = re.compile(r'\[\s*(Type|Category|Type\snumber)?\s*(\d+)\s*\]:\s*.*', re.VERBOSE | re.IGNORECASE)
         # print(response)
         match = re.search(pattern, response)
         if not match:
             return 0
-        elif not match.group(1).isdigit():
+        elif not match.group(2).isdigit():
             return 0
         else:
-            return int(match.group(1))
+            return int(match.group(2))
 
     @staticmethod
     def is_name_element(_element: dict) -> bool:
