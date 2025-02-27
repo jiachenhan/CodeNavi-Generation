@@ -12,7 +12,7 @@ import static java.util.Map.entry;
 
 public class DSLNodeMapping {
     public static final Map<MoNodeType, Class<? extends DSLNode>> nodeMapping = Map.<MoNodeType, Class<? extends DSLNode>>ofEntries(
-            entry(MoNodeType.TYPEModifier, DSLUnSupportNode.class),
+            entry(MoNodeType.TYPEModifier, Modifier.class),
             entry(MoNodeType.TYPETypeParameter, DSLUnSupportNode.class),
             entry(MoNodeType.TYPEPackageDeclaration, DSLUnSupportNode.class),
             entry(MoNodeType.TYPETextElement, DSLUnSupportNode.class),

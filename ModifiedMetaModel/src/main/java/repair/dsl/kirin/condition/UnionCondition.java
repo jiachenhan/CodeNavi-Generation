@@ -35,12 +35,13 @@ public class UnionCondition extends Condition {
     }
 
     public void addInnerCondition(Condition innerCondition) {
-        boolean isDuplicate = innerConditions.stream()
+        innerConditions.add(innerCondition);
+    }
+
+    public boolean isDuplicate(Condition condition) {
+        return innerConditions.stream()
                 .map(Printable::prettyPrint)
-                .anyMatch(s -> s.equals(innerCondition.prettyPrint()));
-        if (!isDuplicate) {
-            innerConditions.add(innerCondition);
-        }
+                .anyMatch(s -> s.equals(condition.prettyPrint()));
     }
 
     @Override

@@ -81,7 +81,10 @@ public class LLMAbstractor implements Abstractor {
 
         // expand action nodes
         actionsRelatedNodes.forEach(node -> {
-            actionRelatedConsiderNodes.add(node);
+            if (node.isLeaf()) {
+                // 只添加叶子节点的强制考虑
+                actionRelatedConsiderNodes.add(node);
+            }
 //            MoNode parent = node.getParent();
 //            // expand parent k=1
 //            if(parent != null) {

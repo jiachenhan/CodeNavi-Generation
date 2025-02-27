@@ -3,6 +3,7 @@ package repair.dsl.kirin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import repair.ast.MoNode;
+import repair.ast.code.MoModifier;
 import repair.ast.code.expression.MoName;
 import repair.ast.code.expression.MoSimpleName;
 import repair.ast.code.statement.MoBlock;
@@ -13,6 +14,7 @@ import repair.ast.code.type.MoPrimitiveType;
 import repair.ast.code.type.MoSimpleType;
 import repair.ast.declaration.MoMethodDeclaration;
 import repair.dsl.kirin.condition.BinaryCondition;
+import repair.dsl.kirin.condition.BoolCondition;
 import repair.dsl.kirin.condition.Condition;
 import repair.dsl.kirin.condition.NotCondition;
 import repair.dsl.kirin.expr.*;
@@ -23,6 +25,7 @@ import repair.dsl.kirin.map.code.KeyWordFactory;
 import repair.dsl.kirin.map.code.Nameable;
 import repair.dsl.kirin.map.code.node.DSLNode;
 import repair.dsl.kirin.map.code.node.DSLUnSupportNode;
+import repair.dsl.kirin.map.code.node.Modifier;
 import repair.dsl.kirin.map.code.node.Name;
 import repair.dsl.kirin.map.code.role.DSLRole;
 import repair.dsl.kirin.map.code.role.RoleAction;
@@ -138,12 +141,27 @@ public class QueryGenerator {
         }
     }
 
+    private int countParents(MoNode node) {
+        int count = 0;
+        MoNode parent = node.getParent();
+        while (parent != null) {
+            count++;
+            parent = parent.getParent();
+        }
+        return count;
+    }
+
     private void generateMoveNotConditions(Pattern graphPattern, MoveNode moveNode, Map<MoNode, Query> queryMap) {
         MoNode movedNode = moveNode.moveNode();
         MoNode moveParent = moveNode.moveParent();
 
         DSLNode dslNode = DSLNodeMapping.convertMoNode2DSLNode(moveParent);
         if (! (dslNode instanceof KeyWord)) {
+            return;
+        }
+
+        // 如果move之后的层数小于move之前的层数（向外层移动，那么忽略这个操作）
+        if (countParents(moveParent) < countParents(movedNode.getParent())) {
             return;
         }
 
@@ -292,6 +310,19 @@ public class QueryGenerator {
                     }
                 }
                 currentQuery.addCondition(binaryCondition);
+            }
+
+            // modifier处理
+            if (currentQuery instanceof TemplateQuery &&
+                    currentNodeBundle != null && currentNodeBundle.getDslNode() instanceof Modifier modifier) {
+                if (currentNodeBundle.getOriginalNode() instanceof MoModifier modifierNode) {
+                    if (modifier.getConditionStr(modifierNode).isEmpty()) {
+                        continue;
+                    }
+
+                    BoolCondition boolCondition = new BoolCondition(currentQuery.getAlias(), modifier.getConditionStr(modifierNode));
+                    currentQuery.addCondition(boolCondition);
+                }
             }
         }
     }

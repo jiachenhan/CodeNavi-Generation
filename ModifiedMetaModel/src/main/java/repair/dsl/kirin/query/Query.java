@@ -38,10 +38,18 @@ public abstract class Query implements Printable, Aliasable, Rhs {
             setCondition(condition);
         } else if (this.condition instanceof UnionCondition unionCondition
                 && unionCondition.getPredicate() == UnionCondition.Predicate.AND) {
+            if (unionCondition.isDuplicate(condition)) {
+                logger.debug("Duplicate condition: {}", condition.prettyPrint());
+                return;
+            }
             unionCondition.addInnerCondition(condition);
         } else {
             UnionCondition unionCondition = new UnionCondition(UnionCondition.Predicate.AND);
             unionCondition.addInnerCondition(this.condition);
+            if (unionCondition.isDuplicate(condition)) {
+                logger.debug("Duplicate condition: {}", condition.prettyPrint());
+                return;
+            }
             unionCondition.addInnerCondition(condition);
             setCondition(unionCondition);
         }

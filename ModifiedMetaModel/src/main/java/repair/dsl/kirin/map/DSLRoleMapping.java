@@ -116,7 +116,7 @@ public class DSLRoleMapping {
             entry(Objects.requireNonNull(findStaticDescription(MoInitializer.class, "bodyDescription")), DSLUnSupportRole.class),
 
             entry(Objects.requireNonNull(findStaticDescription(MoMethodDeclaration.class, "javadocDescription")), DSLUnSupportRole.class),
-            entry(Objects.requireNonNull(findStaticDescription(MoMethodDeclaration.class, "modifiersDescription")), DSLUnSupportRole.class),
+            entry(Objects.requireNonNull(findStaticDescription(MoMethodDeclaration.class, "modifiersDescription")), SkipRole.class),
             entry(Objects.requireNonNull(findStaticDescription(MoMethodDeclaration.class, "constructorDescription")), DSLUnSupportRole.class),
             entry(Objects.requireNonNull(findStaticDescription(MoMethodDeclaration.class, "nameDescription")), SkipRole.class),
             entry(Objects.requireNonNull(findStaticDescription(MoMethodDeclaration.class, "returnTypeDescription")), DSLType.class),
