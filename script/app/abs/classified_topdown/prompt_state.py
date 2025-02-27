@@ -141,7 +141,7 @@ class NormalElementState(PromptState):
             _element_history.add_user_message_to_round(_element_prompt)
             _element_history.add_assistant_message_to_round(response)
             classified_res = self.analyzer.check_classified_num_response(response)
-            if classified_res != 3:
+            if classified_res != 3 and classified_res != 0:
             # if self.analyzer.check_true_response(response):
                 self.analyzer.push(_element)
                 # self.analyzer.prompt_state = StructureState(self.analyzer)
