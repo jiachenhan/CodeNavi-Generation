@@ -2,6 +2,7 @@ package repair.dsl.kirin.map;
 
 import repair.ast.MoNode;
 import repair.ast.MoNodeType;
+import repair.ast.code.statement.MoSwitchCase;
 import repair.ast.code.statement.MoTryStatement;
 import repair.dsl.kirin.map.code.KeyWordFactory;
 import repair.dsl.kirin.map.code.node.*;
@@ -118,6 +119,15 @@ public class DSLNodeMapping {
                 return TryWithResources.class;
             }
         }
+
+        if (node instanceof MoSwitchCase switchCase) {
+            if (switchCase.getExpression().isEmpty()) {
+                return DefaultCase.class;
+            } else {
+                return CaseStatement.class;
+            }
+        }
+
         return nodeMapping.get(node.getMoNodeType());
     }
 
