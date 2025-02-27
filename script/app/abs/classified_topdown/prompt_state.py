@@ -132,7 +132,6 @@ class NormalElementState(PromptState):
         _element_prompt = NORMAL_ELEMENT_PROMPT.format(line=_element.get("startLine"),
                                                        element=_element.get("value"),
                                                        elementType=_element.get("type"))
-        _logger.debug(_element_prompt)
         _element_history = self.analyzer.get_current_element_history()
         _element_his_copy = copy.deepcopy(_element_history)
         _element_his_copy.add_user_message_to_history(_element_prompt)

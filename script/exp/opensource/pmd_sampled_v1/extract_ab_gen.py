@@ -15,10 +15,11 @@ _logger = LoggerConfig.get_logger(__name__)
 
 
 def extract_pattern(_jar: str, _case_path: Path, _pattern_path: Path, _pattern_info_path: Path):
+    checker_name = _case_path.parent.parent.stem
     group_name = _case_path.parent.stem
-    pattern_ori_path = _pattern_path / "ori" / group_name / f"{_case_path.stem}.ser"
-    pattern_info_input_path = _pattern_info_path / "input" / group_name / f"{_case_path.stem}.json"
-    java_extract_pattern(10, _case_path, pattern_ori_path, pattern_info_input_path, _jar)
+    pattern_ori_path = _pattern_path / "ori" / checker_name / group_name / f"{_case_path.stem}.ser"
+    pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
+    java_extract_pattern(30, _case_path, pattern_ori_path, pattern_info_input_path, _jar)
 
 
 async def async_abstract_pattern(
@@ -28,13 +29,14 @@ async def async_abstract_pattern(
         _pattern_path: Path,
         _pattern_info_path: Path
 ):
+    checker_name = _case_path.parent.parent.stem
     group_name = _case_path.parent.stem
     case_info = json.load(open(_case_path / "info.json", 'r'))["may_be_fixed_violations"].strip()
 
-    pattern_ori_path = _pattern_path / "ori" / group_name / f"{_case_path.stem}.ser"
-    pattern_abs_path = _pattern_path / "abs" / group_name / f"{_case_path.stem}.ser"
-    pattern_info_input_path = _pattern_info_path / "input" / group_name / f"{_case_path.stem}.json"
-    pattern_info_output_path = _pattern_info_path / "output" / group_name / f"{_case_path.stem}.json"
+    pattern_ori_path = _pattern_path / "ori" / checker_name / group_name / f"{_case_path.stem}.ser"
+    pattern_abs_path = _pattern_path / "abs" / checker_name / group_name / f"{_case_path.stem}.ser"
+    pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
+    pattern_info_output_path = _pattern_info_path / "output" / checker_name / group_name / f"{_case_path.stem}.json"
 
     if pattern_abs_path.exists():
         return
@@ -47,15 +49,16 @@ async def async_abstract_pattern(
         pattern_info_output_path
     )
 
-    java_abstract(10, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
+    java_abstract(30, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
 
 
 def generate_query(_jar: str, _case_path: Path, _pattern_path: Path, _dsl_path: Path):
+    checker_name = _case_path.parent.parent.stem
     group_name = _case_path.parent.stem
-    pattern_abs_path = _pattern_path / "abs" / group_name / f"{_case_path.stem}.ser"
-    dsl_output_path = _dsl_path / group_name / f"{_case_path.stem}.kirin"
+    pattern_abs_path = _pattern_path / "abs" / checker_name / group_name / f"{_case_path.stem}.ser"
+    dsl_output_path = _dsl_path / checker_name / group_name / f"{_case_path.stem}.kirin"
 
-    java_generate_query(10, pattern_abs_path, dsl_output_path, _jar)
+    java_generate_query(30, pattern_abs_path, dsl_output_path, _jar)
 
 
 def get_random_code_pair(_path: Path) -> Generator[Path, None, None]:
@@ -78,10 +81,8 @@ async def process_single_case(
         pattern_info_path: Path
 ):
     extract_pattern(jar, case, pattern_path, pattern_info_path)
-
     # 异步执行核心步骤
     await async_abstract_pattern(llm_pool, jar, case, pattern_path, pattern_info_path)
-
     # 同步后续步骤
     generate_query(jar, case, pattern_path, dsl_path)
 
