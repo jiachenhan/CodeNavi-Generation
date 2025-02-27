@@ -27,7 +27,7 @@ class Analyzer:
 
         self.prompt_state: PromptState = InitialState(self)
         self.current_element = None
-        self.element_stack = list(reversed(Analyzer.get_top_stmts_from_tree(self.pattern_input.tree)))
+        self.element_stack = list(reversed(Analyzer.get_top_elements_from_tree(self.pattern_input.tree)))
         self.important_lines = []
 
         self.global_history = GlobalHistories()
@@ -44,13 +44,20 @@ class Analyzer:
         self.regex_map = {}
 
     @staticmethod
-    def get_top_stmts_from_tree(tree: dict) -> list:
+    def get_top_elements_from_tree(tree: dict) -> list:
+        result = []
         for sub_tree in tree["children"]:
             if sub_tree["type"] == "MoBlock":
                 if "children" in sub_tree:
-                    return sub_tree["children"]
-                else:
-                    return []
+                    # stmts
+                    result.extend(sub_tree["children"])
+            elif sub_tree["type"] == "MoSimpleName":
+                # func name
+                result.append(sub_tree)
+            elif sub_tree["type"] == "MoSingleVariableDeclaration":
+                # func param
+                result.append(sub_tree)
+        return result
 
     @staticmethod
     def check_valid_response(response: str) -> bool:
