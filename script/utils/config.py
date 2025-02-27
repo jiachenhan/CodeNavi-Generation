@@ -39,13 +39,13 @@ _config = YamlConfig().get_config()
 
 def set_config(tag: str = "silicon"):
     if tag == "huawei":
-        huawei_config()
+        return huawei_config()
     elif tag == "deepseek":
-        deepseek_config()
+        return deepseek_config()
     elif tag == "silicon":
-        silicon_config()
+        return silicon_config()
     elif tag == "ppinfra":
-        ppinfra_config()
+        return ppinfra_config()
 
 def huawei_config():
     os.environ["OPENAI_API_KEY"] = _config["huawei"]["API_KEY"][0]
@@ -75,13 +75,18 @@ def silicon_config():
     os.environ['jar_path'] = _config["tju"]["jar_path"]
 
 def ppinfra_config():
-    os.environ["OPENAI_API_KEY"] = _config["tju"]["ppinfra"]["API_KEY"][0]
-    os.environ["OPENAI_BASE_URL"] = _config["tju"]["ppinfra"]["BASE_URL"]
-    os.environ["MODEL_NAME"] = _config["tju"]["ppinfra"]["MODEL_NAME"]
-    os.environ['HTTP_PROXY'] = _config["tju"]["HTTP_PROXY"]
-    os.environ['HTTPS_PROXY'] = _config["tju"]["HTTPS_PROXY"]
-
-    os.environ['jar_path'] = _config["tju"]["jar_path"]
+    return {
+        "openai": {
+            "api_keys": _config["tju"]["ppinfra"]["API_KEY"],
+            "base_url": _config["tju"]["ppinfra"]["BASE_URL"],
+            "model": _config["tju"]["ppinfra"]["MODEL_NAME"]
+        },
+        "proxy": {
+            "http": _config["tju"]["HTTP_PROXY"],
+            "https": _config["tju"]["HTTPS_PROXY"]
+        },
+        "jar_path": _config["tju"]["jar_path"]
+    }
 
 def get_jar_path() -> str:
     return os.environ.get("jar_path")

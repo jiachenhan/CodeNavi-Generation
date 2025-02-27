@@ -9,7 +9,9 @@ from utils.config import LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
 
-
+"""
+    deprecated
+"""
 class LLMDispatcher:
     def __init__(self,
                  llm_servers: List[LLMOpenAI]):
