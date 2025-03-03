@@ -55,8 +55,8 @@ def detect_repo(_query_base_path: Path,
             continue
 
         for index, java_file in enumerate(repo_path.rglob("*.java")):
-            result_path = result_path / f"{index}_error_kirin"
-            kirin_engine(30, engine_path, dsl_case, java_file, result_path)
+            index_result_path = result_path / f"{index}_error_kirin"
+            kirin_engine(30, engine_path, dsl_case, java_file, index_result_path)
 
 
 def calculate_det_num(_results_path: Path):
