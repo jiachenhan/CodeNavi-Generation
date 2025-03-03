@@ -31,7 +31,7 @@ def get_result_path(_repo_case_path: Path, _results_path: Path) -> Path:
     group_name = _repo_case_path.parent.stem
     checker_name = _repo_case_path.parent.parent.stem
 
-    return _results_path / checker_name / group_name / case_name / "kirin_output"
+    return _results_path / checker_name / group_name / case_name
 
 
 def detect_repo(_query_base_path: Path,
@@ -54,7 +54,10 @@ def detect_repo(_query_base_path: Path,
             print("No repo found")
             continue
 
-        kirin_engine(60*30, engine_path, dsl_case, repo_case, result_path)
+        for index, java_file in enumerate(repo_path.rglob("*.java")):
+            result_path = result_path / f"{index}_error_kirin"
+            kirin_engine(30, engine_path, dsl_case, java_file, result_path)
+
 
 def calculate_det_num(_results_path: Path):
     det_num_list = []
