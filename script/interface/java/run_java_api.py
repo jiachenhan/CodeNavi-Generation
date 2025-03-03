@@ -23,7 +23,8 @@ def start_process(cmd: List[str], work_dir: Path, timeout_sec: float) -> str:
                                stderr=subprocess.PIPE,
                                cwd=str(work_dir),
                                text=True,
-                               encoding="utf-8")
+                               encoding="utf-8",
+                               errors="replace")
 
     timer = Timer(timeout_sec, kill_process, [process])
     stdout = ""
