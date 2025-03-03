@@ -38,16 +38,16 @@ async def async_abstract_pattern(
     pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
     pattern_info_output_path = _pattern_info_path / "output" / checker_name / group_name / f"{_case_path.stem}.json"
 
-    if pattern_abs_path.exists():
-        return
-
-    pattern_input = PatternInput.from_file(pattern_info_input_path)
-    pattern_input.set_error_info(case_info)
-    await _llm_pool.async_run(
-        llm_abstract,
-        pattern_input,
-        pattern_info_output_path
-    )
+    # if pattern_abs_path.exists():
+    #     return
+    #
+    # pattern_input = PatternInput.from_file(pattern_info_input_path)
+    # pattern_input.set_error_info(case_info)
+    # await _llm_pool.async_run(
+    #     llm_abstract,
+    #     pattern_input,
+    #     pattern_info_output_path
+    # )
 
     java_abstract(30, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
 
@@ -59,6 +59,15 @@ def generate_query(_jar: str, _case_path: Path, _pattern_path: Path, _dsl_path: 
     dsl_output_path = _dsl_path / checker_name / group_name / f"{_case_path.stem}.kirin"
 
     java_generate_query(30, pattern_abs_path, dsl_output_path, _jar)
+
+
+def get_ab_case(_pattern_path: Path, _data_path: Path) -> Generator[Path, None, None]:
+    _abs_pattern_path = _pattern_path / "ori"
+    for abs_pat in _abs_pattern_path.rglob("*.ser"):
+        case_name = abs_pat.stem
+        group_name = abs_pat.parent.stem
+        checker_name = abs_pat.parent.parent.stem
+        yield _data_path / checker_name / group_name / case_name
 
 
 def get_random_code_pair(_path: Path) -> Generator[Path, None, None]:
@@ -80,7 +89,7 @@ async def process_single_case(
         dsl_path: Path,
         pattern_info_path: Path
 ):
-    extract_pattern(jar, case, pattern_path, pattern_info_path)
+    # extract_pattern(jar, case, pattern_path, pattern_info_path)
     # 异步执行核心步骤
     await async_abstract_pattern(llm_pool, jar, case, pattern_path, pattern_info_path)
     # 同步后续步骤
@@ -108,7 +117,8 @@ async def main():
     pattern_info_path = utils.config.get_pattern_info_base_path() / dataset_name
     dsl_path = utils.config.get_dsl_base_path() / dataset_name
 
-    cases = get_random_code_pair(dataset_path)
+    # cases = get_random_code_pair(dataset_path)
+    cases = get_ab_case(pattern_path, dataset_path)
 
     tasks = []
     for case in cases:

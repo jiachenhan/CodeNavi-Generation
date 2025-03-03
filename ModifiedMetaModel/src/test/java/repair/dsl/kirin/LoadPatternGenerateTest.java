@@ -15,7 +15,7 @@ public class LoadPatternGenerateTest {
 
     @Test
     public void test() {
-        Path path = Path.of("D:/workspace/CodeNavi-Generation/01pattern/pmd_hiera_60/abs/9/0.ser");
+        Path path = Path.of("D:/workspace/CodeNavi-Generation/01pattern/codeql_sampled_v1/abs/Random_used_only_once/1/2.ser");
 
         Optional<Pattern> patternOpt = Serializer.deserializeFromDisk(path);
         if (patternOpt.isEmpty()) {

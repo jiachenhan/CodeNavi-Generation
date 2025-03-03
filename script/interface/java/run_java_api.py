@@ -174,3 +174,19 @@ def genpat_detect(timeout_sec: float,
 
     sout = start_process(cmd, work_dir, timeout_sec)
     return "YES" in sout.strip().upper()
+
+
+def genpat_detect_all(timeout_sec: float,
+                     pattern_before: Path,
+                     pattern_after: Path,
+                     repo_path: Path,
+                    result_path: Path,
+                    jar_path: Path):
+    work_dir = jar_path.parent
+
+    cmd = ["java",
+           "-Dfile.encoding=utf-8",
+           "-jar", str(jar_path), "matchAll", str(pattern_before), str(pattern_after), str(repo_path), str(result_path)]
+
+    start_process(cmd, work_dir, timeout_sec)
+

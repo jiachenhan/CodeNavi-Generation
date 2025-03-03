@@ -87,7 +87,7 @@ public class QueryGenerator {
             if (patternBefore0 instanceof MoMethodDeclaration methodDeclaration) {
                 MoSimpleName simpleName = ((MoSimpleName) methodDeclaration.getStructuralProperty("name"));
                 String nameStr = simpleName.toSrcString();
-                Rhs rhs = new DSLNodeExpr(nameStr);
+                Rhs rhs = new StringExpr(nameStr);
                 RoleListExpr aliasExpr = new RoleListExpr(templateQuery.getAlias(), List.of());
                 templateQuery.addCondition(new BinaryCondition(BinaryCondition.Predicate.EQ, new NameAttrExpr(aliasExpr, "name"), rhs));
             }
