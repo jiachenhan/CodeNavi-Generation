@@ -53,11 +53,10 @@ def detect_repo(_dataset_path: Path,
         _pattern_buggy_path = data_path / "buggy.java"
         _pattern_fixed_path = data_path / "fixed.java"
 
-        repo_path = next(repos_path.iterdir(), None)
+        repo_path = next(repo_case.iterdir(), None)
         if repo_path is None:
             print("No repo found")
             continue
-
         genpat_detect_all(30 * 60, _pattern_buggy_path, _pattern_fixed_path, repo_path, result_path, genpat_jar)
 
 def calculate_det_num(_results_path: Path):
@@ -89,5 +88,5 @@ if __name__ == '__main__':
 
     results_path = Path(f"/data/jiangjiajun/CodeNavi-DSL/GenPat/repo_{dataset_name}")
 
-    # detect_repo(dataset_path, repos_path, results_path)
-    calculate_det_num(results_path)
+    detect_repo(dataset_path, repos_path, results_path)
+    # calculate_det_num(results_path)
