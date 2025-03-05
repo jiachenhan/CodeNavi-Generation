@@ -48,12 +48,14 @@ def set_config(tag: str = "silicon"):
         return ppinfra_config()
 
 def huawei_config():
-    os.environ["OPENAI_API_KEY"] = _config["huawei"]["API_KEY"][0]
-    os.environ["OPENAI_BASE_URL"] = _config["huawei"]["BASE_URL"]
-    os.environ["MODEL_NAME"] = _config["huawei"]["MODEL_NAME"]
-    os.environ["NO_PROXY"] = _config["huawei"]["NO_PROXY"]
-
-    os.environ['jar_path'] = _config["jar_path"]
+    return {
+        "openai": {
+            "api_keys": _config["huawei"]["API_KEY"],
+            "base_url": _config["huawei"]["BASE_URL"],
+            "model": _config["huawei"]["MODEL_NAME"]
+        },
+        "jar_path": _config["jar_path"]
+    }
 
 def deepseek_config():
     os.environ["OPENAI_API_KEY"] = _config["tju"]["deepseek"]["API_KEY"][0]
