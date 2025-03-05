@@ -39,6 +39,7 @@ def start_process(cmd: List[str], work_dir: Path, timeout_sec: float) -> str:
             print(stderr)
     finally:
         timer.cancel()  # 确保定时器取消，避免错误的杀掉进程
+        stdout = "timeout"
     return stdout
 
 
@@ -137,7 +138,7 @@ def kirin_engine(timeout_sec: float,
                  dsl_path: Path,
                  scanned_file_path: Path,
                  output_dir: Path,
-                 language: str = "java"):
+                 language: str = "java") -> bool:
     work_dir = utils.config.get_root_project_path()
     cmd = ["java",
            "-Dfile.encoding=utf-8",
@@ -159,7 +160,10 @@ def kirin_engine(timeout_sec: float,
            "--language", language
            ]
 
-    start_process(cmd, work_dir, timeout_sec)
+    sout = start_process(cmd, work_dir, timeout_sec)
+    if sout == "timeout":
+        return False
+    return True
 
 
 def genpat_detect(timeout_sec: float,

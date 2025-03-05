@@ -1,3 +1,5 @@
+import platform
+import stat
 from pathlib import Path
 from typing import Generator
 
@@ -34,6 +36,30 @@ def get_result_path(_repo_case_path: Path, _results_path: Path) -> Path:
     return _results_path / checker_name / group_name / case_name
 
 
+def split_java_package(dir_path: Path) -> Generator[Path, None, None]:
+    if platform.system() == "Windows":
+        try:
+            attrs = dir_path.stat().st_file_attributes
+            if (attrs & (stat.FILE_ATTRIBUTE_HIDDEN | stat.FILE_ATTRIBUTE_SYSTEM)) != 0:
+                return
+        except AttributeError:
+            return
+
+    if dir_path.name.startswith("."):
+        return
+
+    if dir_path.is_file():
+        if dir_path.name.endswith(".java"):
+            yield dir_path
+
+    all_java = all(child.is_file() and child.name.endswith(".java") for child in dir_path.iterdir())
+    if all_java:
+        yield dir_path
+    else:
+        for child in dir_path.iterdir():
+            yield from split_java_package(child)
+
+
 def detect_repo(_query_base_path: Path,
                 _repos_path: Path,
                 _results_path: Path):
@@ -45,18 +71,24 @@ def detect_repo(_query_base_path: Path,
         dsl_case = get_pattern_path(repo_case, _query_base_path)
         result_path = get_result_path(repo_case, _results_path)
 
+        if result_path.exists():
+            continue
+
         if not dsl_case.exists():
             print(f"Invalid query path: {dsl_case}")
             continue
 
-        repo_path = next(repos_path.iterdir(), None)
+        repo_path = next(repo_case.iterdir(), None)
         if repo_path is None:
             print("No repo found")
             continue
 
-        for index, java_file in enumerate(repo_path.rglob("*.java")):
+        for index, pkg in enumerate(split_java_package(repo_path)):
             index_result_path = result_path / f"{index}_error_kirin"
-            kirin_engine(30, engine_path, dsl_case, java_file, index_result_path)
+            timeout = kirin_engine(60, engine_path, dsl_case, pkg, index_result_path)
+            if not timeout:
+                print(f"Timeout in : {dsl_case}")
+                break
 
 
 def calculate_det_num(_results_path: Path):
