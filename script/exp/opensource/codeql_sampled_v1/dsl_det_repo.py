@@ -51,6 +51,7 @@ def split_java_package(dir_path: Path) -> Generator[Path, None, None]:
     if dir_path.is_file():
         if dir_path.name.endswith(".java"):
             yield dir_path
+        return
 
     all_java = all(child.is_file() and child.name.endswith(".java") for child in dir_path.iterdir())
     if all_java:
@@ -86,7 +87,7 @@ def detect_repo(_query_base_path: Path,
         for index, pkg in enumerate(split_java_package(repo_path)):
             index_result_path = result_path / f"{index}_error_kirin"
             timeout = kirin_engine(60, engine_path, dsl_case, pkg, index_result_path)
-            if not timeout:
+            if timeout:
                 print(f"Timeout in : {dsl_case}")
                 break
 

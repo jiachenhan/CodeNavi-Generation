@@ -1,7 +1,6 @@
 import subprocess
 from pathlib import Path
-from threading import Timer
-from typing import List
+from typing import List, Tuple
 
 import utils.config
 from utils.config import LoggerConfig
@@ -9,15 +8,7 @@ from utils.config import LoggerConfig
 _logger = LoggerConfig.get_logger(__name__)
 
 
-def kill_process(p):
-    try:
-        p.kill()  # 尝试杀掉进程
-        print("Process was terminated due to timeout.")
-    except Exception as e:
-        print("Error terminating process:", e)
-
-
-def start_process(cmd: List[str], work_dir: Path, timeout_sec: float) -> str:
+def start_process(cmd: List[str], work_dir: Path, timeout_sec: float) -> Tuple[bool, str]:
     process = subprocess.Popen(cmd,
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE,
@@ -25,22 +16,23 @@ def start_process(cmd: List[str], work_dir: Path, timeout_sec: float) -> str:
                                text=True,
                                encoding="utf-8",
                                errors="replace")
-
-    timer = Timer(timeout_sec, kill_process, [process])
+    timed_out = False  # 新增：超时状态标志
     stdout = ""
     try:
         _logger.info(f"Starting process: {cmd}")
-        timer.start()  # 启动定时器
-        stdout, stderr = process.communicate()  # 等待进程完成
+        stdout, stderr = process.communicate(timeout=timeout_sec)  # 直接设置超时参数
         if process.returncode == 0:
             print(stdout)
         else:
             print("Process exited with errors")
             print(stderr)
-    finally:
-        timer.cancel()  # 确保定时器取消，避免错误的杀掉进程
-        stdout = "timeout"
-    return stdout
+    except subprocess.TimeoutExpired:
+        # 超时处理：标记超时状态并终止进程
+        timed_out = True
+        process.kill()
+        stdout, stderr = process.communicate()  # 清理残留输出
+        print(f"Process timed out after {timeout_sec} seconds")
+    return timed_out, stdout
 
 
 def java_genpat_repair(timeout_sec: float,
@@ -160,10 +152,8 @@ def kirin_engine(timeout_sec: float,
            "--language", language
            ]
 
-    sout = start_process(cmd, work_dir, timeout_sec)
-    if sout == "timeout":
-        return False
-    return True
+    timeout, sout = start_process(cmd, work_dir, timeout_sec)
+    return timeout
 
 
 def genpat_detect(timeout_sec: float,
@@ -177,7 +167,9 @@ def genpat_detect(timeout_sec: float,
            "-Dfile.encoding=utf-8",
            "-jar", str(jar_path), "match", str(pattern_before), str(pattern_after), str(test_file)]
 
-    sout = start_process(cmd, work_dir, timeout_sec)
+    timeout, sout = start_process(cmd, work_dir, timeout_sec)
+    if timeout:
+        return False
     return "YES" in sout.strip().upper()
 
 
