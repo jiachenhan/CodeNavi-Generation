@@ -46,6 +46,9 @@ def detect_repo(_dataset_path: Path,
         data_path = get_pattern_path(repo_case, dataset_path)
         result_path = get_result_path(repo_case, _results_path)
 
+        if result_path.exists():
+            continue
+
         if not data_path.exists():
             print(f"Invalid data path: {data_path}")
             continue
@@ -59,20 +62,23 @@ def detect_repo(_dataset_path: Path,
             continue
         genpat_detect_all(30 * 60, _pattern_buggy_path, _pattern_fixed_path, repo_path, result_path, genpat_jar)
 
-def calculate_det_num(_results_path: Path):
+def calculate_det_num(_repos_path: Path, _results_path: Path):
     det_num_list = []
-    for checker in _results_path.iterdir():
-        for group in checker.iterdir():
-            for case in group.iterdir():
-                result_path = case / "result.txt"
-                if not result_path.exists():
-                    print(f"Invalid result path: {result_path}")
-                    continue
+    cases = get_repo_cases(_repos_path)
+    for case in cases:
+        case_name = case.stem
+        group_name = case.parent.stem
+        checker_name = case.parent.parent.stem
+        result_path = _results_path / checker_name / group_name / case_name / "result.txt"
 
-                with open(result_path, "r", encoding="utf-8") as file:
-                    lines = file.readlines()
-                    det_num = len(lines)
-                    det_num_list.append((result_path, det_num))
+        if not result_path.exists():
+            det_num_list.append((result_path, 0))
+            continue
+
+        with open(result_path, "r", encoding="utf-8") as file:
+            lines = file.readlines()
+            det_num = len(lines)
+            det_num_list.append((result_path, det_num))
 
     total_det_nums = sum([det_num for _, det_num in det_num_list])
     print(f"Total det num: {total_det_nums}")
@@ -88,5 +94,5 @@ if __name__ == '__main__':
 
     results_path = Path(f"/data/jiangjiajun/CodeNavi-DSL/GenPat/repo_{dataset_name}")
 
-    detect_repo(dataset_path, repos_path, results_path)
-    # calculate_det_num(results_path)
+    # detect_repo(dataset_path, repos_path, results_path)
+    calculate_det_num(repos_path, results_path)
