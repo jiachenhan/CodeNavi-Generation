@@ -94,10 +94,33 @@ def detect_repo(_query_base_path: Path,
 
 def calculate_det_num(_results_path: Path):
     det_num_list = []
+    for checker in _results_path.iterdir():
+        for group in checker.iterdir():
+            for case in group.iterdir():
+                print(f"case: {case}")
+                all_count = 0
+                for _slice in case.iterdir():
+                    report_file = _slice / "error_report_1.xml"
+                    all_count += xml_count_errors(report_file)
 
-    print(f"Total det num: {sum(det_num_list)}")
-    print(f"Average det num: {sum(det_num_list) / len(det_num_list)}")
-    print(f"det nums: {det_num_list}")
+                det_num_list.append((case, all_count))
+
+    total_det_nums = sum([det_num for _, det_num in det_num_list])
+    print(f"Total det num: {total_det_nums}")
+    print(f"Average det num: {total_det_nums / len(det_num_list)}")
+    print("det nums:")
+    for _ in det_num_list:
+        print(f"{_[0]}: {_[1]}")
+
+
+def xml_count_errors(_output_path: Path) -> int:
+    if not _output_path.exists():
+        return 0
+
+    import xml.etree.ElementTree as ET
+    xml_root = ET.parse(_output_path)
+    all_error = xml_root.find("errors").findall("error")
+    return len(all_error)
 
 
 if __name__ == '__main__':
@@ -108,5 +131,5 @@ if __name__ == '__main__':
 
     results_path = Path(f"/data/jiangjiajun/CodeNavi-DSL/GenPat/repo_{dataset_name}")
 
-    detect_repo(query_base_path, repos_path, results_path)
-    # calculate_det_num(results_path)
+    # detect_repo(query_base_path, repos_path, results_path)
+    calculate_det_num(results_path)
