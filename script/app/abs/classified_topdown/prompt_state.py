@@ -129,30 +129,41 @@ class NormalElementState(PromptState):
             self.analyzer.prompt_state = ElementState(self.analyzer)
             return
 
+        _parent_value = self.analyzer.child_parent_map.get(_element.get("id")).get("value")
+        if self.analyzer.pattern_input.error_info:
+            _error_info = self.analyzer.pattern_input.error_info
+        else:
+            _error_info = "Unknown Error"
+
+        _element_type = _element.get("type")
         _element_prompt = NORMAL_ELEMENT_PROMPT.format(line=_element.get("startLine"),
                                                        element=_element.get("value"),
-                                                       elementType=_element.get("type"))
+                                                       elementType=_element_type,
+                                                       parentElement=_parent_value,
+                                                       error_info=_error_info)
         _element_history = self.analyzer.get_current_element_history()
         _element_his_copy = copy.deepcopy(_element_history)
         _element_his_copy.add_user_message_to_history(_element_prompt)
         _round_prompt = _element_his_copy.history
-        # valid, response = self.analyzer.invoke_validate_retry(_round_prompt)
         valid, response = self.analyzer.invoke_classify_retry(_round_prompt)
         if valid:
             _element_history.add_user_message_to_round(_element_prompt)
             _element_history.add_assistant_message_to_round(response)
             classified_res = self.analyzer.check_classified_num_response(response)
-            if classified_res != 0:
-            # if self.analyzer.check_true_response(response):
+            if classified_res == 0:
+                _logger.error(f"should not happened")
+            elif classified_res == 1:
                 self.analyzer.push(_element)
-                # self.analyzer.prompt_state = StructureState(self.analyzer)
-                self.analyzer.prompt_state = ElementState(self.analyzer)
-                if classified_res != 3:
-                    self.analyzer.considered_elements.add(_element.get("id"))
-                return
+                self.analyzer.considered_elements.add(_element.get("id"))
+            elif classified_res == 2:
+                self.analyzer.push(_element)
         else:
             _logger.error(f"Invalid response: {response} After retry {self.analyzer.retries} times")
-        self.analyzer.prompt_state = ElementState(self.analyzer)
+
+        if _element_type == "MoStringLiteral":
+            self.analyzer.prompt_state = RegEXState(self.analyzer)
+        else:
+            self.analyzer.prompt_state = ElementState(self.analyzer)
         return
 
 

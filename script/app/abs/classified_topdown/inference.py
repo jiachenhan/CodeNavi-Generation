@@ -27,6 +27,7 @@ class Analyzer:
 
         self.prompt_state: PromptState = InitialState(self)
         self.current_element = None
+        self.child_parent_map = {}
         self.element_stack = list(reversed(Analyzer.get_top_elements_from_tree(self.pattern_input.tree)))
         self.important_lines = []
 
@@ -51,11 +52,7 @@ class Analyzer:
                 if "children" in sub_tree:
                     # stmts
                     result.extend(sub_tree["children"])
-            elif sub_tree["type"] == "MoSimpleName":
-                # func name
-                result.append(sub_tree)
-            elif sub_tree["type"] == "MoSingleVariableDeclaration":
-                # func param
+            else:
                 result.append(sub_tree)
         return result
 
@@ -156,9 +153,10 @@ class Analyzer:
         for child in reversed(sub_tree.get("children")):
             element_id = sub_tree.get("id")
             child_id = child.get("id")
+            self.child_parent_map[child_id] = sub_tree
             round_history = copy.deepcopy(self.global_history.element_histories.get(element_id).history)
-            _round = self.global_history.element_histories.get(element_id).element_round
-            round_history.extend(_round)
+            # _round = self.global_history.element_histories.get(element_id).element_round
+            # round_history.extend(_round)
             self.global_history.element_histories[child_id] = ElementHistory(element_id=child_id, history=round_history)
             self.element_stack.append(child)
 

@@ -45,20 +45,21 @@ Example output:
 # [yes/no]: [Cause analysis]
 # """
 
-NORMAL_ELEMENT_PROMPT = """For AST type {elementType} code element {element} in line {line}, please
-classify its violation relevance by selecting ALL applicable types from these categories:
+NORMAL_ELEMENT_PROMPT = """The code element AST node{{ type:{elementType} value:{element} in line {line} }}, it is a
+child node of {parentElement}. Please classify its violation relevance \
+by selecting ALL applicable types from following categories:
+
+Violation information: {error_info}
 
 [Category Options]
  1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
-    a. it directly contributes to triggering the violation(s).
-    b. it contains the code triggering the violation(s) and itself is also crucial.
-    c. it contains relevant features that may appear in the context of this violation(s). 
-    d. it is commonly observed in similar violation patterns based on your knowledge.
- 2. Structural Relevant: One code element is classified as relevant if it meets any of the following criteria:
-    a. it is a control flow structure that is crucial for the violation(s).
-    b. it is commonly observed in similar violation patterns based on your knowledge.
+    a. it directly contributes to triggering the violation.
+    b. it contains the code triggering the violation and itself is also essential in this kind of violation.
+    c. it contains relevant features that may appear in the context of this violation. 
+ 2. Structural Relevant: One code element contains the code triggering the violation but it has NOTHING to do with violation itself.
  3. Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria \
-    or it only contains the related code elements while itself is not crucial for this violation.
+or it only contains the related code elements while itself is not crucial for this violation.
+
 [Response Requirements]
 Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
 If no type is applicable, select 0.
