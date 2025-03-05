@@ -66,7 +66,6 @@ def calculate_det_num(_results_path: Path):
         for group in checker.iterdir():
             for case in group.iterdir():
                 result_path = case / "result.txt"
-                print(f"result_path: {result_path}")
                 if not result_path.exists():
                     print(f"Invalid result path: {result_path}")
                     continue
@@ -74,12 +73,14 @@ def calculate_det_num(_results_path: Path):
                 with open(result_path, "r", encoding="utf-8") as file:
                     lines = file.readlines()
                     det_num = len(lines)
-                    print(f"det_num: {det_num}")
-                    det_num_list.append(det_num)
+                    det_num_list.append((result_path, det_num))
 
-    print(f"Total det num: {sum(det_num_list)}")
-    print(f"Average det num: {sum(det_num_list) / len(det_num_list)}")
-    print(f"det nums: {det_num_list}")
+    total_det_nums = sum([det_num for _, det_num in det_num_list])
+    print(f"Total det num: {total_det_nums}")
+    print(f"Average det num: {total_det_nums / len(det_num_list)}")
+    print("det nums:")
+    for _ in det_num_list:
+        print(f"{_[0]}: {_[1]}")
 
 if __name__ == '__main__':
     dataset_name = "codeql_sampled_v1"
