@@ -49,6 +49,9 @@ def detect_repo(_dataset_path: Path,
         if result_path.exists():
             continue
 
+        result_path.parent.mkdir(parents=True, exist_ok=True)
+        result_path.touch()
+
         if not data_path.exists():
             print(f"Invalid data path: {data_path}")
             continue
@@ -71,18 +74,20 @@ def calculate_det_num(_repos_path: Path, _results_path: Path):
         checker_name = case.parent.parent.stem
         result_path = _results_path / checker_name / group_name / case_name / "result.txt"
 
-        if not result_path.exists():
-            det_num_list.append((result_path, 0))
-            continue
+
 
         with open(result_path, "r", encoding="utf-8") as file:
             lines = file.readlines()
+            if len(lines) > 0 and "Empty Pattern" in lines[0]:
+                det_num_list.append((result_path, "Empty Pattern"))
+                continue
             det_num = len(lines)
             det_num_list.append((result_path, det_num))
 
-    total_det_nums = sum([det_num for _, det_num in det_num_list])
+    no_empty_detects = [_ for _ in det_num_list if isinstance(_[1], int)]
+    total_det_nums = sum([det_num for _, det_num in no_empty_detects])
     print(f"Total det num: {total_det_nums}")
-    print(f"Average det num: {total_det_nums / len(det_num_list)}")
+    print(f"Average det num: {total_det_nums / len(no_empty_detects)}")
     print("det nums:")
     for _ in det_num_list:
         print(f"{_[0]}: {_[1]}")
