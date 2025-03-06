@@ -1,39 +1,41 @@
 import platform
+import random
 import stat
 from pathlib import Path
 from typing import Generator
 
 from interface.java.run_java_api import kirin_engine
+from utils.config import get_dsl_base_path
 
 
-def get_repo_cases(_path: Path) -> Generator[Path, None, None]:
-    for _checker in _path.iterdir():
-        if not _checker.is_dir():
+def get_random_repo_path(_dsl_path: Path, _repos_base_path: Path) -> Path:
+    _case_name = _dsl_path.stem
+    _group_name = _dsl_path.parent.stem
+    _checker_name = _dsl_path.parent.parent.stem
+    _group_repo_path = _repos_base_path / _checker_name / _group_name
+
+    _random_case_path = random.choice([_case for _case in _group_repo_path.iterdir() if _case.is_dir() and _case_name != _case.stem])
+    return next(_random_case_path.iterdir(), None)
+
+
+def get_dsl_paths(_query_path: Path) -> Generator[Path, None, None]:
+    for checker in _query_path.iterdir():
+        if not checker.is_dir():
             continue
-        for group in _checker.iterdir():
+        for group in checker.iterdir():
             if not group.is_dir():
                 continue
-            for case in group.iterdir():
-                if not case.is_dir():
-                    continue
-                yield case
-                break
-
-def get_pattern_path(_repo_case_path: Path, _query_path: Path) -> Path:
-    case_name = _repo_case_path.stem
-    group_name = _repo_case_path.parent.stem
-    checker_name = _repo_case_path.parent.parent.stem
-
-    query = _query_path / checker_name / group_name / f"{case_name}.kirin"
-    return query
+            dsl_path = next(group.glob("*.kirin"), None)
+            if dsl_path is not None:
+                yield dsl_path
 
 
-def get_result_path(_repo_case_path: Path, _results_path: Path) -> Path:
-    case_name = _repo_case_path.stem
-    group_name = _repo_case_path.parent.stem
-    checker_name = _repo_case_path.parent.parent.stem
+def get_result_path(_dsl_path: Path, _results_path: Path, _scanned_case_num: str) -> Path:
+    case_name = _dsl_path.stem
+    group_name = _dsl_path.parent.stem
+    checker_name = _dsl_path.parent.parent.stem
 
-    return _results_path / checker_name / group_name / case_name
+    return _results_path / checker_name / group_name / f"{case_name}-{_scanned_case_num}"
 
 
 def split_java_package(dir_path: Path) -> Generator[Path, None, None]:
@@ -66,29 +68,21 @@ def detect_repo(_query_base_path: Path,
                 _results_path: Path):
     engine_path = Path("D:/env/kirin-cli-1.0.8_sp06-jackofall.jar")
 
-    cases = get_repo_cases(_repos_path)
-    for repo_case in cases:
-        print(f"repo_case: {repo_case}")
-        dsl_case = get_pattern_path(repo_case, _query_base_path)
-        result_path = get_result_path(repo_case, _results_path)
-
-        if result_path.exists():
-            continue
-
-        if not dsl_case.exists():
-            print(f"Invalid query path: {dsl_case}")
-            continue
-
-        repo_path = next(repo_case.iterdir(), None)
-        if repo_path is None:
+    for _dsl_path in get_dsl_paths(_query_base_path):
+        _scanned_repo_path = get_random_repo_path(_dsl_path, _repos_path)
+        if _scanned_repo_path is None:
             print("No repo found")
             continue
+        _result_path = get_result_path(_dsl_path, _results_path, _scanned_repo_path.parent.stem)
 
-        for index, pkg in enumerate(split_java_package(repo_path)):
-            index_result_path = result_path / f"{index}_error_kirin"
-            timeout = kirin_engine(60, engine_path, dsl_case, pkg, index_result_path)
+        # if _result_path.exists():
+        #     continue
+
+        for index, pkg in enumerate(split_java_package(_scanned_repo_path)):
+            index_result_path = _result_path / f"{index}_error_kirin"
+            timeout = kirin_engine(60, engine_path, _dsl_path, pkg, index_result_path)
             if timeout:
-                print(f"Timeout in : {dsl_case}")
+                print(f"Timeout in : {_dsl_path}")
                 break
 
 
