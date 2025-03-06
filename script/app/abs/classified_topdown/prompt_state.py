@@ -8,7 +8,7 @@ from app.abs.classified_topdown.history import ElementHistory
 from app.abs.classified_topdown.prompts import NORMAL_ELEMENT_PROMPT, NAME_ELEMENT_PROMPT, STRUCTURE_ELEMENT_PROMPT, \
     TASK_DESCRIPTION_PROMPT, \
     AFTER_TREE_TASK_PROMPT, AFTER_TREE_ELEMENT_PROMPT, AFTER_TREE_NAME_PROMPT, REGEX_NAME_PROMPT, \
-    ROUGH_SELECT_LINES_PROMPT, LITERAL_ELEMENT_PROMPT, REGEX_LITERAL_PROMPT
+    ROUGH_SELECT_LINES_PROMPT, LITERAL_ELEMENT_PROMPT, REGEX_LITERAL_PROMPT, NORMAL_TOP_ELEMENT_PROMPT
 from utils.common import retry_times, valid_with
 from utils.config import LoggerConfig
 
@@ -123,24 +123,30 @@ class ElementState(PromptState):
 class NormalElementState(PromptState):
     def accept(self):
         _element = self.analyzer.current_element
-        # 如果这个元素不在重要行中，则跳过
+        # 如果这个元素不在重要行(+-1,考虑紧密上下文)中，则跳过
         start_line, end_line = _element.get("startLine"), _element.get("endLine")
-        if not any(start_line <= num <= end_line for num in self.analyzer.important_lines):
+        if not any(start_line - 1 <= num <= end_line + 1 for num in self.analyzer.important_lines):
             self.analyzer.prompt_state = ElementState(self.analyzer)
             return
 
-        _parent_value = self.analyzer.child_parent_map.get(_element.get("id")).get("value")
+        _parent = self.analyzer.child_parent_map.get(_element.get("id"))
         if self.analyzer.pattern_input.error_info:
             _error_info = self.analyzer.pattern_input.error_info
         else:
-            _error_info = "Unknown Error"
+            _error_info = "Unknown Violation"
 
         _element_type = _element.get("type")
-        _element_prompt = NORMAL_ELEMENT_PROMPT.format(line=_element.get("startLine"),
-                                                       element=_element.get("value"),
-                                                       elementType=_element_type,
-                                                       parentElement=_parent_value,
-                                                       error_info=_error_info)
+        if _parent is None:
+            _element_prompt = NORMAL_TOP_ELEMENT_PROMPT.format(line=_element.get("startLine"),
+                                                                element=_element.get("value"),
+                                                                elementType=_element_type,
+                                                                error_info=_error_info)
+        else:
+            _element_prompt = NORMAL_ELEMENT_PROMPT.format(line=_element.get("startLine"),
+                                                           element=_element.get("value"),
+                                                           elementType=_element_type,
+                                                           parentElement=_parent.get("value"),
+                                                           error_info=_error_info)
         _element_history = self.analyzer.get_current_element_history()
         _element_his_copy = copy.deepcopy(_element_history)
         _element_his_copy.add_user_message_to_history(_element_prompt)

@@ -17,9 +17,8 @@ ROUGH_SELECT_LINES_PROMPT = """Based on your analysis, Please select which lines
 for this violation and record their line numbers.
  
 Note: A code line is critical if:
-1. This line has been directly modified.
-2. This line contains contextual features related to the violation.
-3. This line contains code elements that may appear in similar patterns.
+1. This line contains contextual features related to the violation.
+2. This line contains code elements that may appear in similar patterns.
 
 Strictly follow the format below:
 1. First part: [critical lines]
@@ -31,19 +30,32 @@ Example output:
 [critical lines] ||| [3, 4, 6, 7, 8, 10] ||| \n your analysis
 """
 
-# NORMAL_ELEMENT_PROMPT = """For AST type `{elementType}` code element `{element}` in line `{line}`, please \
-# analyze whether it contains representative code elements for above violations(s).
-# 'Yes': If the code snippet contains representative code element for above violation(s).
-# 'No': If the code snippet does not contain representative code element for above violation(s).
-#
-# Note: A code element is considered representative if it meets any of the following criteria:
-# 1. Direct Contribution: It directly contributes to triggering the violation(s).
-# 2. Include violated code: It contains the code triggering the violation(s).
-# 3. Key features: It contains relevant features that may appear in the context of this violation(s).
-# 4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
-# Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
-# [yes/no]: [Cause analysis]
-# """
+NORMAL_TOP_ELEMENT_PROMPT = """The code element AST node{{ type:{elementType} value:{element} in line {line} }}. \
+Please classify its violation relevance by selecting ALL applicable types from following categories:
+
+Violation information: {error_info}
+
+[Category Options]
+ 1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
+    a. it directly contributes to triggering the violation.
+    b. it contains the code triggering the violation and the {elementType} AST node itself is common in this violation.
+ 2. Structural Relevant: 
+    a. One code element contains the code triggering the violation but it has NOTHING to do with violation itself.
+    b. it contains relevant features that may appear in the context of this violation. 
+ 3. Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria \
+or it only contains the related code elements while itself is not crucial for this violation.
+
+[Response Requirements]
+Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
+If no type is applicable, select 0.
+
+Your response should be formatted as follows:
+[Response Format]
+[Type number]: [Corresponding analysis]
+
+Example output:
+[1]: [your analysis]
+"""
 
 NORMAL_ELEMENT_PROMPT = """The code element AST node{{ type:{elementType} value:{element} in line {line} }}, it is a
 child node of {parentElement}. Please classify its violation relevance \

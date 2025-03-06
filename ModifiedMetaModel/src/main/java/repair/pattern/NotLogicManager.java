@@ -39,6 +39,13 @@ public class NotLogicManager implements Serializable {
 
         gainInsertNodes();
         gainMoveNodes();
+
+        if (insertNodes.size() > 10) {
+            insertNodes.clear();
+        }
+        if (moveNodes.size() > 10) {
+            moveNodes.clear();
+        }
     }
 
     private final List<MoveNode> moveNodes = new ArrayList<>();

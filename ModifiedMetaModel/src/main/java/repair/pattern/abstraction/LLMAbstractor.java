@@ -40,7 +40,8 @@ public class LLMAbstractor implements Abstractor {
     public boolean shouldConsider(MoNode node) {
         // 包含了action相关的节点以及LLM考虑语义的节点
 //        return LLMConsideredElements.contains(String.valueOf(node.getId())) || actionRelatedConsiderNodes.contains(node);
-        return LLMConsideredElements.contains(String.valueOf(node.getId()));
+//        return LLMConsideredElements.contains(String.valueOf(node.getId()));
+        return LLMConsideredElements.contains(String.valueOf(node.getId())) && actionRelatedConsiderNodes.contains(node);
     }
 
     @Override
@@ -79,22 +80,10 @@ public class LLMAbstractor implements Abstractor {
         // get action related
         List<MoNode> actionsRelatedNodes = getActionRelatedNodes(pattern);
 
+        Map<MoNode, Integer> nodeToDepth = new HashMap<>();
         // expand action nodes
         actionsRelatedNodes.forEach(node -> {
-            if (node.isLeaf()) {
-                // 只添加叶子节点的强制考虑
-                actionRelatedConsiderNodes.add(node);
-            }
-//            MoNode parent = node.getParent();
-//            // expand parent k=1
-//            if(parent != null) {
-//                actionRelatedConsiderNodes.add(parent);
-//            }
-//            // expand children k=1
-//            if(!node.isLeaf()) {
-//                actionRelatedConsiderNodes.addAll(node.getChildren());
-//            }
-//
+            nodeToDepth.put(node, 0);
 //            // data flow
 //            if (node.context.getDataDependency() != null) {
 //                actionRelatedConsiderNodes.add(node.context.getDataDependency());
@@ -107,6 +96,37 @@ public class LLMAbstractor implements Abstractor {
 //                }
 //            }
         });
+
+        // 最多扩展3层 && 考虑LLM判断
+        Deque<MoNode> queue = new ArrayDeque<>(nodeToDepth.keySet());
+        while (!queue.isEmpty()) {
+            MoNode current = queue.poll();
+            int currentDepth = nodeToDepth.get(current);
+
+            if (currentDepth >= 5) {
+                continue;
+            }
+            List<MoNode> neighbors = new ArrayList<>();
+            MoNode parent = current.getParent();
+            if (parent != null) {
+                neighbors.add(parent);
+            }
+            List<MoNode> children = current.getChildren();
+            if (children != null) {
+                neighbors.addAll(children);
+            }
+            for (MoNode neighbor : neighbors) {
+                int newDepth = currentDepth + 1;
+                // 如果邻居节点未记录，或新的深度更小，则更新并加入队列
+                if (!nodeToDepth.containsKey(neighbor) || newDepth < nodeToDepth.get(neighbor)) {
+                    nodeToDepth.put(neighbor, newDepth);
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        actionRelatedConsiderNodes.addAll(nodeToDepth.keySet());
+
 
         nodeToConsidered.forEach((node, value) -> {
             boolean shouldConsider = shouldConsider(node);

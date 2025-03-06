@@ -13,8 +13,7 @@ def do_extract(dataset_path: Path):
                          PipelineConfig.jar_path
                          )
 
-
-if __name__ == '__main__':
+def inner_main():
     jar_path = utils.config.get_jar_path()
 
     dataset_name = "sample_100_dataset"
@@ -24,3 +23,23 @@ if __name__ == '__main__':
     pattern_ori_path = utils.config.get_pattern_base_path() / dataset_name / "ori" / f"{group}.ser"
     pattern_info_path = utils.config.get_pattern_info_base_path() / dataset_name / "input" / f"{group}.json"
     java_extract_pattern(5, dataset_path, pattern_ori_path, pattern_info_path, jar_path)
+
+
+def open_main():
+    _config = utils.config.set_config("ppinfra")
+    jar_path = _config.get("jar_path")
+
+    dataset_name = "codeql_sampled_v1"
+    checker = "Random_used_only_once"
+    group = "1"
+    case = "2"
+
+    dataset_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / dataset_name / checker / group / case
+
+    pattern_ori_path = utils.config.get_pattern_base_path() / dataset_name / "ori" / checker / group / f"{case}.ser"
+    pattern_info_path = utils.config.get_pattern_info_base_path() / dataset_name / "input" /  checker / group / f"{case}.json"
+    java_extract_pattern(10, dataset_path, pattern_ori_path, pattern_info_path, jar_path)
+
+
+if __name__ == '__main__':
+    open_main()
