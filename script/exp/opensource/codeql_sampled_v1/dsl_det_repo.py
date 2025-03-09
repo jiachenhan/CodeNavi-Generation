@@ -106,10 +106,10 @@ def static_pre_recall(scanned_result: list, report_result: list) -> dict:
         result["fn"] = len(report_result)
         return result
 
-
-    for detect_path, method_sig in scanned_result:
+    result["all_scanned"] = len(scanned_result)
+    for method_sig, detect_path in scanned_result:
         if any([report.get("path") in detect_path
-                and report.get("signature") in method_sig.split("[")[0]
+                and method_sig in report.get("signature")
                 for report in report_result]):
             result["tp"] += 1
         else:
@@ -144,7 +144,7 @@ def statistic(_repos_path: Path, _results_path: Path, _reports_name: str):
 
         report_path = _repos_path / checker_name / group_name / scanned_case_num / _reports_name
 
-        scanned_result = collect_result(report_path)
+        scanned_result = collect_result(result_path)
         report_result = collect_report(report_path)
 
         result = static_pre_recall(scanned_result, report_result)
@@ -160,8 +160,8 @@ def xml_collect_errors(_output_path: Path) -> list:
     all_error = xml_root.find("errors").findall("error")
     for error in all_error:
         defect_info = error.find("defectInfo")
-        func_name = defect_info.attrib.get("funcName")
-        file_name = defect_info.attrib.get("fileName")
+        func_name = defect_info.find("function").text
+        file_name = defect_info.find("fileName").text.replace("\\", "/")
         _results.append((func_name, file_name))
     return _results
 
