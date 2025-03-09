@@ -269,10 +269,80 @@ String constants support uppercase and lowercase English letters, numbers, and s
 ### Task:
 I am using CodeNavi DSL rules to write some code checking rules, with the aim of \
 checking the rules of the code written by developers. 
-I will provide you with a set of positive and negative Java code and a defect description, \
-where the negative example is a bad code writing and the positive example is a fixed version of the defect.
+I will provide you with a set of positive-example and counter-example Java code and a defect description, \
+the counter-example is a poor implementation that may lead to security issues or bugs.
+The CodeNavi DSL describes incorrect implementation code to detect possible similar defects.
 
-Your task is to construct DSL code that can detect this type of defect and identify counterexamples.
+Your task is to construct DSL code that can detect this type of defect and identify counter-examples.
 
-todo: 
+### Examples:
+
+Example 1:
+positive-example java code:
+```java
+logger.error(e.getMessage());
+```
+
+counter-example java code:
+```java
+logger.error(e);
+```
+
+CodeNavi DSL:
+```
+functionCall fc where
+    and(
+        fc.base.name match "log.*",
+        fc.name == "error"
+        fc.arguments[0] arg where
+            or(
+                arg is VariableAccess,
+                arg.name == "e",
+                not(
+                    and(
+                        arg is functionCall,
+                        arg.name == "getMessage"
+                    )
+                )
+            )
+    );
+```
+
+The purpose of the rules:
+
+This DSL will capture all log error outputs, and parameter 0 cannot be a call to the getMessage function.
+Capturing such code indicates a violation and requiring developers to ensure the accuracy of log output.
+
+Example 2:
+positive-example java code:
+```java
+FileReader reader = new FileReader(in)
+```
+
+counter-example java code:
+```java
+FileReader reader = UsFileUtils.getFileReader(in)
+```
+
+CodeNavi DSL:
+```
+objectCreationExpression where
+    name == "FileReader";
+```
+
+The purpose of the rules:
+
+This DSL will capture all `FileReader` object creating.
+Developers should use secure FileReader object creation methods to avoid cross directory attacks
+
+### Input:
+Defect Description: {description}
+
+counter-example java code: {buggy}
+
+positive-example java code: {fixed}
+
+
+### Output:
+CodeNavi DSL:
 """

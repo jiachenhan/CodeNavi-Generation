@@ -1,12 +1,15 @@
+import json
 import platform
 import random
 import stat
 from pathlib import Path
 from typing import Generator
 
+from exp.opensource.codeql_sampled_v1.genpat_det_repo import collect_report
 from interface.java.run_java_api import kirin_engine
-from utils.config import get_dsl_base_path
+from utils.config import get_dsl_base_path, LoggerConfig
 
+_logger = LoggerConfig.get_logger(__name__)
 
 def get_random_repo_path(_dsl_path: Path, _repos_base_path: Path) -> Path:
     _case_name = _dsl_path.stem
@@ -86,25 +89,81 @@ def detect_repo(_query_base_path: Path,
                 break
 
 
-def calculate_det_num(_results_path: Path):
-    det_num_list = []
-    for checker in _results_path.iterdir():
+def collect_result(reports_path: Path) -> list:
+    result = []
+    for report_path in reports_path.rglob("*.xml"):
+        slice_result = xml_collect_errors(report_path)
+        result.extend(slice_result)
+
+    return result
+
+
+def static_pre_recall(scanned_result: list, report_result: list) -> dict:
+    result = {"all_scanned": 0, "report_all": len(report_result),
+              "tp": 0, "fp": 0, "fn": 0,
+              "pre": 0.0, "recall": 0.0}
+    if not scanned_result:
+        result["fn"] = len(report_result)
+        return result
+
+
+    for detect_path, method_sig in scanned_result:
+        if any([report.get("path") in detect_path
+                and report.get("signature") in method_sig.split("[")[0]
+                for report in report_result]):
+            result["tp"] += 1
+        else:
+            result["fp"] += 1
+
+    result["fn"] = result["report_all"] - result["tp"]
+    if result["all_scanned"] != 0:
+        result["pre"] = result["tp"] / (result["tp"] + result["fp"])
+        result["recall"] = result["tp"] / (result["tp"] + result["fn"])
+    return result
+
+
+def collect_scanned_cases(result_path: Path) -> Generator[Path, None, None]:
+    for checker in result_path.iterdir():
+        if not checker.is_dir():
+            continue
         for group in checker.iterdir():
-            for case in group.iterdir():
-                print(f"case: {case}")
-                all_count = 0
-                for _slice in case.iterdir():
-                    report_file = _slice / "error_report_1.xml"
-                    all_count += xml_count_errors(report_file)
+            if not group.is_dir():
+                continue
+            for case_scanned in group.iterdir():
+                if not case_scanned.is_dir():
+                    continue
+                yield case_scanned
 
-                det_num_list.append((case, all_count))
+def statistic(_repos_path: Path, _results_path: Path, _reports_name: str):
+    _results = []
+    for result_path in collect_scanned_cases(_results_path):
+        _logger.info(f"In statistics: {result_path}")
+        scanned_case_num = result_path.stem.split("-")[-1]
+        group_name = result_path.parent.stem
+        checker_name = result_path.parents[1].stem
 
-    total_det_nums = sum([det_num for _, det_num in det_num_list])
-    print(f"Total det num: {total_det_nums}")
-    print(f"Average det num: {total_det_nums / len(det_num_list)}")
-    print("det nums:")
-    for _ in det_num_list:
-        print(f"{_[0]}: {_[1]}")
+        report_path = _repos_path / checker_name / group_name / scanned_case_num / _reports_name
+
+        scanned_result = collect_result(report_path)
+        report_result = collect_report(report_path)
+
+        result = static_pre_recall(scanned_result, report_result)
+        _results.append({"result_path": str(result_path), "result": result})
+    return _results
+
+def xml_collect_errors(_output_path: Path) -> list:
+    _results = []
+    if not _output_path.exists():
+        return []
+    import xml.etree.ElementTree as ET
+    xml_root = ET.parse(_output_path)
+    all_error = xml_root.find("errors").findall("error")
+    for error in all_error:
+        defect_info = error.find("defectInfo")
+        func_name = defect_info.attrib.get("funcName")
+        file_name = defect_info.attrib.get("fileName")
+        _results.append((func_name, file_name))
+    return _results
 
 
 def xml_count_errors(_output_path: Path) -> int:
@@ -124,6 +183,15 @@ if __name__ == '__main__':
     repos_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / f"{dataset_name}_repos"
 
     results_path = Path(f"/data/jiangjiajun/CodeNavi-DSL/GenPat/repo_{dataset_name}")
+    sat_reports_path = Path("D:/datas/codeql_sampled_v1_reports")
+    result_store_path = results_path / "result_store.json"
+
 
     # detect_repo(query_base_path, repos_path, results_path)
-    calculate_det_num(results_path)
+
+    results = statistic(sat_reports_path, results_path, "codeql_warnings.txt")
+
+    print(results)
+
+    # with open(result_store_path, "w", encoding="utf-8") as file:
+    #     json.dump(results, file, indent=4)
