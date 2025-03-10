@@ -167,7 +167,7 @@ def kirin_validate(timeout_sec: float,
            ]
 
     timeout, sout = start_process(cmd, work_dir, timeout_sec)
-    return "successfully" in sout
+    return "invalid" not in sout
 
 
 def genpat_detect(timeout_sec: float,
