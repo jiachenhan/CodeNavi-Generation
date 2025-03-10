@@ -150,8 +150,8 @@ if __name__ == '__main__':
     reports_path = Path(f"/data/jiangjiajun/DSL-AutoDebug/data/{dataset_name}_reports")
 
     result_store_path = results_path / "result_store.json"
-    detect_repo(dataset_path, repos_path, results_path)
-    # results = statistic(repos_path, results_path, "pmd_warnings.txt")
-    #
-    # with open(result_store_path, "w", encoding="utf-8") as file:
-    #     json.dump(results, file, indent=4)
+    # detect_repo(dataset_path, repos_path, results_path)
+    results = statistic(repos_path, results_path, "pmd_warnings.txt")
+
+    with open(result_store_path, "w", encoding="utf-8") as file:
+        json.dump(results, file, indent=4)

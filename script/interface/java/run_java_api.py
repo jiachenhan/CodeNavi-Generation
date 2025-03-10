@@ -155,6 +155,20 @@ def kirin_engine(timeout_sec: float,
     timeout, sout = start_process(cmd, work_dir, timeout_sec)
     return timeout
 
+def kirin_validate(timeout_sec: float,
+                   engine_path: Path,
+                   dsl_path: Path) -> bool:
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java",
+           "-Dfile.encoding=utf-8",
+           "-cp", str(engine_path), "com.huawei.secbrella.kirin.horn.HornMain",
+           "validate",
+           str(dsl_path)
+           ]
+
+    timeout, sout = start_process(cmd, work_dir, timeout_sec)
+    return "successfully" in sout
+
 
 def genpat_detect(timeout_sec: float,
                   pattern_before: Path,
