@@ -1,3 +1,5 @@
+from pathlib import Path
+
 PURE_LLM_PROMPT_V1 = """
 ### CodeNavi DSL Rule:
 1. Rule Introduction
@@ -344,5 +346,6 @@ positive-example java code: {fixed}
 
 
 ### Output:
+Note: Your code should begin with '```CodeNavi' and end with another ```
 CodeNavi DSL:
 """

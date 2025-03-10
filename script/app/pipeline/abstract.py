@@ -28,7 +28,7 @@ def llm_abstract(_llm,
 这个修饰器不支持直接在这个文件作为入口函数时使用
 在spawn过程中报错: Can't Pickle <function run_llm_analysis ...>: it's not the same object as __main__.run_llm_analysis
 """
-# @timeout(30 * 60)
+@timeout(30 * 60)
 def run_llm_analysis(_llm,
                      _pattern_input: PatternInput,
                      _output_path: Path):
