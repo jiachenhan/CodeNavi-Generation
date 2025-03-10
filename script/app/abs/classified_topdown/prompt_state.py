@@ -45,6 +45,7 @@ class BackGroundState(PromptState):
             element_id = element.get("id")
             background_history_copy = copy.deepcopy(self.analyzer.global_history.background_history)
             background_history_copy.extend(self.analyzer.global_history.task_history)
+            background_history_copy.extend(self.analyzer.global_history.roughly_line_history)
             self.analyzer.global_history.element_histories[element_id] = ElementHistory(element_id=element_id,
                                                                                         history=background_history_copy)
 

@@ -38,12 +38,10 @@ Violation information: {error_info}
 [Category Options]
  1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
     a. it directly contributes to triggering the violation.
-    b. it contains the code triggering the violation and the {elementType} AST node itself is common in this violation.
- 2. Structural Relevant: 
-    a. One code element contains the code triggering the violation but it has NOTHING to do with violation itself.
-    b. it contains relevant features that may appear in the context of this violation. 
- 3. Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria \
-or it only contains the related code elements while itself is not crucial for this violation.
+    b. it contains the code triggering the violation and the node itself is relevant to the description of the violation.
+    c. it contains relevant features that may appear in the context of this violation. 
+ 2. Structural Irrelevant: One code element contains the code triggering the violation but it has NOTHING to do with violation itself.
+ 3. Completely Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria.
 
 [Response Requirements]
 Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
@@ -66,12 +64,11 @@ Violation information: {error_info}
 [Category Options]
  1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
     a. it directly contributes to triggering the violation.
-    b. it contains the code triggering the violation and itself is also essential in this kind of violation.
+    b. it contains the code triggering the violation and the node itself is relevant to the description of the violation.
     c. it contains relevant features that may appear in the context of this violation. 
- 2. Structural Relevant: One code element contains the code triggering the violation but it has NOTHING to do with violation itself.
- 3. Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria \
-or it only contains the related code elements while itself is not crucial for this violation.
-
+ 2. Structural Irrelevant: One code element contains the code triggering the violation but it has NOTHING to do with violation itself.
+ 3. Completely Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria.
+ 
 [Response Requirements]
 Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
 If no type is applicable, select 0.
