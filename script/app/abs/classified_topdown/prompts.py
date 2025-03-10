@@ -35,6 +35,9 @@ Please classify its violation relevance by selecting ALL applicable types from f
 
 Violation information: {error_info}
 
+Note: Not all action related code elements are relevant to the violation, you should attention to the code elements \
+that contained in the minimal representation of the violation. 
+
 [Category Options]
  1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
     a. it directly contributes to triggering the violation.
@@ -60,6 +63,9 @@ child node of {parentElement}. Please classify its violation relevance \
 by selecting ALL applicable types from following categories:
 
 Violation information: {error_info}
+
+Note: Not all action related code elements are relevant to the violation, you should attention to the code elements \
+that contained in the minimal representation of the violation. 
 
 [Category Options]
  1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
