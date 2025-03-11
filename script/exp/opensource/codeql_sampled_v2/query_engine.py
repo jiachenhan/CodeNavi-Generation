@@ -52,7 +52,7 @@ def run_query(_query_base_path: Path, _dataset_path: Path):
         for group in checker.iterdir():
             dsl_case = next(group.glob("*.kirin"))
 
-            target_group_path = _dataset_path / group.stem
+            target_group_path = _dataset_path / checker.stem / group.stem
             _sub_case_paths = [d for d in target_group_path.iterdir() if d.is_dir() and d.stem != dsl_case.stem]
 
             _random_case_path = random.choice(_sub_case_paths)
