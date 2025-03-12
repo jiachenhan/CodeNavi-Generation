@@ -3,6 +3,7 @@ import random
 from pathlib import Path
 from typing import Generator, Tuple, Optional
 
+from exp.opensource.statistic_analysis import genpat_repo_statistic
 from interface.java.run_java_api import genpat_detect_all
 from utils.config import LoggerConfig
 
@@ -66,78 +67,7 @@ def detect_repo(_dataset_path: Path,
             continue
         genpat_detect_all(30 * 60, _buggy_path, _fixed_path, _scanned_repo_path, _result_path, genpat_jar)
 
-def split_reports(report_path: Path) -> Generator[str, None, None]:
-    current_section = []
-    with open(report_path, "r", encoding="utf-8") as file:
-        for line in file:
-            if line.strip().startswith('hash#'):
-                if current_section:  # 遇到新分隔符时保存当前部分
-                    yield '\n'.join(current_section).strip()
-                else:
-                    current_section = [line.strip()]
-            else:
-                current_section.append(line.strip())
 
-        if current_section:  # 处理最后一部分
-            yield '\n'.join(current_section).strip()
-
-def collect_report(report_path: Path) -> list:
-    result = []
-    for _method_section in split_reports(report_path):
-        _method_info = _method_section.split("\n")[0]
-        if not _method_info.startswith("hash#"):
-            _logger.error(f"Invalid method info: {_method_info}")
-            continue
-
-        _method_info_relative_path = _method_info.split("#")[1]
-        _method_signature = _method_info.split("#")[-1]
-        result.append({"path": _method_info_relative_path, "signature": _method_signature})
-    return result
-
-
-def static_pre_recall(result_path: Path, report_result: list) -> dict:
-    result = {"all_scanned": 0, "no_pattern": False, "report_all": len(report_result),
-              "tp": 0, "fp": 0, "fn": 0,
-              "pre": 0.0, "recall": 0.0}
-    if not result_path.exists():
-        result["fn"] = len(report_result)
-        return result
-    with open(result_path, "r", encoding="utf-8") as file:
-        for index, line in enumerate(file):
-            if index == 0 and "Empty Pattern" in line:
-                result["no_pattern"] = True
-                return result
-            result["all_scanned"] += 1
-            detect_path = line.split("\t")[1]
-            method_sig = line.split("\t")[2]
-
-            if any([report.get("path") in detect_path
-                    and report.get("signature").split("(")[0] == method_sig.split("[")[0]
-                    for report in report_result]):
-                result["tp"] += 1
-            else:
-                result["fp"] += 1
-
-    result["fn"] = result["report_all"] - result["tp"]
-    if result["all_scanned"] != 0:
-        result["pre"] = result["tp"] / (result["tp"] + result["fp"])
-        result["recall"] = result["tp"] / (result["tp"] + result["fn"])
-    return result
-
-
-def statistic(_repos_path: Path, _results_path: Path, _reports_name: str):
-    _results = []
-    for result_path in _results_path.rglob("result.txt"):
-        _logger.info(f"In statistics: {result_path}")
-        scanned_case_num = result_path.parent.stem.split("-")[-1]
-        group_name = result_path.parents[1].stem
-        checker_name = result_path.parents[2].stem
-        report_path = _repos_path / checker_name / group_name / scanned_case_num / _reports_name
-        report_result = collect_report(report_path)
-
-        result = static_pre_recall(result_path, report_result)
-        _results.append({"result_path": str(result_path), "result": result})
-    return _results
 
 if __name__ == '__main__':
     dataset_name = "pmd_sampled_v1"
@@ -147,11 +77,12 @@ if __name__ == '__main__':
 
     results_path = Path(f"/data/jiangjiajun/CodeNavi-DSL/GenPat/result_trans_repo_{dataset_name}")
 
-    reports_path = Path(f"/data/jiangjiajun/DSL-AutoDebug/data/{dataset_name}_reports")
+    # reports_path = Path(f"/data/jiangjiajun/DSL-AutoDebug/data/{dataset_name}_reports")
 
-    result_store_path = results_path / "result_store.json"
+    result_store_path = results_path / "genpat_result_store.json"
+
     # detect_repo(dataset_path, repos_path, results_path)
-    results = statistic(repos_path, results_path, "pmd_warnings.txt")
+    results = genpat_repo_statistic(dataset_path, results_path)
 
     with open(result_store_path, "w", encoding="utf-8") as file:
         json.dump(results, file, indent=4)

@@ -122,60 +122,6 @@ def static_pre_recall(scanned_result: list, report_result: list) -> dict:
     return result
 
 
-def collect_scanned_cases(result_path: Path) -> Generator[Path, None, None]:
-    for checker in result_path.iterdir():
-        if not checker.is_dir():
-            continue
-        for group in checker.iterdir():
-            if not group.is_dir():
-                continue
-            for case_scanned in group.iterdir():
-                if not case_scanned.is_dir():
-                    continue
-                yield case_scanned
-
-def statistic(_repos_path: Path, _results_path: Path, _reports_name: str):
-    _results = []
-    for result_path in collect_scanned_cases(_results_path):
-        _logger.info(f"In statistics: {result_path}")
-        scanned_case_num = result_path.stem.split("-")[-1]
-        group_name = result_path.parent.stem
-        checker_name = result_path.parents[1].stem
-
-        report_path = _repos_path / checker_name / group_name / scanned_case_num / _reports_name
-
-        scanned_result = collect_result(result_path)
-        report_result = collect_report(report_path)
-
-        result = static_pre_recall(scanned_result, report_result)
-        _results.append({"result_path": str(result_path), "result": result})
-    return _results
-
-def xml_collect_errors(_output_path: Path) -> list:
-    _results = []
-    if not _output_path.exists():
-        return []
-    import xml.etree.ElementTree as ET
-    xml_root = ET.parse(_output_path)
-    all_error = xml_root.find("errors").findall("error")
-    for error in all_error:
-        defect_info = error.find("defectInfo")
-        func_name = defect_info.find("function").text
-        file_name = defect_info.find("fileName").text.replace("\\", "/")
-        _results.append((func_name, file_name))
-    return _results
-
-
-def xml_count_errors(_output_path: Path) -> int:
-    if not _output_path.exists():
-        return 0
-
-    import xml.etree.ElementTree as ET
-    xml_root = ET.parse(_output_path)
-    all_error = xml_root.find("errors").findall("error")
-    return len(all_error)
-
-
 if __name__ == '__main__':
     dataset_name = "codeql_sampled_v1"
     query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/") / dataset_name
