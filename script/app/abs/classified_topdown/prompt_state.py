@@ -205,8 +205,7 @@ class NameState(PromptState):
 
 class RegEXState(PromptState):
     pattern = re.compile(r'''
-        # 格式1：以 "yes" 开头，捕获中间的内容
-        ^
+        # 格式1："yes" ，捕获中间的内容
         (yes)                   # 匹配并捕获 "yes"
         \|\|\|                  # 分隔符 "|||"
         (                       # 捕获组：中间内容（允许转义字符）
@@ -224,8 +223,7 @@ class RegEXState(PromptState):
         
         |                       # 或
     
-        # 格式2：以 "no" 开头，固定内容 "None"
-        ^
+        # 格式2："no" ，固定内容 "None"
         (no)                    # 匹配并捕获 "no"
         \|\|\|                  # 分隔符 "|||"
         None                    # 固定内容 "None"（非捕获组）
