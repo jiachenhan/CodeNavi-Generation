@@ -112,7 +112,11 @@ def xml_collect_errors(_output_path: Path) -> list:
     if not _output_path.exists():
         return []
     import xml.etree.ElementTree as ET
-    xml_root = ET.parse(_output_path)
+    try:
+        xml_root = ET.parse(_output_path)
+    except ET.ParseError:
+        _logger.error(f"Parse error: {_output_path}")
+        return []
     all_error = xml_root.find("errors").findall("error")
     for error in all_error:
         defect_info = error.find("defectInfo")
