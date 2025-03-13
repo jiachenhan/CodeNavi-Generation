@@ -97,7 +97,7 @@ if __name__ == '__main__':
     dataset_path = Path("D:/datas/opensource/data/") / dataset_name
     query_base_path = Path("C:/Users/hWX1386605/Desktop/3-11-v2/") / dataset_name
 
-    repos_path = Path("D:/datas/opensource/data/") / f"{dataset_name}_all_repos"
+    repos_path = Path("D:/datas/opensource/data/") / f"{dataset_name}_repos"
 
     results_path = Path(f"D:/datas/opensource/data/result_trans_repo_{dataset_name}")
     # sat_reports_path = Path("D:/datas/pmd_sampled_v1_reports")

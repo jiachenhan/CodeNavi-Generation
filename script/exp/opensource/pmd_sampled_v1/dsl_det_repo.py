@@ -95,19 +95,17 @@ def detect_repo(_query_base_path: Path,
 if __name__ == '__main__':
     dataset_name = "pmd_sampled_v1"
     dataset_path = Path("D:/datas/opensource/data/") / dataset_name
-    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/") / dataset_name
+    query_base_path = Path("C:/Users/hWX1386605/Desktop/3-12-v1/") / dataset_name
 
-    repos_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / f"{dataset_name}_repos"
+    repos_path = Path("D:/datas/opensource/data/") / f"{dataset_name}_all_repos"
 
-    results_path = Path(f"/data/jiangjiajun/CodeNavi-DSL/GenPat/repo_{dataset_name}")
+    results_path = Path(f"D:/datas/opensource/data/result_trans_repo_{dataset_name}")
     # sat_reports_path = Path("D:/datas/pmd_sampled_v1_reports")
     result_store_path = results_path / "navi_result_store.json"
 
-    # detect_repo(query_base_path, repos_path, results_path)
+    detect_repo(query_base_path, repos_path, results_path)
 
-    results = navi_repo_statistic(dataset_path, results_path)
-
-    print(results)
+    # results = navi_repo_statistic(dataset_path, results_path)
 
     # with open(result_store_path, "w", encoding="utf-8") as file:
     #     json.dump(results, file, indent=4)

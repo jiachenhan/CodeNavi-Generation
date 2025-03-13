@@ -5,11 +5,12 @@ import stat
 from pathlib import Path
 from typing import Generator
 
-from exp.opensource.codeql_sampled_v1.genpat_det_repo import collect_report
+from exp.opensource.statistic_analysis import navi_repo_statistic
 from interface.java.run_java_api import kirin_engine
-from utils.config import get_dsl_base_path, LoggerConfig
+from utils.config import LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
+
 
 def get_random_repo_path(_dsl_path: Path, _repos_base_path: Path) -> Path:
     _case_name = _dsl_path.stem
@@ -89,55 +90,22 @@ def detect_repo(_query_base_path: Path,
                 break
 
 
-def collect_result(reports_path: Path) -> list:
-    result = []
-    for report_path in reports_path.rglob("*.xml"):
-        slice_result = xml_collect_errors(report_path)
-        result.extend(slice_result)
-
-    return result
-
-
-def static_pre_recall(scanned_result: list, report_result: list) -> dict:
-    result = {"all_scanned": 0, "report_all": len(report_result),
-              "tp": 0, "fp": 0, "fn": 0,
-              "pre": 0.0, "recall": 0.0}
-    if not scanned_result:
-        result["fn"] = len(report_result)
-        return result
-
-    result["all_scanned"] = len(scanned_result)
-    for method_sig, detect_path in scanned_result:
-        if any([report.get("path") in detect_path
-                and method_sig in report.get("signature")
-                for report in report_result]):
-            result["tp"] += 1
-        else:
-            result["fp"] += 1
-
-    result["fn"] = result["report_all"] - result["tp"]
-    if result["all_scanned"] != 0:
-        result["pre"] = result["tp"] / (result["tp"] + result["fp"])
-        result["recall"] = result["tp"] / (result["tp"] + result["fn"])
-    return result
 
 
 if __name__ == '__main__':
     dataset_name = "codeql_sampled_v1"
-    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/") / dataset_name
+    dataset_path = Path("D:/datas/opensource/data/") / dataset_name
+    query_base_path = Path("C:/Users/hWX1386605/Desktop/3-12-v1/") / dataset_name
 
-    repos_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / f"{dataset_name}_repos"
+    repos_path = Path("D:/datas/opensource/data/") / f"{dataset_name}_all_repos"
 
-    results_path = Path(f"/data/jiangjiajun/CodeNavi-DSL/GenPat/repo_{dataset_name}")
-    sat_reports_path = Path("D:/datas/codeql_sampled_v1_reports")
-    result_store_path = results_path / "result_store.json"
+    results_path = Path(f"D:/datas/opensource/data/result_trans_repo_{dataset_name}")
+    # sat_reports_path = Path("D:/datas/pmd_sampled_v1_reports")
+    result_store_path = results_path / "navi_result_store.json"
 
+    detect_repo(query_base_path, repos_path, results_path)
 
-    # detect_repo(query_base_path, repos_path, results_path)
-
-    results = statistic(sat_reports_path, results_path, "codeql_warnings.txt")
-
-    print(results)
+    # results = navi_repo_statistic(dataset_path, results_path)
 
     # with open(result_store_path, "w", encoding="utf-8") as file:
     #     json.dump(results, file, indent=4)

@@ -70,7 +70,7 @@ def detect_repo(_dataset_path: Path,
 
 
 if __name__ == '__main__':
-    dataset_name = "codeql_sampled_v1"
+    dataset_name = "codeql_sampled_v2"
 
     dataset_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / dataset_name
     repos_path = Path("/data/jiangjiajun/DSL-AutoDebug/data") / f"{dataset_name}_all_repos_test"
