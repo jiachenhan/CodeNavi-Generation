@@ -155,6 +155,28 @@ def kirin_engine(timeout_sec: float,
     timeout, sout = start_process(cmd, work_dir, timeout_sec)
     return timeout
 
+def outer_kirin_engine(timeout_sec: float,
+                 engine_path: str,
+                 dsl_path: Path,
+                 scanned_file_path: Path,
+                 output_dir: Path,
+                 language: str = "java") -> bool:
+    work_dir = utils.config.get_root_project_path()
+    cmd = ["java",
+           "-Dfile.encoding=utf-8",
+           "-Djava.io.tmpdir=/data/jiangjiajun/CodeNavi-DSL/tmp",
+           "-cp", engine_path, "com.huawei.secbrella.kirin.Main",
+           "--plugin",
+           "--dir", str(scanned_file_path),
+           "--outputFormat", "xml",
+           "--output", str(output_dir),
+           "--checkerDir", str(dsl_path),
+           "--language", language
+           ]
+
+    timeout, sout = start_process(cmd, work_dir, timeout_sec)
+    return timeout
+
 def kirin_validate(timeout_sec: float,
                    engine_path: Path,
                    dsl_path: Path) -> bool:
