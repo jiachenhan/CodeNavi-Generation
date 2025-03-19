@@ -1,25 +1,88 @@
-TASK_DESCRIPTION_PROMPT = """Based on your analysis, I've identified that there are some representative code elements \
-that clearly illustrate the violation(s) and strongly related to the causes. These representative code elements can \
-be used to detect similar violation(s) in other parts of the codebase.
+TASK_DESCRIPTION_PROMPT = """I hope to summarize the violations in the code into defect templates, and the template \
+can be used to detect similar violation in other codebase. I will provide you with the elements of \
+the Abstract Syntax Tree (AST) from the original code. And your task is to analyze each AST Node and determine \
+whether it should appear in template.
 
-I will provide you with the elements of the Abstract Syntax Tree (AST) from the original code.
-Your task is to analyze each AST element and determine whether it is representative.
+For example: \
+The Error code is
+```java
+    Class c = new String().getClass();
+```
 
-Note: A code element is considered representative if:
-* It directly contributes to triggering the violations.
-* Its semantics, type, structure are strongly indicative of the underlying violations.
-* It is commonly observed in similar violation patterns based on your knowledge.
+The violation info is
+```
+Avoid instantiating an object just to call getClass() on it; use the .class public member instead.
+```
 
-Note: You should NOT attempt to split AST by yourself.
+Your should think like the following:
+* Step 1: Analysis the violation
+The violation means that new String() is an object creation, and method invocation "getClass()" shouldn't be called \
+on an objectCreation Node.
+* Step 2: Guessing possible defect templates
+This template can be described as a DSL like the following:
+```DSL
+    functionCall f1 where and(
+        f1.base is ObjectCreation,
+        f1.name == "getClass"
+    );
+```
+This DSL can retrieve all method invocation which name is 'getClass' and its target is an object creation. \
+And you can summarize other defects to DSL, which can effectively describe such defects.
+
+For Name and Literal nodes, if the literal value can be summarized by regular expressions, this node is also important.
+For example the following DSL.
+```DSL
+    functionCall f1 where f1.name match "(?i).*set(Access|Visibility|Field)";
+```
+
+* Step 3: Mapping DSL to the important AST Nodes
+Based on the DSL, the important AST Nodes are
+1. MethodInvocation `new String().getClass()`
+2. ClassCreation `new String()`
+3. SimpleName `getClass`
+
+After this analysis process, you can know which AST nodes are important.
 """
 
 ROUGH_SELECT_LINES_PROMPT = """Based on your analysis, Please select which lines are critical\
-for this violation and record their line numbers. If this violation occurs more than once, \
-only keep one and record their line numbers.
- 
+for this violation and record their line numbers. 
+
 Note: A code line is critical if:
 1. This line contains contextual features related to the violation.
 2. This line contains code elements that may appear in similar patterns.
+
+Note: If this violation occurs more than once, only keep one and record their line numbers.
+For example:
+The buggy code
+```java
+    2: public void testNewReader() throws IOException {
+    3: File asciiFile = getTestFile("ascii.txt");
+    4: try {
+    5:   Files.newReader(asciiFile, null);
+    6:   fail("expected exception");
+    7: } catch (NullPointerException expected) {
+    8: }
+    9: 
+    10: try {
+    11:   Files.newReader(null, Charsets.UTF_8);
+    12:   fail("expected exception");
+    13: } catch (NullPointerException expected) {
+    14: }
+    16: 
+    17: BufferedReader r = Files.newReader(asciiFile, Charsets.US_ASCII);
+    18: try {
+    19:   assertEquals(ASCII, r.readLine());
+    20: } finally {
+    21:   r.close();
+    22: }
+  }
+```
+the violation information is \
+'AvoidCatchingNPE: Avoid catching NullPointerException; consider removing the cause of the NPE.'
+
+Because line 4-8 and line 10-14 both represent the same issue, so import lines only reserve one of them.
+critical lines : [4, 5, 6, 7, 8]
+
 
 Strictly follow the format below:
 1. First part: [critical lines]
@@ -28,36 +91,18 @@ Strictly follow the format below:
 Each part use ||| segmentation between three parts
 
 Example output:
-[critical lines] ||| [3, 4, 6, 7, 8, 10] ||| \n your analysis
+[critical lines] ||| [4, 5, 6, 7, 8] ||| \n your analysis
 """
 
-NORMAL_TOP_ELEMENT_PROMPT = """The code element AST node{{ type:{elementType} value:{element} in line {line} }}. \
-Please classify its violation relevance by selecting ALL applicable types from following categories:
+NORMAL_TOP_ELEMENT_PROMPT = """Based on your analysis, \
+for the code element AST node{{ type:{elementType} value:{element} in line {line} }}, \
+please classify its violation relevance by selecting ALL applicable types from following categories:
 
 Violation information: {error_info}
 
-
-Note: Not all action related code elements are relevant to the violation, you should attention to the code elements \
-that contained in the minimal representation of the violation. 
-For example:
-Violation info: Avoid instantiating an object just to call getClass() on it; use the .class public member instead.
-Error Code
-```java
-    Class c = new String().getClass();
-```
-Minimal representation AST Nodes are
-1. MethodInvocation `new String().getClass()`
-2. ClassCreation `new String()`
-3. SimpleName `getClass`
-Other AST Nodes such as VariableDeclaration `Class c = new String().getClass();`, SimpleName `String` don't have \
-representation of the violation.
-
 [Category Options]
- 1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
-    a. it directly contributes to triggering the violation.
-    b. it contains the code triggering the violation and the node itself is relevant to the description of the violation.
-    c. it contains relevant features that may appear in the context of this violation. 
- 2. Structural Irrelevant: One code element contains the code triggering the violation but it has NOTHING to do with violation itself.
+ 1. Important AST Node: One code element itself should appear in DSL Template.
+ 2. Structural Irrelevant: One code element shouldn't appear in DSL Template, but it contains important AST Node.
  3. Completely Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria.
 
 [Response Requirements]
@@ -72,21 +117,16 @@ Example output:
 [1]: [your analysis]
 """
 
-NORMAL_ELEMENT_PROMPT = """The code element AST node{{ type:{elementType} value:{element} in line {line} }}, it is a
-child node of {parentElement}. Please classify its violation relevance \
+NORMAL_ELEMENT_PROMPT = """Based on your analysis, \
+for the code element AST node{{ type:{elementType} value:{element} in line {line} }}, which is a
+child node of {parentElement}, please classify its violation relevance \
 by selecting ALL applicable types from following categories:
 
 Violation information: {error_info}
 
-Note: Not all action related code elements are relevant to the violation, you should attention to the code elements \
-that contained in the minimal representation of the violation. 
-
 [Category Options]
- 1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
-    a. it directly contributes to triggering the violation.
-    b. it contains the code triggering the violation and the node itself is relevant to the description of the violation.
-    c. it contains relevant features that may appear in the context of this violation. 
- 2. Structural Irrelevant: One code element contains the code triggering the violation but it has NOTHING to do with violation itself.
+ 1. Important AST Node: One code element itself should appear in DSL Template.
+ 2. Structural Irrelevant: One code element shouldn't appear in DSL Template, but it contains important AST Node.
  3. Completely Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria.
  
 [Response Requirements]
@@ -103,27 +143,20 @@ Example output:
 
 NAME_ELEMENT_PROMPT = """Please evaluate whether the name of the element `{element}` in line {line} is representative \
 for above violation(s).
-'Yes': If the name is representative for above violation(s).
-'No': If the name is not representative for above violation(s).
+'Yes': If the name is important Node for above violation(s).
+'No': If the name is not important Node for above violation(s).
 
-Note: A code element's name is considered representative if it meets any of the following criteria:
-1. Semantic meaning of variables: The semantic meaning contained in the name suggests that it may trigger the violation(s), \
-or its semantic meaning is related to the modification.
-2. Refers to a violated function: Represents violated function calls, type constructions, etc.
-3. Key features: The name is the feature related to the modifications that need to be applied
-4. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
+Note: You can refer to your analysis above to determine which nodes are important.
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
 
 LITERAL_ELEMENT_PROMPT = """Please evaluate whether the string literal `{element}` in line {line} is representative \
 for above violation(s).
-'Yes': If the string literal is representative for above violation(s).
-'No': If the string literal is not representative for above violation(s).
+'Yes': If the StringLiteral is important Node for above violation(s).
+'No': If the StringLiteral is not important Node for above violation(s).
 
-Note: A string literal is considered representative if it meets any of the following criteria:
-1. Key features: A certain part of this string literal is related to the violation(s).
-2. Common Pattern: It is commonly observed in similar violation patterns based on your knowledge.
+Note: You can refer to your analysis above to determine which nodes are important.
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """

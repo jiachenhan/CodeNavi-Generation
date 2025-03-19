@@ -40,15 +40,6 @@ class ExitState(PromptState):
 
 
 class BackGroundState(PromptState):
-    def init_history(self):
-        for element in self.analyzer.element_stack:
-            element_id = element.get("id")
-            background_history_copy = copy.deepcopy(self.analyzer.global_history.background_history)
-            background_history_copy.extend(self.analyzer.global_history.task_history)
-            background_history_copy.extend(self.analyzer.global_history.roughly_line_history)
-            self.analyzer.global_history.element_histories[element_id] = ElementHistory(element_id=element_id,
-                                                                                        history=background_history_copy)
-
     def task_prompt(self):
         _background_messages_copy = copy.deepcopy(self.analyzer.global_history.background_history)
         task_prompt = [{"role": "user", "content": TASK_DESCRIPTION_PROMPT}]
@@ -61,7 +52,6 @@ class BackGroundState(PromptState):
         background_history = background_analysis(self.analyzer.llm, self.analyzer.pattern_input)
         self.analyzer.global_history.background_history = background_history
         self.task_prompt()
-        self.init_history()
         self.analyzer.prompt_state = AttentionLineState(self.analyzer)
 
 
@@ -81,6 +71,15 @@ class AttentionLineState(PromptState):
         \|\|\|               # 匹配第二个分隔符
         [\s\S]*              # 匹配后续所有内容（分析部分）
     """, re.VERBOSE | re.IGNORECASE)
+
+    def init_history(self):
+        for element in self.analyzer.element_stack:
+            element_id = element.get("id")
+            background_history_copy = copy.deepcopy(self.analyzer.global_history.background_history)
+            background_history_copy.extend(self.analyzer.global_history.task_history)
+            background_history_copy.extend(self.analyzer.global_history.roughly_line_history)
+            self.analyzer.global_history.element_histories[element_id] = ElementHistory(element_id=element_id,
+                                                                                        history=background_history_copy)
 
     def check_valid(self, response: str) -> bool:
         match = re.search(self.pattern, response)
@@ -109,6 +108,8 @@ class AttentionLineState(PromptState):
             self.analyzer.global_history.roughly_line_history = _select_lines_prompt
             attention_lines = self.get_attention_lines(response)
             self.analyzer.important_lines = attention_lines
+
+        self.init_history()
         self.analyzer.prompt_state = ElementState(self.analyzer)
         return
 
@@ -119,6 +120,7 @@ class ElementState(PromptState):
             self.analyzer.element_analysis()
         else:
             self.analyzer.prompt_state = InsertNodeState(self.analyzer)
+            # self.analyzer.prompt_state = ExitState(self.analyzer)
 
 
 class NormalElementState(PromptState):
@@ -168,10 +170,7 @@ class NormalElementState(PromptState):
         else:
             _logger.error(f"Invalid response: {response} After retry {self.analyzer.retries} times")
 
-        if _element_type == "MoStringLiteral":
-            self.analyzer.prompt_state = RegEXState(self.analyzer)
-        else:
-            self.analyzer.prompt_state = ElementState(self.analyzer)
+        self.analyzer.prompt_state = ElementState(self.analyzer)
         return
 
 
