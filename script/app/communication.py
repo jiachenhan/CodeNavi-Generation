@@ -16,7 +16,8 @@ class PatternInput(BaseModel):
         description="用户提供的错误信息"
     )
     before_code: list[str] = Field(alias="BeforeCode")
-    diff: list[dict[str, Union[str, int, list[str]]]] = Field(alias="Diff")
+    after_code: list[str] = Field(alias="AfterCode")
+    # diff: list[dict[str, Union[str, int, list[str]]]] = Field(alias="Diff")
     tree: dict = Field(alias="Before0Tree")
     attrs: dict = Field(alias="Attrs")
 

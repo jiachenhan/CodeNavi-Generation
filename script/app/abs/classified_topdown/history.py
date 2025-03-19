@@ -51,5 +51,7 @@ class GlobalHistories:
         self.roughly_line_history = []
         self.task_history = []
         self.element_histories: Dict[int, ElementHistory] = {}
+
         self.after_task_history = []
-        self.after_tree_history: Dict[int, ElementHistory] = {}
+        self.after_roughly_line_history = []
+        # self.after_tree_history: Dict[int, ElementHistory] = {}

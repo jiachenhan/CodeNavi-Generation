@@ -26,10 +26,12 @@ class Analyzer:
         self.retries = retries
 
         self.prompt_state: PromptState = InitialState(self)
+        self.last_state = None # 为了让regex识别到应该转移到什么状态
         self.current_element = None
         self.child_parent_map = {}
         self.element_stack = list(reversed(Analyzer.get_top_elements_from_tree(self.pattern_input.tree)))
         self.important_lines = []
+        self.important_after_lines = []
 
         self.global_history = GlobalHistories()
         self.considered_elements = set()
@@ -121,14 +123,14 @@ class Analyzer:
             }
         histories["elements"] = element_histories
 
-        after_histories = {}
-        for _id, _element_history in self.global_history.after_tree_history.items():
-            after_histories[_id] = {
-                "history": _element_history.history,
-                "round": _element_history.element_round,
-                "structure_round": _element_history.structure_round
-            }
-        histories["afters"] = after_histories
+        # after_histories = {}
+        # for _id, _element_history in self.global_history.after_tree_history.items():
+        #     after_histories[_id] = {
+        #         "history": _element_history.history,
+        #         "round": _element_history.element_round,
+        #         "structure_round": _element_history.structure_round
+        #     }
+        # histories["afters"] = after_histories
 
         data = {
             "histories": histories,
@@ -160,17 +162,17 @@ class Analyzer:
             self.global_history.element_histories[child_id] = ElementHistory(element_id=child_id, history=round_history)
             self.element_stack.append(child)
 
-    def push_action(self, sub_tree: dict) -> None:
-        if sub_tree.get("leaf"):
-            return
-        for child in reversed(sub_tree.get("children")):
-            element_id = sub_tree.get("id")
-            child_id = child.get("id")
-            round_history = copy.deepcopy(self.global_history.after_tree_history.get(element_id).history)
-            _round = self.global_history.after_tree_history.get(element_id).element_round
-            round_history.extend(_round)
-            self.global_history.after_tree_history[child_id] = ElementHistory(element_id=child_id, history=round_history)
-            self.element_stack.append(child)
+    # def push_action(self, sub_tree: dict) -> None:
+    #     if sub_tree.get("leaf"):
+    #         return
+    #     for child in reversed(sub_tree.get("children")):
+    #         element_id = sub_tree.get("id")
+    #         child_id = child.get("id")
+    #         round_history = copy.deepcopy(self.global_history.after_tree_history.get(element_id).history)
+    #         # _round = self.global_history.after_tree_history.get(element_id).element_round
+    #         # round_history.extend(_round)
+    #         self.global_history.after_tree_history[child_id] = ElementHistory(element_id=child_id, history=round_history)
+    #         self.element_stack.append(child)
 
     def get_current_element_history(self) -> ElementHistory:
         return self.global_history.element_histories.get(self.current_element.get("id"))
@@ -186,8 +188,8 @@ class Analyzer:
         else:
             self.prompt_state = NormalElementState(self)
 
-    def get_action_current_element_history(self) -> ElementHistory:
-        return self.global_history.after_tree_history.get(self.current_element.get("id"))
+    # def get_action_current_element_history(self) -> ElementHistory:
+    #     return self.global_history.after_tree_history.get(self.current_element.get("id"))
 
     def insert_node_analysis(self):
         self.current_element = self.element_stack.pop()

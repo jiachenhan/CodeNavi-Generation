@@ -9,20 +9,24 @@ def original_code(input_schema: PatternInput) -> str:
     return "\n".join(input_schema.before_code)
 
 
-def basic_change_info(input_schema: PatternInput) -> str:
-    change_prompt = f"""there are {len(input_schema.diff)} changes in the code, """
+def fixed_code(input_schema: PatternInput) -> str:
+    return "\n".join(input_schema.after_code)
 
-    for i, change in enumerate(input_schema.diff):
-        index = i + 1
-        change_prompt += f"Change {index} is {change['Type']} at line {change['LineStart']}.\n"
-        if change["Type"] == "INSERT":
-            change_prompt += f"Inserted code is {change['Revised']}.\n"
-        elif change["Type"] == "DELETE":
-            change_prompt += f"Deleted code is {change['Original']}.\n"
-        elif change["Type"] == "CHANGE":
-            change_prompt += f"Original code is {change['Original']}.\n"
-            change_prompt += f"Revised code is {change['Revised']}.\n"
-    return change_prompt
+
+# def basic_change_info(input_schema: PatternInput) -> str:
+#     change_prompt = f"""there are {len(input_schema.diff)} changes in the code, """
+#
+#     for i, change in enumerate(input_schema.diff):
+#         index = i + 1
+#         change_prompt += f"Change {index} is {change['Type']} at line {change['LineStart']}.\n"
+#         if change["Type"] == "INSERT":
+#             change_prompt += f"Inserted code is {change['Revised']}.\n"
+#         elif change["Type"] == "DELETE":
+#             change_prompt += f"Deleted code is {change['Original']}.\n"
+#         elif change["Type"] == "CHANGE":
+#             change_prompt += f"Original code is {change['Original']}.\n"
+#             change_prompt += f"Revised code is {change['Revised']}.\n"
+#     return change_prompt
 
 
 def background_analysis(_llm: LLMAPI, _global_schema: PatternInput) -> list:
@@ -30,14 +34,14 @@ def background_analysis(_llm: LLMAPI, _global_schema: PatternInput) -> list:
         _background_messages = [
             {"role": "user",
              "content": BACKGROUND_WITH_ERROR_INFO_PROMPT.format(original_code=original_code(_global_schema),
-                                                                 change_info=basic_change_info(_global_schema),
+                                                                 fixed_code=fixed_code(_global_schema),
                                                                  error_info=_global_schema.error_info)},
         ]
     else:
         _background_messages = [
             {"role": "user",
              "content": BACKGROUND_NO_ERROR_INFO_PROMPT.format(original_code=original_code(_global_schema),
-                                                               change_info=basic_change_info(_global_schema))},
+                                                               fixed_code=fixed_code(_global_schema))},
         ]
 
     _background_response1 = _llm.invoke(_background_messages)

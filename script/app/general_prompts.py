@@ -32,9 +32,9 @@ Here is the original code:
 {original_code}
 ```
 
-Here is the modification information:
+Here is the fixed code:
 ```
-{change_info}
+{fixed_code}
 ```
 
 Here is error information about this code modification, \

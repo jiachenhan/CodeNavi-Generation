@@ -68,10 +68,11 @@ def get_ab_case(_pattern_path: Path, _data_path: Path) -> Generator[Path, None, 
 
 
 def get_random_code_pair(_path: Path) -> Generator[Path, None, None]:
-    yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/AvoidCatchingNPE/6/1")
-    yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/InstantiationToGetClass/0/0")
-    yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/AssignmentInOperand/1/1")
-    yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/AvoidAccessibilityAlteration/0/1")
+    # yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/AvoidCatchingNPE/6/1")
+    # yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/InstantiationToGetClass/0/0")
+    # yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/AssignmentInOperand/1/1")
+    # yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/AvoidAccessibilityAlteration/0/1")
+    yield Path("/data/jiangjiajun/CodeNavi-DSL/data/pmd_sampled_v1/GuardLogStatement/0/4")
     # for _checker in _path.iterdir():
     #     if not _checker.is_dir():
     #         continue

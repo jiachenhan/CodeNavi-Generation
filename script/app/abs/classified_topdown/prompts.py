@@ -240,38 +240,124 @@ Note: According to the following template, please answer the question with 'yes'
 """
 
 
-AFTER_TREE_TASK_PROMPT = """Based on your analysis, the fixed version code fixes some issues by adding some code snippet.\
-I want to detect similar problem codes that still have issues as they have not been fixed with similar modifications.
+AFTER_TREE_TASK_PROMPT = """In addition, some code element in after tree also should be add into the defect template.
+I will provide you with the elements of the Abstract Syntax Tree (AST) from the fixed code. 
+And your task is to analyze each AST Node and determine whether it should appear in template.
 
-I will provide you with the elements of the Abstract Syntax Tree (AST) from the fixed code.
-Your task is to analyze each AST element and determine whether it is representative.
+For example: \
+The code diff is
+```java
+    + if (LOG.isDebugEnabled()) {
+        LOG.debug("get version from meta service, partitions: {}, versions: {}", partitionIds, versions);
+    + }
+```
 
-Note: A code element is considered representative if:
-* Its semantic information is useful in correcting incorrect code
+The violation info is
+```
+GuardLogStatement: Logger calls should be surrounded by log level guards.
+```
 
-Note: You should NOT attempt to split AST by yourself.
+Fixed code should also appear in DSL template in Step 2:
+* Step 2: Guessing possible defect templates
+This template can be described as a DSL like the following:
+```DSL
+    functionCall f1 where and(
+        f1.base.name match "(?i)(log|logger)",
+        f1.name == "debug",
+        f1 notin ifBlock ib where and(
+            ib.condition.name == "isDebugEnabled"
+        )
+    );
+```
+
+* Step 3: Mapping DSL to the important AST Nodes
+Based on the DSL, the important AST Nodes in before tree are
+1. MethodInvocation `LOG.debug("get version from meta service, partitions: {}, versions: {}", partitionIds, versions)`
+2. SimpleName `debug`
+3. SimpleName `LOG`
+import AST Nodes in after tree:
+4. ifStatement `if (LOG.isDebugEnabled()) { LOG.debug("get version from meta service, partitions: {}, versions: {}", partitionIds, versions); }`
+5. SimpleName `isDebugEnabled`
+
+After this analysis process, you can know which AST nodes are important.
 """
 
-AFTER_TREE_ELEMENT_PROMPT = """For AST type `{elementType}` code element `{element}` in fixed AST, please \
-analyze whether it contains representative code elements for resolving above violations(s).
-'Yes': If the code snippet contains representative code element for resolving above violation(s).
-'No': If the code snippet does not contain representative code element for resolving above violation(s).
 
-Note: A code element is considered representative if it meets any of the following criteria:
-1. Direct Contribution: It directly contributes to resolving the violation(s).
-2. Include key semantics: It contains key code, whose semantics are helping to solve this violation(s).
-Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
-[yes/no]: [Cause analysis]
+AFTER_SELECT_LINES_PROMPT = """Please select which lines are critical in fixed code \
+for this violation and record their line numbers. 
+
+Note: A code line is critical if:
+1. This line contains contextual features related to the violation.
+2. This line contains code elements that may appear in similar patterns.
+
+Note: If this violation occurs more than once, only keep one and record their line numbers.
+For example:
+The buggy code
+```java
+    19: if (LOG.isDebugEnabled()) {
+    20:     LOG.debug("getVisibleVersion use CloudPartition {}", partitionIds.toString());
+    21: }
+    22: Cloud.GetVersionResponse resp = getVersionFromMeta(req);
+    23: if (resp.getStatus().getCode() != MetaServiceCode.OK) {
+    24:     throw new RpcException("get visible version", "unexpected status " + resp.getStatus());
+    25: }
+    26: 
+    27: List<Long> versions = resp.getVersionsList();
+    28: if (versions.size() != partitionIds.size()) {
+    29:     throw new RpcException("get visible version",
+    30:             "wrong number of versions, required " + partitionIds.size() + ", but got " + versions.size());
+    31: }
+    32:
+    33: if (LOG.isDebugEnabled()) {
+    34:     LOG.debug("get version from meta service, partitions: {}, versions: {}", partitionIds, versions);
+    35: }
+  }
+```
+the violation information is \
+'GuardLogStatement: Logger calls should be surrounded by log level guards.'
+
+Because line 19-21 and line 33-35 both represent the same issue, so import lines only reserve one of them.
+critical lines : [19, 20, 21]
+
+
+Strictly follow the format below:
+1. First part: [critical lines]
+2. Second part: A number list wrapped in a pair of square brackets.
+3. Third part: your analysis
+Each part use ||| segmentation between three parts
+
+Example output:
+[critical lines] ||| [19, 20, 21] ||| \n your analysis
 """
 
-AFTER_TREE_NAME_PROMPT = """Please evaluate whether the name of the element `{element}` is representative \
-for resolving above violation(s).
-'Yes': If the name is representative for resolving above violation(s).
-'No': If the name is not representative for resolving above violation(s).
 
-Note: A code element's name is considered representative if it meets any of the following criteria:
-1. Refers to a function, a class or interface: this function call, class or interface is crucial for solving this problem.
-2. Key semantic: the name's semantic is crucial for solving this problem.
+AFTER_TREE_ELEMENT_PROMPT = """Based on your analysis, \
+for the code element AST node{{ type:{elementType} value:{element} in line {line} }}, \
+please classify its violation relevance by selecting ALL applicable types from following categories:
+
+[Category Options]
+ 1. Important AST Node: One code element itself should appear in DSL Template.
+ 2. Structural Irrelevant: One code element shouldn't appear in DSL Template, but it contains important AST Node.
+ 3. Completely Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria.
+ 
+[Response Requirements]
+Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
+If no type is applicable, select 0.
+
+Your response should be formatted as follows:
+[Response Format]
+[Type number]: [Corresponding analysis]
+
+Example output:
+[1]: [your analysis]
+"""
+
+AFTER_TREE_NAME_PROMPT = """Please evaluate whether the name of the element `{element}` \
+in line {line} is representative for above violation(s).
+'Yes': If the name is important Node for above violation(s).
+'No': If the name is not important Node for above violation(s).
+
+Note: You can refer to your analysis above to determine which nodes are important.
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """

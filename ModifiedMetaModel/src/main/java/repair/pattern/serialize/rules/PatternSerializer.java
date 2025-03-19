@@ -29,7 +29,8 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
         jsonGenerator.writeStartObject();
 
         generateBeforeCode(pattern.getPatternBefore0(), jsonGenerator); // part 1: before code
-        generateDiff(pattern.getPatternBefore0(), pattern.getPatternAfter0(), jsonGenerator); // part 2: diff
+//        generateDiff(pattern.getPatternBefore0(), pattern.getPatternAfter0(), jsonGenerator); // part 2: diff
+        generateAfterCode(pattern.getPatternAfter0(), jsonGenerator); // part 2: diff
 
         jsonGenerator.writeFieldName("Before0Tree");
         generateNodeTree(pattern.getPatternBefore0(), jsonGenerator); // part 3: before0 tree
@@ -57,40 +58,52 @@ public class PatternSerializer extends JsonSerializer<Pattern> {
         jsonGenerator.writeEndArray();
     }
 
-    private void generateDiff(MoNode beforeCode, MoNode afterCode, JsonGenerator jsonGenerator) throws IOException {
-        Path beforeFileName = beforeCode.getFileName();
-        Path afterFileName = afterCode.getFileName();
-        List<String> original = Files.readAllLines(beforeFileName, Charset.forName(FileUtils.detectCharset(beforeFileName)));
-        List<String> revised = Files.readAllLines(afterFileName, Charset.forName(FileUtils.detectCharset(afterFileName)));
-        jsonGenerator.writeFieldName("Diff");
+    private void generateAfterCode(MoNode afterCode, JsonGenerator jsonGenerator) throws IOException {
+        Path fileName = afterCode.getFileName();
+        List<String> codes = Files.readAllLines(fileName, Charset.forName(FileUtils.detectCharset(fileName)));
 
-        Patch<String> patch = DiffUtils.diff(original, revised);
+        jsonGenerator.writeFieldName("AfterCode");
         jsonGenerator.writeStartArray();
-        for (AbstractDelta<String> delta : patch.getDeltas()) {
-            int lineStart = delta.getSource().getPosition() + 1;
-            if(lineStart < beforeCode.getStartLine() || lineStart > beforeCode.getEndLine()) {
-                continue;
-            }
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField("Type", delta.getType().toString());
-            jsonGenerator.writeNumberField("LineStart", lineStart);
-            jsonGenerator.writeFieldName("Original");
-            jsonGenerator.writeStartArray();
-            for (String line : delta.getSource().getLines()) {
-                jsonGenerator.writeString(line);
-            }
-            jsonGenerator.writeEndArray();
-            jsonGenerator.writeFieldName("Revised");
-            jsonGenerator.writeStartArray();
-            for (String line : delta.getTarget().getLines()) {
-                jsonGenerator.writeString(line);
-            }
-            jsonGenerator.writeEndArray();
-
-            jsonGenerator.writeEndObject();
+        for (int i = afterCode.getStartLine() - 1; i < afterCode.getEndLine(); i++) {
+            jsonGenerator.writeString((i + 1) + ": " + codes.get(i));
         }
         jsonGenerator.writeEndArray();
     }
+
+//    private void generateDiff(MoNode beforeCode, MoNode afterCode, JsonGenerator jsonGenerator) throws IOException {
+//        Path beforeFileName = beforeCode.getFileName();
+//        Path afterFileName = afterCode.getFileName();
+//        List<String> original = Files.readAllLines(beforeFileName, Charset.forName(FileUtils.detectCharset(beforeFileName)));
+//        List<String> revised = Files.readAllLines(afterFileName, Charset.forName(FileUtils.detectCharset(afterFileName)));
+//        jsonGenerator.writeFieldName("Diff");
+//
+//        Patch<String> patch = DiffUtils.diff(original, revised);
+//        jsonGenerator.writeStartArray();
+//        for (AbstractDelta<String> delta : patch.getDeltas()) {
+//            int lineStart = delta.getSource().getPosition() + 1;
+//            if(lineStart < beforeCode.getStartLine() || lineStart > beforeCode.getEndLine()) {
+//                continue;
+//            }
+//            jsonGenerator.writeStartObject();
+//            jsonGenerator.writeStringField("Type", delta.getType().toString());
+//            jsonGenerator.writeNumberField("LineStart", lineStart);
+//            jsonGenerator.writeFieldName("Original");
+//            jsonGenerator.writeStartArray();
+//            for (String line : delta.getSource().getLines()) {
+//                jsonGenerator.writeString(line);
+//            }
+//            jsonGenerator.writeEndArray();
+//            jsonGenerator.writeFieldName("Revised");
+//            jsonGenerator.writeStartArray();
+//            for (String line : delta.getTarget().getLines()) {
+//                jsonGenerator.writeString(line);
+//            }
+//            jsonGenerator.writeEndArray();
+//
+//            jsonGenerator.writeEndObject();
+//        }
+//        jsonGenerator.writeEndArray();
+//    }
 
     private void generateNodeTree(MoNode node, JsonGenerator jsonGenerator) throws IOException {
         jsonGenerator.writeStartObject();
