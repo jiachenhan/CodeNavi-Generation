@@ -90,8 +90,6 @@ def detect_repo(_query_base_path: Path,
                 break
 
 
-
-
 if __name__ == '__main__':
     dataset_name = "codeql_sampled_v2"
     dataset_path = Path("D:/datas/opensource/data/") / dataset_name

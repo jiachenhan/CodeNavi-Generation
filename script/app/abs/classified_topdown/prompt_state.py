@@ -126,7 +126,8 @@ class NormalElementState(PromptState):
         _element = self.analyzer.current_element
         # 如果这个元素不在重要行(+-1,考虑紧密上下文)中，则跳过
         start_line, end_line = _element.get("startLine"), _element.get("endLine")
-        if not any(start_line - 1 <= num <= end_line + 1 for num in self.analyzer.important_lines):
+        if not any(start_line - 1 <= num <= start_line + 1 or end_line - 1 <= num <= end_line + 1
+                   for num in self.analyzer.important_lines):
             self.analyzer.prompt_state = ElementState(self.analyzer)
             return
 

@@ -14,7 +14,8 @@ Note: You should NOT attempt to split AST by yourself.
 """
 
 ROUGH_SELECT_LINES_PROMPT = """Based on your analysis, Please select which lines are critical\
-for this violation and record their line numbers.
+for this violation and record their line numbers. If this violation occurs more than once, \
+only keep one and record their line numbers.
  
 Note: A code line is critical if:
 1. This line contains contextual features related to the violation.
@@ -35,8 +36,21 @@ Please classify its violation relevance by selecting ALL applicable types from f
 
 Violation information: {error_info}
 
+
 Note: Not all action related code elements are relevant to the violation, you should attention to the code elements \
 that contained in the minimal representation of the violation. 
+For example:
+Violation info: Avoid instantiating an object just to call getClass() on it; use the .class public member instead.
+Error Code
+```java
+    Class c = new String().getClass();
+```
+Minimal representation AST Nodes are
+1. MethodInvocation `new String().getClass()`
+2. ClassCreation `new String()`
+3. SimpleName `getClass`
+Other AST Nodes such as VariableDeclaration `Class c = new String().getClass();`, SimpleName `String` don't have \
+representation of the violation.
 
 [Category Options]
  1. Strong Relevant: One code element is classified as relevant if it meets any of the following criteria:
