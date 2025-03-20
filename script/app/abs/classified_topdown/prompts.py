@@ -32,7 +32,7 @@ And you can summarize other defects to DSL, which can effectively describe such 
 For Name and Literal nodes, if the literal value can be summarized by regular expressions, this node is also important.
 For example the following DSL.
 ```DSL
-    functionCall f1 where f1.name match "(?i).*set(Access|Visibility|Field)";
+    functionCall f1 where f1.name match "(?i).*set(Accessible|Visiable)";
 ```
 
 * Step 3: Mapping DSL to the important AST Nodes
@@ -47,11 +47,11 @@ After this analysis process, you can know which AST nodes are important.
 ROUGH_SELECT_LINES_PROMPT = """Based on your analysis, Please select which lines are critical\
 for this violation and record their line numbers. 
 
-Note: A code line is critical if:
-1. This line contains contextual features related to the violation.
-2. This line contains code elements that may appear in similar patterns.
+Note: A code line is critical if it is part of a defective code snippet.
+Note: If this kind of violation occurs more than once, you only need to keep the line numbers \
+of one defective code fragment and ignore the other defective code lines. \
+Because the template will be accurate if only use one code snippet.
 
-Note: If this violation occurs more than once, only keep one and record their line numbers.
 For example:
 The buggy code
 ```java
@@ -101,9 +101,9 @@ please classify its violation relevance by selecting ALL applicable types from f
 Violation information: {error_info}
 
 [Category Options]
- 1. Important AST Node: One code element itself should appear in DSL Template.
- 2. Structural Irrelevant: One code element shouldn't appear in DSL Template, but it contains important AST Node.
- 3. Completely Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria.
+ 1. Important AST Node: This code element itself should appear in DSL Template.
+ 2. Structural Irrelevant: This code element shouldn't appear in DSL Template, but it contains important AST Node.
+ 3. Completely Irrelevant: This code element is classified as irrelevant if it does not meet any of the above criteria.
 
 [Response Requirements]
 Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
@@ -125,9 +125,9 @@ by selecting ALL applicable types from following categories:
 Violation information: {error_info}
 
 [Category Options]
- 1. Important AST Node: One code element itself should appear in DSL Template.
- 2. Structural Irrelevant: One code element shouldn't appear in DSL Template, but it contains important AST Node.
- 3. Completely Irrelevant: One code element is classified as irrelevant if it does not meet any of the above criteria.
+ 1. Important AST Node: This code element itself should appear in DSL Template.
+ 2. Structural Irrelevant: This code element shouldn't appear in DSL Template, but it contains important AST Node.
+ 3. Completely Irrelevant: This code element is classified as irrelevant if it does not meet any of the above criteria.
  
 [Response Requirements]
 Select one most relevant type number (1-3) for this element, and analyze the reason for your selection.
@@ -143,26 +143,25 @@ Example output:
 
 NAME_ELEMENT_PROMPT = """Please evaluate whether the name of the element `{element}` in line {line} is representative \
 for above violation(s).
-'Yes': If the name is important Node for above violation(s).
-'No': If the name is not important Node for above violation(s).
+'Yes': This name or the regular expression that summarizes it should appear in DSL.
+'No': This name or the regular expression that summarizes it should not appear in DSL.
 
-Note: You can refer to your analysis above to determine which nodes are important.
+Note: Carefully check the position of this name regarding the code.
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
 
 LITERAL_ELEMENT_PROMPT = """Please evaluate whether the string literal `{element}` in line {line} is representative \
 for above violation(s).
-'Yes': If the StringLiteral is important Node for above violation(s).
-'No': If the StringLiteral is not important Node for above violation(s).
+'Yes': This StringLiteral or the regular expression that summarizes it should appear in DSL.
+'No': This StringLiteral or the regular expression that summarizes it should not appear in DSL.
 
-Note: You can refer to your analysis above to determine which nodes are important.
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
 """
 
 REGEX_NAME_PROMPT = """Does this name have to be literally equal to `{value}`? Please evaluate whether it must literally \
-equal to `{value}`, or it can be replace by another name with similarly semantic.
+equal to `{value}`, or it can be better summarized by a regular expression to express this defect template.
 'yes': If the name can be replace by another name. 
 'no': If the name must literally equal to `{value}`
 
@@ -193,7 +192,8 @@ Output: no|||None||| \n your analysis
 """
 
 REGEX_LITERAL_PROMPT = """Does this string literal have to be literally equal to `{value}`? \
-Please evaluate whether it must literally equal to `{value}`, or it can be represented by a regular expression
+Please evaluate whether it must literally equal to `{value}`, \
+or it can be better summarized by a regular expression to express this defect template.
 
 'yes': If the string literal can be represented by a regular expression
 'no': If the string literal must literally equal to `{value}`

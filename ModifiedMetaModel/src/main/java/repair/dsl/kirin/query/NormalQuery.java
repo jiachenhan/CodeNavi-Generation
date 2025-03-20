@@ -18,9 +18,14 @@ public class NormalQuery extends Query {
     @Override
     public String prettyPrint() {
         StringBuilder sb = new StringBuilder();
-        sb.append(dslNode.prettyPrint()).append(" ").append(getAlias().getAliasKey());
-        if (getCondition().isPresent()) {
-            sb.append(" ").append(conditionPrefix).append(" ").append(getCondition().get().prettyPrint());
+        if (getAlias().getAliasKey().contains("defaultstatement")) {
+            // 针对defaultstatement，kirin的alias有bug的问题
+            sb.append(dslNode.prettyPrint());
+        } else {
+            sb.append(dslNode.prettyPrint()).append(" ").append(getAlias().getAliasKey());
+            if (getCondition().isPresent()) {
+                sb.append(" ").append(conditionPrefix).append(" ").append(getCondition().get().prettyPrint());
+            }
         }
         return sb.toString();
     }

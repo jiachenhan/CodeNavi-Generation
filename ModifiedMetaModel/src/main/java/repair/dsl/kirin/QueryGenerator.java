@@ -99,6 +99,7 @@ public class QueryGenerator {
     private List<NodePath> collectConsideredNodePaths(MoNode patternBefore, List<MoNode> consideredNodes) {
         return consideredNodes.stream()
                 .filter(node -> node != patternBefore)
+                .sorted(Comparator.comparingInt(this::countParents).reversed()) // 将节点数多的节点排到前面，保持先生成长链，防止附加条件
                 .map(node -> NodePath.computeNodePath(patternBefore, node, consideredNodes))
                 .toList();
     }

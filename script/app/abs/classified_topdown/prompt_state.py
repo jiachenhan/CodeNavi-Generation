@@ -253,7 +253,7 @@ class RegEXState(PromptState):
         match = re.search(self.pattern, part.strip())
         if match:
             if match.group(1) and match.group(1).lower() == "yes":
-                return True, match.group(2)
+                return True, match.group(2).strip()
             else:
                 return False, None
         else:
