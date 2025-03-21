@@ -46,7 +46,7 @@ def check_detect_result(_query_base_path: Path):
 
 
 def run_query(_query_base_path: Path, _dataset_path: Path):
-    engine_path = Path("D:/env/kirin-cli-1.0.8_sp06-jackofall.jar")
+    engine_path = Path("E:/Tools/kirin-cli-1.0.8_sp06-jackofext-obfuscate.jar")
 
     for checker in _query_base_path.iterdir():
         for group in checker.iterdir():
@@ -68,9 +68,8 @@ def run_query(_query_base_path: Path, _dataset_path: Path):
 
 
 if __name__ == '__main__':
-    dataset_name = "codeql_sampled_v2"
-    query_base_path = Path("C:/Users/hWX1386605/Desktop/3-11-v2/") / dataset_name
-    dataset_path = Path("D:/datas/opensource/data/") / dataset_name
+    query_base_path = Path("E:/datasets/stash/codeql_sampled_v2")
+    dataset_path = Path("E:/datasets/codenavi-open/codeql_sampled_v2")
 
     run_query(query_base_path, dataset_path)
     check_detect_result(query_base_path)

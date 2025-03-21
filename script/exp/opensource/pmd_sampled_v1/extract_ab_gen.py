@@ -38,8 +38,8 @@ async def async_abstract_pattern(
     pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
     pattern_info_output_path = _pattern_info_path / "output" / checker_name / group_name / f"{_case_path.stem}.json"
 
-    # if pattern_abs_path.exists():
-    #     return
+    if pattern_abs_path.exists():
+        return
 
     pattern_input = PatternInput.from_file(pattern_info_input_path)
     pattern_input.set_error_info(case_info)
@@ -122,6 +122,14 @@ async def main():
 
     tasks = []
     for case in cases:
+
+        checker_name = case.parent.parent.stem
+        group_name = case.parent.stem
+        dsl_group_path = dsl_path / checker_name / group_name
+        if dsl_group_path.exists():
+            _logger.info(f"{checker_name}/{group_name} already exists")
+            continue
+
         task = asyncio.create_task(
             process_single_case(
                 llm_pool,

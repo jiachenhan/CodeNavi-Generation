@@ -22,19 +22,20 @@ def check_detect_result(_query_base_path: Path):
     no_result = []
 
     query_num = sum(1 for _ in _query_base_path.rglob("*.kirin"))
-    for group in _query_base_path.iterdir():
-        buggy_output_path = group / "scan_error_output" / "error_report_1.xml"
-        fixed_output_path = group / "scan_correct_output" / "error_report_1.xml"
+    for checker in _query_base_path.iterdir():
+        for group in checker.iterdir():
+            buggy_output_path = group / "scan_error_output" / "error_report_1.xml"
+            fixed_output_path = group / "scan_correct_output" / "error_report_1.xml"
 
-        if xml_check_has_error(buggy_output_path):
-            tp.append(group)
-        else:
-            fn.append(group)
+            if xml_check_has_error(buggy_output_path):
+                tp.append(group)
+            else:
+                fn.append(group)
 
-        if xml_check_has_error(fixed_output_path):
-            fp.append(group)
-        else:
-            tn.append(group)
+            if xml_check_has_error(fixed_output_path):
+                fp.append(group)
+            else:
+                tn.append(group)
 
 
     print(f"{_query_base_path.stem}:\t tp: {len(tp)}, tn: {len(tn)}, fp: {len(fp)}, fn: {len(fn)}")
@@ -45,29 +46,30 @@ def check_detect_result(_query_base_path: Path):
 
 
 def run_query(_query_base_path: Path, _dataset_path: Path):
-    engine_path = Path("D:/env/kirin-cli-1.0.8_sp06-jackofall.jar")
+    engine_path = Path("E:/Tools/kirin-cli-1.0.8_sp06-jackofext-obfuscate.jar")
 
-    for group in _query_base_path.iterdir():
-        dsl_case = next(group.glob("*.kirin"))
+    for checker in _query_base_path.iterdir():
+        for group in checker.iterdir():
+            dsl_case = next(group.glob("*.kirin"))
 
-        target_group_path = _dataset_path / group.stem
-        _sub_case_paths = [d for d in target_group_path.iterdir() if d.is_dir() and d.stem != dsl_case.stem]
+            target_group_path = _dataset_path / checker.stem / group.stem
+            _sub_case_paths = [d for d in target_group_path.iterdir() if d.is_dir() and d.stem != dsl_case.stem]
 
-        _random_case_path = random.choice(_sub_case_paths)
+            _random_case_path = random.choice(_sub_case_paths)
 
-        buggy_case_path = _random_case_path / "buggy.java"
-        fixed_case_path = _random_case_path / "fixed.java"
+            buggy_case_path = _random_case_path / "buggy.java"
+            fixed_case_path = _random_case_path / "fixed.java"
 
-        buggy_output_path = group / "scan_error_output"
-        fixed_output_path = group / "scan_correct_output"
+            buggy_output_path = group / "scan_error_output"
+            fixed_output_path = group / "scan_correct_output"
 
-        kirin_engine(60.0, engine_path, dsl_case, buggy_case_path, buggy_output_path)
-        kirin_engine(60.0, engine_path, dsl_case, fixed_case_path, fixed_output_path)
+            kirin_engine(60.0, engine_path, dsl_case, buggy_case_path, buggy_output_path)
+            kirin_engine(60.0, engine_path, dsl_case, fixed_case_path, fixed_output_path)
 
 
 if __name__ == '__main__':
-    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/codeql_hiera_60")
-    dataset_path = Path("D:/datas/opensource/data/codeql_hiera_60")
+    query_base_path = Path("E:/datasets/stash/pmd_sampled_v1")
+    dataset_path = Path("E:/datasets/codenavi-open/pmd_sampled_v1")
 
     run_query(query_base_path, dataset_path)
     check_detect_result(query_base_path)

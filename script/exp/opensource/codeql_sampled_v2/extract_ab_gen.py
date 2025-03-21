@@ -122,6 +122,14 @@ async def main():
 
     tasks = []
     for case in cases:
+
+        checker_name = case.parent.parent.stem
+        group_name = case.parent.stem
+        dsl_group_path = dsl_path / checker_name / group_name
+        if dsl_group_path.exists():
+            _logger.info(f"{checker_name}/{group_name} already exists")
+            continue
+
         task = asyncio.create_task(
             process_single_case(
                 llm_pool,
