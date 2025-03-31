@@ -55,17 +55,15 @@ def detect_repo(_query_base_path: Path,
                 _results_path: Path):
     engine_path = Path("D:/envs/kirin-cli-1.0.8_sp06-jackofext-obfuscate.jar")
 
-    for _dsl_path in get_dsl_paths(_query_base_path):
-        for _scanned_repo_path in _repos_path.iterdir():
-
-            _result_path = _results_path / _dsl_path.stem / _scanned_repo_path.stem
+    for _scanned_repo_path in _repos_path.iterdir():
+        for _dsl_path in get_dsl_paths(_query_base_path):
+            _result_path = _results_path / _scanned_repo_path.stem / _dsl_path.stem
 
             for index, pkg in enumerate(split_java_package(_scanned_repo_path)):
                 index_result_path = _result_path / f"{index}_error_kirin"
                 timeout = kirin_engine(300, engine_path, _dsl_path, pkg, index_result_path)
                 if timeout:
                     print(f"Timeout in : {_dsl_path}")
-                    break
 
 
 if __name__ == '__main__':
@@ -73,6 +71,6 @@ if __name__ == '__main__':
     query_base_path = Path(f"E:/dataset/Navi/vul/ql/{dataset_name}")
 
     repos_path = Path(f"E:/dataset/Navi/local_repos")
-    results_path = Path(f"E:/dataset/Navi/vul/results/{dataset_name}")
+    results_path = Path(f"E:/dataset/Navi/vul/results/{dataset_name}_2")
 
     detect_repo(query_base_path, repos_path, results_path)

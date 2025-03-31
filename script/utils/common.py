@@ -1,4 +1,5 @@
 import multiprocessing
+import random
 import threading
 import time
 from functools import wraps, reduce
@@ -8,6 +9,7 @@ from typing import Union, Optional, Callable
 from utils.config import LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
+
 
 class Timer:
     def __init__(self):
@@ -23,13 +25,28 @@ class Timer:
         print(f"Thread {threading.current_thread().name} - Elapsed time: {self.local.elapsed_time:.2f} seconds")
 
 
+def reservoir_sampling(generator, k) -> list:
+    """Reservoir sampling algorithm"""
+    reservoir = []
+    for i, item in enumerate(generator):
+        if i < k:
+            reservoir.append(item)
+        else:
+            j = random.randint(0, i)
+            if j < k:
+                reservoir[j] = item
+    return reservoir
+
+
 class TimeoutException(Exception):
     """Custom exception for function timeout"""
     pass
 
+
 class BusinessException(Exception):
     """业务逻辑异常基类"""
     pass
+
 
 class InvalidOutputError(BusinessException):
     """输出校验失败"""

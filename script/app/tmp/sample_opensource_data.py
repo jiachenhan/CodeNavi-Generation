@@ -3,16 +3,7 @@ import shutil
 from pathlib import Path
 from typing import Generator, Tuple
 
-def reservoir_sampling(generator, k) -> list:
-    reservoir = []
-    for i, item in enumerate(generator):
-        if i < k:
-            reservoir.append(item)
-        else:
-            j = random.randint(0, i)
-            if j < k:
-                reservoir[j] = item
-    return reservoir
+from utils.common import reservoir_sampling
 
 
 def get_all_groups(path: Path) -> Generator[Path, None, None]:

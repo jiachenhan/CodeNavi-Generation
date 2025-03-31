@@ -24,7 +24,8 @@ def start_process(cmd: List[str], work_dir: Path, timeout_sec: float) -> Tuple[b
         if process.returncode == 0:
             print(stdout)
         else:
-            print("Process exited with errors")
+            _logger.error("Process exited with errors")
+            print(stdout)
             print(stderr)
     except subprocess.TimeoutExpired:
         # 超时处理：标记超时状态并终止进程
@@ -154,6 +155,7 @@ def kirin_engine(timeout_sec: float,
 
     timeout, sout = start_process(cmd, work_dir, timeout_sec)
     return timeout
+
 
 def outer_kirin_engine(timeout_sec: float,
                  engine_path: str,

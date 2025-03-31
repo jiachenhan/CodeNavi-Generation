@@ -2,6 +2,7 @@ import os
 import threading
 import time
 
+import openai
 from openai import OpenAI
 
 from interface.llm.cost_manager import CostManager
@@ -49,10 +50,13 @@ class LLMOpenAI(LLMAPI):
                 # if rate_limit_remaining == 0:
                 #     _logger.warn(f"Rate limit remaining: {rate_limit_remaining}")
                 #     raise Exception("Rate limit exceeded")
+            except openai.BadRequestError as e:
+                _logger.error(f"OpenAI API error: {e}")
+                raise e
             except Exception as e:
                 import traceback
                 traceback.print_exc()
-                _logger.error(f"OpenAI API error: {e}")
+                _logger.error(f"Other error: {e}")
                 time.sleep(30)
 
         if hasattr(response.usage, "prompt_cache_hit_tokens"):

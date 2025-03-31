@@ -98,12 +98,12 @@ if __name__ == '__main__':
     repos_path = Path(f"E:/dataset/Navi/{dataset_name}_repos")
     results_path = Path(f"E:/dataset/Navi/result_trans_repo_{dataset_name}")
 
-    detect_repo(query_base_path, repos_path, results_path)
+    # detect_repo(query_base_path, repos_path, results_path)
 
     # sat_reports_path = Path("D:/datas/pmd_sampled_v1_reports")
     result_store_path = results_path / "navi_result_store.json"
 
-    # results = navi_repo_statistic(dataset_path, results_path)
+    results = navi_repo_statistic(dataset_path, results_path)
 
-    # with open(result_store_path, "w", encoding="utf-8") as file:
-    #     json.dump(results, file, indent=4)
+    with open(result_store_path, "w", encoding="utf-8") as file:
+        json.dump(results, file, indent=4)

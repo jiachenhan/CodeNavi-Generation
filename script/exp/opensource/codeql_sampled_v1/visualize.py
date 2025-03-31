@@ -75,8 +75,8 @@ def view_result(_result_path: Path, _store_path: Path):
 
 
 if __name__ == "__main__":
-    result_path = Path("/data/jiangjiajun/CodeNavi-DSL/GenPat/result_trans_repo_codeql_sampled_v1/result_store.json")
-    store_path = Path("/data/jiangjiajun/CodeNavi-DSL/GenPat/result_trans_repo_codeql_sampled_v1/det_num_his.png")
+    result_path = Path("E:/dataset/Navi/result_trans_repo_codeql_sampled_v1/navi_result_store.json")
+    store_path = Path("E:/dataset/Navi/result_trans_repo_codeql_sampled_v1/det_num_his.png")
     view_result(result_path, store_path)
 
 

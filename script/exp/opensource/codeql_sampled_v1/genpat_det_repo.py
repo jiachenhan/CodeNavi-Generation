@@ -24,6 +24,31 @@ def get_random_repo_path(_dataset_case_path: Path, _repos_base_path: Path) -> Op
     return next(filter(lambda file : file.is_dir(), _random_case_path.iterdir()), None)
 
 
+def get_repo_path(_repos_base_path: Path):
+    for _checker in _repos_base_path.iterdir():
+        for _group in _checker.iterdir():
+            _case = next(_group.iterdir(), None)
+            if _case is not None:
+                yield next(_case.iterdir(), None)
+            else:
+                _logger.error(f"No case in {_group}")
+
+
+def get_random_case_path(_dataset_path: Path, _scanned_repo_path: Path) -> Optional[Path]:
+    _checker_name = _scanned_repo_path.parent.parent.parent.stem
+    _group_name = _scanned_repo_path.parent.parent.stem
+    _case_name = _scanned_repo_path.parent.stem
+
+    _group_dataset_path = _dataset_path / _checker_name / _group_name
+
+    _other_cases = [_case for _case in _group_dataset_path.iterdir() if _case.is_dir() and _case_name != _case.stem]
+    if not _other_cases:
+        _logger.error(f"No other cases in {_group_dataset_path}")
+        return None
+    _random_case_path = random.choice(_other_cases)
+    return _random_case_path
+
+
 def get_code_pair_path(_dataset_case_path: Path) -> Tuple[Path, Path]:
     return _dataset_case_path / "buggy.java", _dataset_case_path / "fixed.java"
 
@@ -49,11 +74,11 @@ def get_result_path(_dataset_case_path: Path, _results_path: Path, _scanned_case
 def detect_repo(_dataset_path: Path,
                 _repos_path: Path,
                 _results_path: Path):
-    genpat_cmd = Path("/data/jiangjiajun/CodeNavi-DSL/GenPat")
+    genpat_cmd = Path("D:/envs/GenPat")
     genpat_jar = genpat_cmd / "GenPat-1.0-SNAPSHOT-runnable.jar"
 
-    for _dataset_case in get_dataset_case(_dataset_path):
-        _scanned_repo_path = get_random_repo_path(_dataset_case, _repos_path)
+    for _scanned_repo_path in get_repo_path(_repos_path):
+        _dataset_case = get_random_case_path(_dataset_path, _scanned_repo_path)
         _logger.info(f"Scanning {_dataset_case} in {_scanned_repo_path}")
 
         if _scanned_repo_path is None:
@@ -72,10 +97,9 @@ def detect_repo(_dataset_path: Path,
 if __name__ == '__main__':
     dataset_name = "codeql_sampled_v1"
 
-    dataset_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / dataset_name
-    repos_path = Path("/data/jiangjiajun/DSL-AutoDebug/data") / f"{dataset_name}_all_repos_test"
-
-    results_path = Path(f"/data/jiangjiajun/CodeNavi-DSL/GenPat/result_trans_repo_{dataset_name}")
+    dataset_path = Path(f"E:/dataset/Navi/3-23-sampled-datasets/{dataset_name}")
+    repos_path = Path(f"E:/dataset/Navi/{dataset_name}_repos")
+    results_path = Path(f"E:/dataset/Navi/genpat_result_trans_repo_{dataset_name}")
 
     # reports_path = Path(f"/data/jiangjiajun/DSL-AutoDebug/data/{dataset_name}_reports")
 

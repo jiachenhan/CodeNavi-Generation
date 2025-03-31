@@ -19,7 +19,7 @@ def extract_pattern(_jar: str, _case_path: Path, _pattern_path: Path, _pattern_i
     group_name = _case_path.parent.stem
     pattern_ori_path = _pattern_path / "ori" / sub_dataset_name / group_name / f"{_case_path.stem}.ser"
     pattern_info_input_path = _pattern_info_path / "input" / sub_dataset_name / group_name / f"{_case_path.stem}.json"
-    java_extract_pattern(30, _case_path, pattern_ori_path, pattern_info_input_path, _jar)
+    java_extract_pattern(60, _case_path, pattern_ori_path, pattern_info_input_path, _jar)
 
 
 async def async_abstract_pattern(
@@ -38,9 +38,6 @@ async def async_abstract_pattern(
     pattern_info_input_path = _pattern_info_path / "input" / sub_dataset_name / group_name / f"{_case_path.stem}.json"
     pattern_info_output_path = _pattern_info_path / "output" / sub_dataset_name / group_name / f"{_case_path.stem}.json"
 
-    if pattern_abs_path.exists():
-        return
-
     pattern_input = PatternInput.from_file(pattern_info_input_path)
     pattern_input.set_error_info(case_info)
     await _llm_pool.async_run(
@@ -49,7 +46,7 @@ async def async_abstract_pattern(
         pattern_info_output_path
     )
 
-    java_abstract(30, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
+    java_abstract(60, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
 
 
 def generate_query(_jar: str, _case_path: Path, _pattern_path: Path, _dsl_path: Path):
@@ -58,7 +55,7 @@ def generate_query(_jar: str, _case_path: Path, _pattern_path: Path, _dsl_path: 
     pattern_abs_path = _pattern_path / "abs" / sub_dataset_name / group_name / f"{_case_path.stem}.ser"
     dsl_output_path = _dsl_path / sub_dataset_name / group_name / f"{_case_path.stem}.kirin"
 
-    java_generate_query(30, pattern_abs_path, dsl_output_path, _jar)
+    java_generate_query(60, pattern_abs_path, dsl_output_path, _jar)
 
 
 def get_random_code_pair(_path: Path) -> Generator[Path, None, None]:
@@ -115,7 +112,7 @@ async def main():
         group_name = case.parent.stem
         dsl_group_path = dsl_path / sub_dataset / group_name
         if dsl_group_path.exists():
-            _logger.info(f"{group_name} already exists")
+            _logger.info(f"{str(dsl_group_path)} already exists")
             continue
 
         task = asyncio.create_task(
