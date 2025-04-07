@@ -46,6 +46,14 @@ def set_config(tag: str = "silicon"):
         return silicon_config()
     elif tag == "ppinfra":
         return ppinfra_config()
+    elif tag == "aliyun":
+        return aliyun_config()
+    elif tag == "openkey":
+        return openkey_config()
+    elif tag == "yunwu":
+        return yunwu_config()
+    elif tag == "yunwu2":
+        return yunwu2_config()
 
 def huawei_config():
     return {
@@ -76,6 +84,7 @@ def silicon_config():
 
     os.environ['jar_path'] = _config["tju"]["jar_path"]
 
+
 def ppinfra_config():
     return {
         "openai": {
@@ -89,6 +98,67 @@ def ppinfra_config():
         },
         "jar_path": _config["tju"]["jar_path"]
     }
+
+
+def aliyun_config():
+    return {
+        "openai": {
+            "api_keys": _config["tju"]["aliyun"]["API_KEY"],
+            "base_url": _config["tju"]["aliyun"]["BASE_URL"],
+            "model": _config["tju"]["aliyun"]["MODEL_NAME"]
+        },
+        "proxy": {
+            "http": _config["tju"]["HTTP_PROXY"],
+            "https": _config["tju"]["HTTPS_PROXY"]
+        },
+        "jar_path": _config["tju"]["jar_path"]
+    }
+
+
+def openkey_config():
+    return {
+        "openai": {
+            "api_keys": _config["tju"]["openkey"]["API_KEY"],
+            "base_url": _config["tju"]["openkey"]["BASE_URL"],
+            "model": _config["tju"]["openkey"]["MODEL_NAME"]
+        },
+        "proxy": {
+            "http": _config["tju"]["HTTP_PROXY"],
+            "https": _config["tju"]["HTTPS_PROXY"]
+        },
+        "jar_path": _config["tju"]["jar_path"]
+    }
+
+
+def yunwu_config():
+    return {
+        "openai": {
+            "api_keys": _config["tju"]["yunwu"]["API_KEY"],
+            "base_url": _config["tju"]["yunwu"]["BASE_URL"],
+            "model": _config["tju"]["yunwu"]["MODEL_NAME"]
+        },
+        "proxy": {
+            "http": _config["tju"]["HTTP_PROXY"],
+            "https": _config["tju"]["HTTPS_PROXY"]
+        },
+        "jar_path": _config["tju"]["jar_path"]
+    }
+
+
+def yunwu2_config():
+    return {
+        "openai": {
+            "api_keys": _config["tju"]["yunwu2"]["API_KEY"],
+            "base_url": _config["tju"]["yunwu2"]["BASE_URL"],
+            "model": _config["tju"]["yunwu2"]["MODEL_NAME"]
+        },
+        "proxy": {
+            "http": _config["tju"]["HTTP_PROXY"],
+            "https": _config["tju"]["HTTPS_PROXY"]
+        },
+        "jar_path": _config["tju"]["jar_path"]
+    }
+
 
 def get_jar_path() -> str:
     return os.environ.get("jar_path")

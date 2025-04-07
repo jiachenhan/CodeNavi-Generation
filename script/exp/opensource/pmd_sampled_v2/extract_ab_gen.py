@@ -97,13 +97,15 @@ async def process_single_case(
 
 
 async def main():
-    _config = set_config("ppinfra")
+    _config = set_config("aliyun")
     jar_path = _config.get("jar_path")
+    model_name = _config.get("openai").get("model")
+
 
     llm_pool = AsyncLLMPool([
         (_config.get("openai").get("base_url"),
          api_key,
-         _config.get("openai").get("model"))
+         model_name)
         for api_key in _config.get("openai").get("api_keys")
     ])
 
@@ -113,9 +115,9 @@ async def main():
     dataset_name = "pmd_sampled_v2"
     dataset_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / dataset_name
 
-    pattern_path = utils.config.get_pattern_base_path() / dataset_name
-    pattern_info_path = utils.config.get_pattern_info_base_path() / dataset_name
-    dsl_path = utils.config.get_dsl_base_path() / dataset_name
+    pattern_path = utils.config.get_pattern_base_path() / model_name / dataset_name
+    pattern_info_path = utils.config.get_pattern_info_base_path() / model_name / dataset_name
+    dsl_path = utils.config.get_dsl_base_path() / model_name / dataset_name
 
     cases = get_random_code_pair(dataset_path)
     # cases = get_ab_case(pattern_path, dataset_path)

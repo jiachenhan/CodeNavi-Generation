@@ -87,7 +87,6 @@ def detect_repo(_query_base_path: Path,
             timeout = kirin_engine(300, engine_path, _dsl_path, pkg, index_result_path)
             if timeout:
                 print(f"Timeout in : {_dsl_path}")
-                break
 
 
 if __name__ == '__main__':
@@ -96,14 +95,13 @@ if __name__ == '__main__':
 
     query_base_path = Path(f"D:/workspace/CodeNavi-Generation/07dsl/3-21-all-sampled/{dataset_name}")
     repos_path = Path(f"E:/dataset/Navi/{dataset_name}_repos")
-    results_path = Path(f"E:/dataset/Navi/result_trans_repo_{dataset_name}")
+    results_path = Path(f"E:/dataset/Navi/2_result_trans_repo_{dataset_name}")
 
-    # detect_repo(query_base_path, repos_path, results_path)
+    detect_repo(query_base_path, repos_path, results_path)
 
-    # sat_reports_path = Path("D:/datas/pmd_sampled_v1_reports")
     result_store_path = results_path / "navi_result_store.json"
 
-    results = navi_repo_statistic(dataset_path, results_path)
-
-    with open(result_store_path, "w", encoding="utf-8") as file:
-        json.dump(results, file, indent=4)
+    # results = navi_repo_statistic(dataset_path, results_path)
+    #
+    # with open(result_store_path, "w", encoding="utf-8") as file:
+    #     json.dump(results, file, indent=4)

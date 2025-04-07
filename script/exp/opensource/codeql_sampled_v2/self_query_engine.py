@@ -24,8 +24,8 @@ def check_detect_result(_query_base_path: Path):
     query_num = sum(1 for _ in _query_base_path.rglob("*.kirin"))
     for checker in _query_base_path.iterdir():
         for group in checker.iterdir():
-            buggy_output_path = group / "scan_error_output" / "error_report_1.xml"
-            fixed_output_path = group / "scan_correct_output" / "error_report_1.xml"
+            buggy_output_path = group / "scan_self_error_output" / "error_report_1.xml"
+            fixed_output_path = group / "scan_self_correct_output" / "error_report_1.xml"
 
             if xml_check_has_error(buggy_output_path):
                 tp.append(group)
@@ -53,23 +53,24 @@ def run_query(_query_base_path: Path, _dataset_path: Path):
             dsl_case = next(group.glob("*.kirin"))
 
             target_group_path = _dataset_path / checker.stem / group.stem
-            _sub_case_paths = [d for d in target_group_path.iterdir() if d.is_dir() and d.stem != dsl_case.stem]
+            _sub_case_paths = [d for d in target_group_path.iterdir() if d.is_dir() and d.stem == dsl_case.stem]
 
-            _random_case_path = random.choice(_sub_case_paths)
+            _random_case_path = _sub_case_paths[0]
 
             buggy_case_path = _random_case_path / "buggy.java"
             fixed_case_path = _random_case_path / "fixed.java"
 
-            buggy_output_path = group / "scan_error_output"
-            fixed_output_path = group / "scan_correct_output"
+            buggy_output_path = group / "scan_self_error_output"
+            fixed_output_path = group / "scan_self_correct_output"
 
             kirin_engine(60.0, engine_path, dsl_case, buggy_case_path, buggy_output_path)
             kirin_engine(60.0, engine_path, dsl_case, fixed_case_path, fixed_output_path)
 
 
 if __name__ == '__main__':
-    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/4-5-qwen-max-latest/codeql_sampled_v1")
-    dataset_path = Path("E:/dataset/Navi/3-23-sampled-datasets/codeql_sampled_v1")
+    dataset_name = "codeql_sampled_v2"
+    query_base_path = Path(f"D:/workspace/CodeNavi-Generation/07dsl/3-21-all-sampled/{dataset_name}")
+    dataset_path = Path(f"E:/dataset/Navi/3-23-sampled-datasets/{dataset_name}")
 
     run_query(query_base_path, dataset_path)
     check_detect_result(query_base_path)

@@ -52,7 +52,11 @@ class LLMOpenAI(LLMAPI):
                 #     raise Exception("Rate limit exceeded")
             except openai.BadRequestError as e:
                 _logger.error(f"OpenAI API error: {e}")
-                raise e
+                if "Request timed out" in str(e):
+                    time.sleep(30)
+                    continue
+                else:
+                    raise
             except Exception as e:
                 import traceback
                 traceback.print_exc()

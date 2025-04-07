@@ -40,6 +40,12 @@ def check_detect_result(_query_base_path: Path):
 
     print(f"{_query_base_path.stem}:\t tp: {len(tp)}, tn: {len(tn)}, fp: {len(fp)}, fn: {len(fn)}")
 
+    for _ in fp:
+        print(f"FP: {_}")
+
+    for _ in fn:
+        print(f"FN: {_}")
+
     print(f"ACC: {(len(tp) + len(tn)) / (len(tp) + len(tn) + len(fp) + len(fn))}\n"
           f"PRE: {(len(tp)) / (len(tp) + len(fp))}\n"
           f"RECALL: {(len(tp)) / (len(tp) + len(fn))}\n")
@@ -71,5 +77,5 @@ if __name__ == '__main__':
     query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/c3_sampled_v1")
     dataset_path = Path("E:/dataset/Navi/c3_sampled_v1")
 
-    run_query(query_base_path, dataset_path)
+    # run_query(query_base_path, dataset_path)
     check_detect_result(query_base_path)

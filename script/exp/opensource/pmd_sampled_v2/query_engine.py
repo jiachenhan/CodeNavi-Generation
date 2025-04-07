@@ -46,7 +46,7 @@ def check_detect_result(_query_base_path: Path):
 
 
 def run_query(_query_base_path: Path, _dataset_path: Path):
-    engine_path = Path("E:/Tools/kirin-cli-1.0.8_sp06-jackofext-obfuscate.jar")
+    engine_path = Path("D:/envs/kirin-cli-1.0.8_sp06-jackofext-obfuscate.jar")
 
     for checker in _query_base_path.iterdir():
         for group in checker.iterdir():
@@ -68,8 +68,8 @@ def run_query(_query_base_path: Path, _dataset_path: Path):
 
 
 if __name__ == '__main__':
-    query_base_path = Path("E:/datasets/stash/3-21-all-sampled/pmd_sampled_v2")
-    dataset_path = Path("E:/datasets/codenavi-open/pmd_sampled_v2")
+    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/4-5-qwen-max-latest/pmd_sampled_v2")
+    dataset_path = Path("E:/dataset/Navi/3-23-sampled-datasets/pmd_sampled_v2")
 
     run_query(query_base_path, dataset_path)
     check_detect_result(query_base_path)

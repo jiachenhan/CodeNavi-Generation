@@ -149,6 +149,9 @@ for above violation(s).
 Note: Carefully check the position of this name regarding the code.
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
+
+Example output:
+yes: The element name is representative for the violation, ...
 """
 
 LITERAL_ELEMENT_PROMPT = """Please evaluate whether the string literal `{element}` in line {line} is representative \
@@ -158,6 +161,9 @@ for above violation(s).
 
 Note: According to the following template, please answer the question with 'yes' or 'no' at beginning:
 [yes/no]: [Cause analysis]
+
+Example output:
+no: The string literal is not directly relevant to the violation...
 """
 
 REGEX_NAME_PROMPT = """Does this name have to be literally equal to `{value}`? Please evaluate whether it must literally \

@@ -97,10 +97,9 @@ async def process_single_case(
 
 
 async def main():
-    _config = set_config("aliyun")
+    _config = set_config("yunwu2")
     jar_path = _config.get("jar_path")
     model_name = _config.get("openai").get("model")
-
 
     llm_pool = AsyncLLMPool([
         (_config.get("openai").get("base_url"),
@@ -110,9 +109,9 @@ async def main():
     ])
 
     # 创建并行任务（限制最大并发数）
-    sem = asyncio.Semaphore(5)  # 根据API总限制调整
+    sem = asyncio.Semaphore(10)  # 根据API总限制调整
 
-    dataset_name = "pmd_sampled_v1"
+    dataset_name = "pmd_sampled_v2"
     dataset_path = Path("/data/jiangjiajun/CodeNavi-DSL/data") / dataset_name
 
     pattern_path = utils.config.get_pattern_base_path() / model_name / dataset_name

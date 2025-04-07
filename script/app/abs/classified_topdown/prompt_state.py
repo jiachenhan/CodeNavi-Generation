@@ -139,7 +139,7 @@ class NormalElementState(PromptState):
         if self.analyzer.pattern_input.error_info:
             _error_info = self.analyzer.pattern_input.error_info
         else:
-            _error_info = "Unknown Violation"
+            _error_info = "Please analysis the error violation information in the code by yourself. "
 
         _element_type = _element.get("type")
         if _parent is None:
