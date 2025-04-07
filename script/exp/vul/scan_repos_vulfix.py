@@ -11,6 +11,16 @@ from utils.config import LoggerConfig
 _logger = LoggerConfig.get_logger(__name__)
 
 
+def get_random_repo_path(_dsl_path: Path, _repos_base_path: Path) -> Path:
+    _case_name = _dsl_path.stem
+    _group_name = _dsl_path.parent.stem
+    _checker_name = _dsl_path.parent.parent.stem
+    _group_repo_path = _repos_base_path / _checker_name / _group_name
+
+    _random_case_path = random.choice([_case for _case in _group_repo_path.iterdir() if _case.is_dir() and _case_name != _case.stem])
+    return next(_random_case_path.iterdir(), None)
+
+
 def get_dsl_paths(_query_path: Path) -> Generator[Path, None, None]:
     return _query_path.rglob("*.kirin")
 
@@ -57,10 +67,10 @@ def detect_repo(_query_base_path: Path,
 
 
 if __name__ == '__main__':
-    dataset_name = "sampled"
+    dataset_name = "vul4j"
     query_base_path = Path(f"E:/dataset/Navi/vul/ql/{dataset_name}")
 
     repos_path = Path(f"E:/dataset/Navi/local_repos")
-    results_path = Path(f"E:/dataset/Navi/vul/results/{dataset_name}")
+    results_path = Path(f"E:/dataset/Navi/vul/results/{dataset_name}_2")
 
     detect_repo(query_base_path, repos_path, results_path)
