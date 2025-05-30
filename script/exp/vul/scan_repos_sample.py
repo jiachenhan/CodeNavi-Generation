@@ -48,6 +48,9 @@ def detect_repo(_query_base_path: Path,
     for _scanned_repo_path in _repos_path.iterdir():
         for _dsl_path in get_dsl_paths(_query_base_path):
             _result_path = _results_path / _scanned_repo_path.stem / _dsl_path.stem
+            if _result_path.exists():
+                _logger.info(f"Already scanned: {_result_path}")
+                continue
 
             for index, pkg in enumerate(split_java_package(_scanned_repo_path)):
                 index_result_path = _result_path / f"{index}_error_kirin"

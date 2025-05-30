@@ -57,7 +57,8 @@ def genpat_repo_statistic(_dataset_path: Path, _results_path: Path):
 
 ###################################################################################
 
-def collect_result(reports_path: Path) -> list:
+
+def collect_navi_result(reports_path: Path) -> list:
     result = []
     for report_path in reports_path.rglob("*.xml"):
         slice_result = xml_collect_errors(report_path)
@@ -99,7 +100,7 @@ def navi_repo_statistic(_dataset_path: Path, _results_path: Path):
         group_name = result_path.parent.stem
         checker_name = result_path.parents[1].stem
 
-        scanned_result = collect_result(result_path)
+        scanned_result = collect_navi_result(result_path)
         _data_path = _dataset_path / checker_name / group_name / scanned_case_num
 
 
@@ -122,7 +123,8 @@ def xml_collect_errors(_output_path: Path) -> list:
         defect_info = error.find("defectInfo")
         func_name = defect_info.find("function").text
         file_name = defect_info.find("fileName").text.replace("\\", "/")
-        _results.append((func_name, file_name))
+        det_line = defect_info.find("reportLine").text
+        _results.append((func_name, file_name, det_line))
     return _results
 
 

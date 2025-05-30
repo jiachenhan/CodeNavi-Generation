@@ -336,6 +336,25 @@ Example output:
 [critical lines] ||| [19, 20, 21] ||| \n your analysis
 """
 
+CORE_EDIT_PROMPT = """Based on your analysis, \
+please classify the edit operation {{edit}} in the following categories:
+
+[Category Options]
+ 1. Core operation: the edit operation has a core contribution to introducing semantic fixes for defects
+ 2. Auxiliary operation: the editing operation is designed to accommodate the addition of core operations, \
+ (including modifying variable scopes or refactoring local code)
+ 
+[Response Requirements]
+Select one most relevant type number (1-2) for this element, and analyze the reason for your selection.
+
+Your response should be formatted as follows:
+[Response Format]
+[Type number]: [Corresponding analysis]
+
+Example output:
+[1]: [your analysis]
+"""
+
 
 AFTER_TREE_ELEMENT_PROMPT = """Based on your analysis, \
 for the code element AST node{{ type:{elementType} value:{element} in line {line} }}, \

@@ -68,7 +68,7 @@ def run_query(_query_base_path: Path, _dataset_path: Path):
 
 
 if __name__ == '__main__':
-    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/4-5-qwen-max-latest/codeql_sampled_v1")
+    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/no_logic/codeql_sampled_v1")
     dataset_path = Path("E:/dataset/Navi/3-23-sampled-datasets/codeql_sampled_v1")
 
     run_query(query_base_path, dataset_path)

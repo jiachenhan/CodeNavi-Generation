@@ -4,7 +4,7 @@ from interface.java.run_java_api import kirin_validate
 
 
 def validate_grammar(_query_base_path: Path) -> bool:
-    engine_path = Path("D:/env/kirin-cli-1.0.8_sp06-jackofall.jar")
+    engine_path = Path("D:/envs/kirin-cli-1.0.8_sp06-jackofext-obfuscate.jar")
     total_query = []
     legal_query = []
     for query_path in _query_base_path.rglob("*.kirin"):
@@ -19,9 +19,9 @@ def validate_grammar(_query_base_path: Path) -> bool:
 
 
 if __name__ == '__main__':
-    # query_base_path = Path("C:/Users/hWX1386605/Desktop/3-10-pure_llm/codeql_sampled_v1")
-    # query_base_path = Path("C:/Users/hWX1386605/Desktop/3-6-v1/codeql_sampled_v1")
-    query_base_path = Path("C:/Users/hWX1386605/Desktop/3-10-pure_llm/pmd_sampled_v1")
-    query_base_path = Path("C:/Users/hWX1386605/Desktop/3-6-v1/pmd_sampled_v1")
+    # query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/pure_llm/codeql_sampled_v1")
+    # query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/pure_llm/codeql_sampled_v2")
+    # query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/pure_llm/pmd_sampled_v1")
+    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/pure_llm/pmd_sampled_v2")
 
-    # validate_grammar(query_base_path)
+    validate_grammar(query_base_path)

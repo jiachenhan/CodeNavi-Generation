@@ -69,6 +69,7 @@ public class QueryGenerator {
         queryMap.put(patternBefore0, templateQuery);
         setConditionsTopdown(graphPattern, templateQuery, nodePaths, queryMap);
 
+        // not 逻辑
         Optional<NotLogicManager> notLogicManagerOpt = graphPattern.getNotLogicManager();
         if (notLogicManagerOpt.isEmpty()) {
             return templateQuery;

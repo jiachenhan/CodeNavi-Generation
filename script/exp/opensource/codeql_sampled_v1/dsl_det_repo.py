@@ -84,7 +84,7 @@ def detect_repo(_query_base_path: Path,
 
         for index, pkg in enumerate(split_java_package(_scanned_repo_path)):
             index_result_path = _result_path / f"{index}_error_kirin"
-            timeout = kirin_engine(300, engine_path, _dsl_path, pkg, index_result_path)
+            timeout = kirin_engine(3600, engine_path, _dsl_path, pkg, index_result_path)
             if timeout:
                 print(f"Timeout in : {_dsl_path}")
 
@@ -95,12 +95,12 @@ if __name__ == '__main__':
 
     query_base_path = Path(f"D:/workspace/CodeNavi-Generation/07dsl/3-21-all-sampled/{dataset_name}")
     repos_path = Path(f"E:/dataset/Navi/{dataset_name}_repos")
-    results_path = Path(f"E:/dataset/Navi/2_result_trans_repo_{dataset_name}")
+    results_path = Path(f"E:/dataset/Navi/4_28_result_trans_repo_{dataset_name}")
 
     detect_repo(query_base_path, repos_path, results_path)
 
-    result_store_path = results_path / "navi_result_store.json"
-
+    # result_store_path = results_path / "navi_result_store.json"
+    #
     # results = navi_repo_statistic(dataset_path, results_path)
     #
     # with open(result_store_path, "w", encoding="utf-8") as file:

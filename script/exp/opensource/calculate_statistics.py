@@ -65,7 +65,7 @@ def metric_recall(navi_dict, genpat_dict):
     pass
 
 
-def find_navi_warnings(navi_results_path: Path):
+def find_navi_warnings(_dataset_name: str, navi_results_path: Path):
     xml_files = glob.glob(f"{navi_results_path}/*/*.xml")
     ret_warnings = []
     # print(f"xml_files: {len(xml_files)}")
@@ -79,7 +79,7 @@ def find_navi_warnings(navi_results_path: Path):
         for error in error_tags:
             detect_info = error.find("defectInfo")
             # print(detect_info.fileName.text.replace("\\", "/"))
-            file_name = "/".join(detect_info.fileName.text.replace("\\", "/").split("_sampled_v1_")[1].split("/")[5:]) if detect_info.fileName else None
+            file_name = "/".join(detect_info.fileName.text.replace("\\", "/").split(_dataset_name)[1].split("/")[5:]) if detect_info.fileName else None
             function = detect_info.function.text if detect_info.function else None
             det_line = detect_info.reportLine.text
             ret_warnings.append((file_name + "#" + function, det_line))
@@ -89,7 +89,7 @@ def find_navi_warnings(navi_results_path: Path):
     return ret_warnings
 
 
-def find_genpat_warnings(genpat_results_path: Path):
+def find_genpat_warnings(_dataset_name: str, genpat_results_path: Path):
     result_file = genpat_results_path / "result.txt"
     lines = open(result_file, 'r', encoding="ISO-8859-1").readlines()
     ret_warnings = []
@@ -103,7 +103,7 @@ def find_genpat_warnings(genpat_results_path: Path):
         # file_path = "/".join(file_path.split("_sampled_v1_")[1].split("/")[5:])
         # sig = " ".join(info.split(" ")[1:]).split(" ")[1].split("[")[0]
         # ret_warnings.append(file_path + "#" + sig)
-        file_path = "/".join(file_path.split("_sampled_v1_")[1].split("/")[5:])
+        file_path = "/".join(file_path.split(_dataset_name)[1].split("/")[5:])
         sig_name = " ".join(info.split(" ")[1:]).split(" ")[1].split("[")[0]
         ret_type = info.split(" ")[1].strip()
         params = " ".join(info.split(" ")[1:]).split("[")[1].split("]")[0].strip()
@@ -131,7 +131,7 @@ def get_baseline_warnings(baseline_case_warnings: Path):
     return ret_warnings
 
 
-def metric_coverage(baseline_warnings: Path, result_dict: dict, warnings_path: Path, output_path: Path, is_navi=True):
+def metric_coverage(_dataset_name: str, baseline_warnings: Path, result_dict: dict, warnings_path: Path, output_path: Path, is_navi=True):
     ret_result_dict = {}
     for task_id in result_dict.keys():
         checker_name, group_id, case_id = task_id.split("#")
@@ -141,19 +141,19 @@ def metric_coverage(baseline_warnings: Path, result_dict: dict, warnings_path: P
             continue
         tool_case_warnings_path = warnings_path / checker_name / group_id /case_id
         if is_navi:
-            tool_warnings = find_navi_warnings(tool_case_warnings_path)
+            tool_warnings = find_navi_warnings(_dataset_name, tool_case_warnings_path)
         else:
-            tool_warnings = find_genpat_warnings(tool_case_warnings_path)
+            tool_warnings = find_genpat_warnings(_dataset_name, tool_case_warnings_path)
 
         detect_amount = 0
         # print(tool_warnings)
         # print(baseline_case_warnings)
         if is_navi:
             for warning in tool_warnings:
-                warn, line = warning
+                warn_file, line = warning
                 for baseline_warning in baseline_case_warnings:
                     file_path, sig_name, params, begin_line, end_line = baseline_warning
-                    if warn in baseline_warning and int(begin_line) <= int(line) <= int(end_line):
+                    if file_path in warn_file and int(begin_line) <= int(line) <= int(end_line):
                         detect_amount += 1
                         break
         else:
@@ -189,7 +189,7 @@ def analyze_coverage(coverage_report: Path):
     return all_coverage_rates  
 
 
-def draw_box_plot(data1, data2):
+def draw_cov_box_plot(_dataset_name, data1, data2):
     import matplotlib.pyplot as plt
     import seaborn as sns
     import pandas as pd
@@ -212,27 +212,69 @@ def draw_box_plot(data1, data2):
     plt.title('Repo Coverage Rate Comparison')
     plt.ylabel('Coverage Rate (%)')
     # plt.show()
-    plt.savefig("./box_plot.png", dpi=300)
+    plt.savefig(f"./{_dataset_name}_cov_box_plot.png", dpi=300)
+
+def filter_outliers(data):
+    import numpy as np
+    q1 = np.percentile(data, 25)
+    q3 = np.percentile(data, 75)
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+    filtered_data = [x for x in data if lower_bound <= x <= upper_bound]
+    return filtered_data
+
+def draw_num_box_plot(_dataset_name, data1, data2):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+
+    data = [data1, data2]
+    # 绘制盒图
+    plt.boxplot(data)
+
+    # 设置x轴标签（可选）
+    plt.xticks([1, 2], ['Navi', 'GenPat'])
+
+    # 添加标题和标签（可选）
+    plt.title("det nums")
+    plt.xlabel("methods")
+    plt.ylabel("nums")
+
+    # 显示图形
+    # plt.show()
+    plt.savefig(f"./{_dataset_name}_num_box_plot.png", dpi=300)
 
 
 if __name__ == "__main__":
-    navi_result = read_from_json(Path("E:/dataset/Navi/result_trans_repo_codeql_sampled_v1/navi_result_store.json"))
-    genpat_result = read_from_json(Path("E:/dataset/Navi/consistent_genpat_result_trans_repo_codeql_sampled_v1/genpat_result_store.json"))
+    dataset_name = "codeql_sampled_v1"
+    navi_result = read_from_json(Path(f"E:/dataset/Navi/2_result_trans_repo_{dataset_name}/navi_result_store.json"))
+    genpat_result = read_from_json(Path(f"E:/dataset/Navi/2_consistent_genpat_result_trans_repo_{dataset_name}/genpat_result_store.json"))
     
     # metric_scanned_amount(navi_dict=navi_result, genpat_dict=genpat_result)
     # metric_recall(navi_dict=navi_result, genpat_dict=genpat_result)
+    # navi_det_num = filter_outliers([result["all_scanned"] for result in navi_result.values()])
+    # genpat_det_num = filter_outliers([result["all_scanned"] for result in genpat_result.values()])
+    # draw_num_box_plot(dataset_name, data1=navi_det_num, data2=genpat_det_num)
 
-    # metric_coverage(baseline_warnings=Path("E:/dataset/Navi/codeql_sampled_v1_reports2"),
+
+    # metric_coverage(dataset_name,
+    #                 baseline_warnings=Path(f"E:/dataset/Navi/{dataset_name}_repos111"),
     #                 result_dict=navi_result,
-    #                 warnings_path=Path("E:/dataset/Navi/2_result_trans_repo_codeql_sampled_v1"),
-    #                 output_path=Path("E:/dataset/Navi/navi_RQ2_coverage_report.json"),
+    #                 warnings_path=Path(f"E:/dataset/Navi/2_result_trans_repo_{dataset_name}"),
+    #                 output_path=Path(f"E:/dataset/Navi/navi_RQ2_{dataset_name}_coverage_report.json"),
     #                 is_navi=True)
-    metric_coverage(baseline_warnings=Path("E:/dataset/Navi/codeql_sampled_v1_reports2"),
-                    result_dict=genpat_result,
-                    warnings_path=Path("E:/dataset/Navi/2_consistent_genpat_result_trans_repo_codeql_sampled_v1"),
-                    output_path=Path("E:/dataset/Navi/genpat_RQ2_coverage_report.json"),
-                    is_navi=False)
-    navi_coverage_rate = analyze_coverage(coverage_report=Path("E:/dataset/Navi/navi_RQ2_coverage_report.json"))
-    genpat_coverage_rate = analyze_coverage(coverage_report=Path("E:/dataset/Navi/genpat_RQ2_coverage_report.json"))
-    draw_box_plot(data1=navi_coverage_rate, data2=genpat_coverage_rate)
+    # metric_coverage(dataset_name,
+    #                 baseline_warnings=Path(f"E:/dataset/Navi/{dataset_name}_repos111"),
+    #                 result_dict=genpat_result,
+    #                 warnings_path=Path(f"E:/dataset/Navi/2_consistent_genpat_result_trans_repo_{dataset_name}"),
+    #                 output_path=Path(f"E:/dataset/Navi/genpat_RQ2_{dataset_name}_coverage_report.json"),
+    #                 is_navi=False)
+    # navi_coverage_rate = analyze_coverage(coverage_report=Path(f"E:/dataset/Navi/navi_RQ2_{dataset_name}_coverage_report.json"))
+    # genpat_coverage_rate = analyze_coverage(coverage_report=Path(f"E:/dataset/Navi/genpat_RQ2_{dataset_name}_coverage_report.json"))
+    # draw_cov_box_plot(dataset_name, data1=navi_coverage_rate, data2=genpat_coverage_rate)
+
+    navi_coverage_rate = analyze_coverage(coverage_report=Path(f"E:/dataset/Navi/navi_merge.json"))
+    genpat_coverage_rate = analyze_coverage(coverage_report=Path(f"E:/dataset/Navi/genpat_merge.json"))
+    draw_cov_box_plot("merge_ql", data1=navi_coverage_rate, data2=genpat_coverage_rate)
     pass

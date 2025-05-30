@@ -3,23 +3,36 @@ import platform
 import random
 import stat
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Optional
 
 from exp.opensource.statistic_analysis import navi_repo_statistic
 from interface.java.run_java_api import kirin_engine
 from utils.config import LoggerConfig
 
+
 _logger = LoggerConfig.get_logger(__name__)
 
 
-def get_random_repo_path(_dsl_path: Path, _repos_base_path: Path) -> Path:
+def get_repo_path(_dsl_path: Path, _navi_result_path: Path, _repos_base_path: Path) -> Optional[Path]:
     _case_name = _dsl_path.stem
     _group_name = _dsl_path.parent.stem
     _checker_name = _dsl_path.parent.parent.stem
-    _group_repo_path = _repos_base_path / _checker_name / _group_name
 
-    _random_case_path = random.choice([_case for _case in _group_repo_path.iterdir() if _case.is_dir() and _case_name != _case.stem])
-    return next(_random_case_path.iterdir(), None)
+    _navi_group_result_path = _navi_result_path / _checker_name / _group_name
+
+    _navi_case_result = next(_navi_group_result_path.iterdir(), None)
+
+    if not _navi_case_result:
+        return None
+
+    return get_consistent_scanned_repo_path(_navi_case_result, _repos_base_path)
+
+
+def get_consistent_scanned_repo_path(_navi_case_result: Path, _repos_base_path: Path) -> Optional[Path]:
+    _pat_case, _scanned_case = _navi_case_result.stem.split("-")
+    _group_name = _navi_case_result.parent.stem
+    _checker_name = _navi_case_result.parent.parent.stem
+    return next((_repos_base_path / _checker_name / _group_name / _scanned_case).iterdir(), None)
 
 
 def get_dsl_paths(_query_path: Path) -> Generator[Path, None, None]:
@@ -29,13 +42,13 @@ def get_dsl_paths(_query_path: Path) -> Generator[Path, None, None]:
         for group in checker.iterdir():
             if not group.is_dir():
                 continue
-            dsl_path = next(group.glob("*.kirin"), None)
+            dsl_path = next(group.glob("*_refine.kirin"), None)
             if dsl_path is not None:
                 yield dsl_path
 
 
 def get_result_path(_dsl_path: Path, _results_path: Path, _scanned_case_num: str) -> Path:
-    case_name = _dsl_path.stem
+    case_name = _dsl_path.stem.split("_")[0]
     group_name = _dsl_path.parent.stem
     checker_name = _dsl_path.parent.parent.stem
 
@@ -68,59 +81,35 @@ def split_java_package(dir_path: Path) -> Generator[Path, None, None]:
 
 
 def detect_repo(_query_base_path: Path,
-                sampled_hjc: list,
                 _repos_path: Path,
+                _navi_result_path: Path,
                 _results_path: Path):
     engine_path = Path("D:/envs/kirin-cli-1.0.8_sp06-jackofext-obfuscate.jar")
 
     for _dsl_path in get_dsl_paths(_query_base_path):
-        _checker_name = _dsl_path.parent.parent.stem
-        _group_name = _dsl_path.parent.stem
-        if f"pmd_sampled_v2/{_checker_name}/{_group_name}" not in sampled_hjc:
-            print(f"Skip {_checker_name}/{_group_name}")
-            continue
-
-        try:
-            _scanned_repo_path = get_random_repo_path(_dsl_path, _repos_path)
-        except:
-            print(f"Error in {_checker_name}/{_group_name}")
-            continue
-
+        _scanned_repo_path = get_repo_path(_dsl_path, _navi_result_path, _repos_path)
         if _scanned_repo_path is None:
             print("No repo found")
             continue
         _result_path = get_result_path(_dsl_path, _results_path, _scanned_repo_path.parent.stem)
 
-        if _result_path.exists():
-            continue
+        # if _result_path.exists():
+        #     continue
 
         for index, pkg in enumerate(split_java_package(_scanned_repo_path)):
             index_result_path = _result_path / f"{index}_error_kirin"
             timeout = kirin_engine(3600, engine_path, _dsl_path, pkg, index_result_path)
             if timeout:
                 print(f"Timeout in : {_dsl_path}")
-                break
-
-
 
 
 if __name__ == '__main__':
-    dataset_name = "pmd_sampled_v2"
+    dataset_name = "codeql_sampled_v1"
     dataset_path = Path(f"E:/dataset/Navi/3-23-sampled-datasets/{dataset_name}")
 
     query_base_path = Path(f"D:/workspace/CodeNavi-Generation/07dsl/3-21-all-sampled/{dataset_name}")
     repos_path = Path(f"E:/dataset/Navi/{dataset_name}_repos")
+    navi_result_path = Path(f"E:/dataset/Navi/4_23_result_trans_repo_{dataset_name}")
+    results_path = Path(f"E:/dataset/Navi/4_28_refine_{dataset_name}")
 
-    with open("E:/dataset/Navi/pmd_hjc_1.json", 'r') as f:
-        pmd_sampled_v2_hjc = json.load(f)
-
-    results_path = Path(f"E:/dataset/Navi/4_28_result_trans_repo_{dataset_name}")
-
-    detect_repo(query_base_path, pmd_sampled_v2_hjc, repos_path, results_path)
-
-    # result_store_path = results_path / "navi_result_store.json"
-    #
-    # results = navi_repo_statistic(dataset_path, results_path)
-    #
-    # with open(result_store_path, "w", encoding="utf-8") as file:
-    #     json.dump(results, file, indent=4)
+    detect_repo(query_base_path, repos_path, navi_result_path, results_path)
