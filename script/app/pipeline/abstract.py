@@ -38,10 +38,10 @@ def run_llm_analysis(_llm,
 
 
 def do_abstract():
-    set_config("huawei")
-    _llm = LLMOpenAI(base_url=os.environ.get("OPENAI_BASE_URL"),
-                    api_key=os.environ.get("OPENAI_API_KEY"),
-                    model_name=os.environ.get("MODEL_NAME"))
+    _config = set_config("yunwu")
+    _llm = LLMOpenAI(base_url=_config.get("openai").get("base_url"),
+                    api_key=_config.get("openai").get("api_keys")[0],
+                    model_name=_config.get("openai").get("model"))
 
     _pattern_input = PatternInput.from_file(PipelineConfig.pattern_info_path)
     llm_abstract(_llm, _pattern_input, PipelineConfig.pattern_output_path)

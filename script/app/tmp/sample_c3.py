@@ -55,5 +55,12 @@ def main():
         copy_groups(project, target_project_path, selected_groups)
 
 
+def count_c3_pairs():
+    c3_sample_path = Path("/data/jiangjiajun/CodeNavi-DSL/data/c3_sampled_v1")
+    total_pairs = sum(1 for _ in c3_sample_path.rglob("before.java"))
+    print(total_pairs)
+
+
 if __name__ == "__main__":
-    main()
+    # main()
+    count_c3_pairs()

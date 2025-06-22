@@ -158,6 +158,10 @@ public class LLMAbstractor implements Abstractor {
                             insertNodeToConsidered.put(node, false);
                         }
                     });
+                } else {
+                    insertNodeToConsidered.forEach((node, value) -> {
+                        insertNodeToConsidered.put(node, false);
+                    });
                 }
             });
 
@@ -173,6 +177,10 @@ public class LLMAbstractor implements Abstractor {
                         } else {
                             moveNodeToConsidered.put(node, false);
                         }
+                    });
+                } else {
+                    moveNodeToConsidered.forEach((node, value) -> {
+                        moveNodeToConsidered.put(node, false);
                     });
                 }
             });
