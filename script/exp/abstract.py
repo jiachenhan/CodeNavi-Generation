@@ -5,7 +5,7 @@ from typing import List
 
 import utils
 from data.dataset import DataCollection, OneMethodFilePair
-from interface.java.run_java_api import java_genpat_detect, java_detect, java_abstract
+from interface.java.run_java_api import java_genpat_detect, java_detect, java_llm_abstract
 from utils.config import LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
@@ -20,7 +20,7 @@ def abstract_pat(_origin_pattern_path: Path,
     if not _origin_pattern_path.exists() or not _abstract_info_path.exists():
         _logger.error(f"Invalid origin pattern path: {_origin_pattern_path}")
         return
-    java_abstract(timeout_sec, _origin_pattern_path, _abstract_info_path, _abstract_pattern_path, _jar_path)
+    java_llm_abstract(timeout_sec, _origin_pattern_path, _abstract_info_path, _abstract_pattern_path, _jar_path)
 
 
 def process(_origin_pattern_path: Path,

@@ -32,6 +32,7 @@ public class Main {
             case "oracle" -> GainOracle.main(args);
             case "extract" -> Extract.main(args);
             case "abstract" -> Abstract.main(args);
+            case "genpat_ab" -> GenPat.abstract_main(args);
             case "detect" -> Detect.main(args);
             case "genquery" -> GenQuery.main(args);
             default -> logger.error("not supported command: {}", args[0]);

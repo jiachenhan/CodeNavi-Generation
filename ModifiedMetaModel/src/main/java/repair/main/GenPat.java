@@ -16,7 +16,9 @@ import repair.common.CodeChangeInfo;
 import repair.common.CodeChangeInfoReader;
 import repair.pattern.Pattern;
 import repair.pattern.abstraction.Abstractor;
+import repair.pattern.abstraction.LLMAbstractor;
 import repair.pattern.abstraction.TermFrequencyAbstractor;
+import repair.pattern.serialize.Serializer;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -132,6 +134,28 @@ public class GenPat {
             logger.error("Failed to detect pattern", e);
         }
 
+    }
+
+    public static void abstract_main(String[] args) {
+        if (args.length < 3) {
+            logger.error("Please given the arguments java -jar Main.jar genpat_ab [patternOriPath] [PatternAbsPath]");
+            return;
+        }
+
+        Path patternOriPath = Path.of(args[1]);
+        Path patternAbsPath = Path.of(args[2]);
+
+        Optional<Pattern> patternOri = Serializer.deserializeFromDisk(patternOriPath);
+        if (patternOri.isEmpty()) {
+            logger.error("Failed to read pattern from: {}", patternOriPath);
+            return;
+        }
+        Pattern pattern = patternOri.get();
+
+        Abstractor abstractor = new TermFrequencyAbstractor();
+        abstractor.doAbstraction(pattern);
+
+        Serializer.serializeToDisk(pattern, patternAbsPath);
     }
 
 }

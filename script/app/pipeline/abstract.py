@@ -5,7 +5,7 @@ from pathlib import Path
 import utils
 from app.communication import PatternInput
 from app.abs.classified_topdown.inference import Analyzer
-from interface.java.run_java_api import java_abstract
+from interface.java.run_java_api import java_llm_abstract
 from interface.llm.llm_openai import LLMOpenAI
 from utils.common import timeout
 from utils.config import LoggerConfig, set_config, PipelineConfig
@@ -45,12 +45,12 @@ def do_abstract():
 
     _pattern_input = PatternInput.from_file(PipelineConfig.pattern_info_path)
     llm_abstract(_llm, _pattern_input, PipelineConfig.pattern_output_path)
-    java_abstract(10,
-                  PipelineConfig.pattern_ori_path,
-                  PipelineConfig.pattern_output_path,
-                  PipelineConfig.pattern_abs_path,
-                  PipelineConfig.jar_path
-                  )
+    java_llm_abstract(10,
+                      PipelineConfig.pattern_ori_path,
+                      PipelineConfig.pattern_output_path,
+                      PipelineConfig.pattern_abs_path,
+                      PipelineConfig.jar_path
+                      )
 
 def inner_main():
     set_config()
@@ -73,7 +73,7 @@ def inner_main():
     pattern_input = PatternInput.from_file(pattern_info_path)
     llm_abstract(llm, pattern_input, pattern_output_path)
     # 生成修改后pattern
-    java_abstract(10, pattern_ori_path, pattern_output_path, pattern_abs_path, jar_path)
+    java_llm_abstract(10, pattern_ori_path, pattern_output_path, pattern_abs_path, jar_path)
 
 
 if __name__ == "__main__":
@@ -105,5 +105,5 @@ if __name__ == "__main__":
 
     # llm_abstract(llm, pattern_input, pattern_output_path)
     # 生成修改后pattern
-    java_abstract(10, pattern_ori_path, pattern_output_path, pattern_abs_path, jar_path)
+    java_llm_abstract(10, pattern_ori_path, pattern_output_path, pattern_abs_path, jar_path)
         

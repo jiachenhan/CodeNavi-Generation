@@ -7,7 +7,7 @@ import utils
 from app.abs.mark.history import GlobalHistories, MessageList
 from app.abs.mark.prompt_state import InitialState, ExitState
 from app.communication import PatternInput
-from interface.java.run_java_api import java_extract_pattern, java_abstract, java_generate_query
+from interface.java.run_java_api import java_extract_pattern, java_llm_abstract, java_generate_query
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
 from utils.config import LoggerConfig, set_config
@@ -140,7 +140,7 @@ if __name__ == "__main__":
         analyzer = Analyzer(_llm, pattern_input, pattern_info_output_path)
         analyzer.analysis()
 
-        java_abstract(30, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
+        java_llm_abstract(30, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
 
     def generate_query(_jar: str, _case_path: Path, _pattern_path: Path, _dsl_path: Path):
         checker_name = _case_path.parent.parent.stem
