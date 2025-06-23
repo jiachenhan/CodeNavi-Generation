@@ -273,6 +273,7 @@ public class QueryGenerator {
             // 被考虑节点路径被中间截断
             if ((state != RoleAction.Collection && state != RoleAction.Body)
                     && currentNodeBundle != null && currentNodeBundle.getDslNode() instanceof Nameable nameable) {
+                // todo: 考虑currentNodeBundle.getDslNode() 不属于 Nameable的情况，应该使用类型进行约束
                 RoleListExpr roleListExpr = new RoleListExpr(currentQuery.getAlias(), new ArrayList<>(roleList));
                 MoNode moNode = currentNodeBundle.getOriginalNode();
                 Nameable.NameAttr nameAttr = nameable.getNameAttr(moNode);
