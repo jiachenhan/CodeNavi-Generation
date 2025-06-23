@@ -2,6 +2,7 @@ from utils.config import get_root_project_path, LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
 
+
 def delete_kirin_log():
     directory = get_root_project_path()
 
