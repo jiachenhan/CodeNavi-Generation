@@ -5,7 +5,7 @@ from pathlib import Path
 import utils
 from app.communication import PatternInput
 from app.abs.classified_topdown.inference import Analyzer
-from interface.java.run_java_api import java_llm_abstract
+from interface.java.run_java_api import java_llm_abstract, java_genpat_abstract
 from interface.llm.llm_openai import LLMOpenAI
 from utils.common import timeout
 from utils.config import LoggerConfig, set_config, PipelineConfig
@@ -24,6 +24,7 @@ def llm_abstract(_llm,
         _logger.error(f"Error in {_output_path}: {e}")
         return
 
+
 """
 这个修饰器不支持直接在这个文件作为入口函数时使用
 在spawn过程中报错: Can't Pickle <function run_llm_analysis ...>: it's not the same object as __main__.run_llm_analysis
@@ -37,20 +38,24 @@ def run_llm_analysis(_llm,
     analyzer.serialize(_output_path)
 
 
-def do_abstract():
-    _config = set_config("yunwu")
-    _llm = LLMOpenAI(base_url=_config.get("openai").get("base_url"),
-                    api_key=_config.get("openai").get("api_keys")[0],
-                    model_name=_config.get("openai").get("model"))
+def do_abstract(use_llm: bool = False):
+    if use_llm:
+        _config = set_config("yunwu")
+        _llm = LLMOpenAI(base_url=_config.get("openai").get("base_url"),
+                        api_key=_config.get("openai").get("api_keys")[0],
+                        model_name=_config.get("openai").get("model"))
 
-    _pattern_input = PatternInput.from_file(PipelineConfig.pattern_info_path)
-    llm_abstract(_llm, _pattern_input, PipelineConfig.pattern_output_path)
-    java_llm_abstract(10,
-                      PipelineConfig.pattern_ori_path,
-                      PipelineConfig.pattern_output_path,
-                      PipelineConfig.pattern_abs_path,
-                      PipelineConfig.jar_path
-                      )
+        _pattern_input = PatternInput.from_file(PipelineConfig.pattern_info_path)
+        llm_abstract(_llm, _pattern_input, PipelineConfig.pattern_output_path)
+        java_llm_abstract(10,
+                          PipelineConfig.pattern_ori_path,
+                          PipelineConfig.pattern_output_path,
+                          PipelineConfig.pattern_abs_path,
+                          PipelineConfig.jar_path
+                          )
+    else:
+        java_genpat_abstract(10, pattern_ori_path, pattern_abs_path, PipelineConfig.jar_path)
+
 
 def inner_main():
     set_config()
