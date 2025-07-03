@@ -54,7 +54,10 @@ def do_abstract(use_llm: bool = False):
                           PipelineConfig.jar_path
                           )
     else:
-        java_genpat_abstract(10, pattern_ori_path, pattern_abs_path, PipelineConfig.jar_path)
+        java_genpat_abstract(10,
+                             PipelineConfig.pattern_ori_path,
+                             PipelineConfig.pattern_abs_path,
+                             PipelineConfig.jar_path)
 
 
 def inner_main():
