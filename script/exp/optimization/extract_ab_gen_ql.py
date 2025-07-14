@@ -121,7 +121,7 @@ async def process_single_case(
 
 
 async def main():
-    config = set_config("yunwu")
+    config = set_config("yunwu2")
     jar_path = config.get("jar_path")
     model_name = config.get("openai").get("model")
 

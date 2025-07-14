@@ -60,9 +60,11 @@ def run_query(_query_base_path: Path, _dataset_path: Path):
     for checker in _query_base_path.iterdir():
         for group in checker.iterdir():
             for dsl_path in group.glob("*.kirin"):
-                if not dsl_path.name.startswith("refined"):
-                    continue
-                dsl_case = dsl_path.stem.replace("refined_", "")
+                # if not dsl_path.name.startswith("refined"):
+                #     continue
+                # dsl_case = dsl_path.stem.replace("refined_", "")
+
+                dsl_case = dsl_path.stem
 
                 target_group_path = _dataset_path / checker.stem / group.stem
                 _sub_case_paths = [d for d in target_group_path.iterdir() if d.is_dir() and d.stem != dsl_case]
@@ -80,7 +82,8 @@ def run_query(_query_base_path: Path, _dataset_path: Path):
 
 
 if __name__ == '__main__':
-    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/gpt-4o/ql")
+    # query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/gpt-4o/ql")
+    query_base_path = Path("D:/workspace/CodeNavi-Generation/07dsl/llama-2-70b/ql")
     dataset_path = Path("E:/dataset/Navi/DEFs/ql")
 
     run_query(query_base_path, dataset_path)
