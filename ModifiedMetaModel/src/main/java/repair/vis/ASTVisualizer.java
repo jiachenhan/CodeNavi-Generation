@@ -44,7 +44,7 @@ public class ASTVisualizer {
     }
 
     public static void main(String[] args) {
-        Path path = Path.of("D:\\workspace\\CodeNavi-Generation\\08example\\code\\correct.java");
+        Path path = Path.of("C:\\Users\\frexv\\Desktop\\codenavi\\CodeNavi-Generation\\08example\\code\\correct.java");
         CompilationUnit compilationUnit = genASTFromFile(path);
         Optional<MethodDeclaration> onlyMethodDeclarationOpt = getOnlyMethodDeclaration(compilationUnit);
         if (onlyMethodDeclarationOpt.isEmpty()) {

@@ -12,7 +12,10 @@ public class MoNodeSerializer extends JsonSerializer<MoNode> {
     public void serialize(MoNode moNode, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("id", moNode.getId());
-        jsonGenerator.writeStringField("element", moNode.toString());
+        jsonGenerator.writeStringField("type", moNode.getClass().getSimpleName());
+        jsonGenerator.writeStringField("value", moNode.toString());
+        jsonGenerator.writeNumberField("startLine", moNode.getStartLine());
+        jsonGenerator.writeNumberField("endLine", moNode.getEndLine());
         jsonGenerator.writeEndObject();
     }
 }

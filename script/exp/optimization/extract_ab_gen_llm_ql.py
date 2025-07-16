@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Generator
 
 import utils
-from app.abs.mark.inference import Analyzer
+from app.abs.mark2.inference import Analyzer
 from app.communication import PatternInput
 from interface.java.run_java_api import java_extract_pattern, java_llm_abstract, java_generate_query, \
     java_genpat_abstract
@@ -17,9 +17,10 @@ _logger = LoggerConfig.get_logger(__name__)
 
 def llm_abstract(_llm,
                  _pattern_input: PatternInput,
-                 _output_path: Path) -> None:
+                 _output_path: Path,
+                 _ori_path: Path) -> None:
     try:
-        run_llm_analysis(_llm, _pattern_input, _output_path)
+        run_llm_analysis(_llm, _pattern_input, _output_path,_ori_path)
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -34,8 +35,9 @@ def llm_abstract(_llm,
 # @timeout(30 * 60)
 def run_llm_analysis(_llm,
                      _pattern_input: PatternInput,
-                     _output_path: Path):
-    analyzer = Analyzer(_llm, _pattern_input, _output_path)
+                     _output_path: Path,
+                     _ori_path: Path):
+    analyzer = Analyzer(_llm, _pattern_input, _output_path,_ori_path)
     analyzer.analysis()
 
 
@@ -45,7 +47,6 @@ def run_llm_analysis(_llm,
 # #     pattern_ori_path = _pattern_path / "ori" / checker_name / group_name / f"{_case_path.stem}.ser"
 # #     pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
 # #     java_extract_pattern(30, _case_path, pattern_ori_path, pattern_info_input_path, _jar)
-
 def extract_pattern(_jar: str, _case_path: Path, _pattern_path: Path, _pattern_info_path: Path):
     checker_name = _case_path.parent.parent.stem
     group_name = _case_path.parent.stem
@@ -82,6 +83,8 @@ async def async_abstract_pattern(
     pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
     pattern_info_output_path = _pattern_info_path / "output" / checker_name / group_name / f"{_case_path.stem}.json"
 
+    json_path = _pattern_path / "ori" / checker_name / group_name / "considered_nodes.json"
+
     if pattern_abs_path.exists():
         return
 
@@ -90,7 +93,8 @@ async def async_abstract_pattern(
     await _llm_pool.async_run(
         llm_abstract,
         pattern_input,
-        pattern_info_output_path
+        pattern_info_output_path,
+        json_path
     )
 
     java_llm_abstract(30, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
@@ -141,7 +145,7 @@ async def process_single_case(
 
 
 async def main():
-    config = set_config("yunwu2")
+    config = set_config("yunwu")
     jar_path = config.get("jar_path")
     model_name = config.get("openai").get("model")
 

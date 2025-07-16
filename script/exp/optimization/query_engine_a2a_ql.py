@@ -27,8 +27,8 @@ def check_detect_result(_query_base_path: Path):
             # buggy_output_path = group / "scan_error_output" / "error_report_1.xml"
             # fixed_output_path = group / "scan_correct_output" / "error_report_1.xml"
 
-            buggy_output_path = group / "scan_error_refine_output" / "error_report_1.xml"
-            fixed_output_path = group / "scan_correct_refine_output" / "error_report_1.xml"
+            buggy_output_path = group / "scan_error_a2a_output" / "error_report_1.xml"
+            fixed_output_path = group / "scan_correct_a2a_output" / "error_report_1.xml"
 
             if xml_check_has_error(buggy_output_path):
                 tp.append(group)
@@ -66,15 +66,17 @@ def run_query(_query_base_path: Path, _dataset_path: Path):
                 dsl_case = dsl_path.stem
 
                 target_group_path = _dataset_path / checker.stem / group.stem
-                _sub_case_paths = [d for d in target_group_path.iterdir() if d.is_dir() and d.stem != dsl_case]
+                _sub_case_paths = [d for d in target_group_path.iterdir() if d.is_dir() and d.stem == dsl_case]
 
-                _random_case_path = random.choice(_sub_case_paths)
+                _sub_case_path = next(iter(_sub_case_paths), None)
+                if not _sub_case_path:
+                    continue
 
-                buggy_case_path = _random_case_path / "buggy.java"
-                fixed_case_path = _random_case_path / "fixed.java"
+                buggy_case_path = _sub_case_path / "buggy.java"
+                fixed_case_path = _sub_case_path / "fixed.java"
 
-                buggy_output_path = group / "scan_error_refine_output"
-                fixed_output_path = group / "scan_correct_refine_output"
+                buggy_output_path = group / "scan_error_a2a_output"
+                fixed_output_path = group / "scan_correct_a2a_output"
 
                 kirin_engine(60.0, engine_path, dsl_path, buggy_case_path, buggy_output_path)
                 kirin_engine(60.0, engine_path, dsl_path, fixed_case_path, fixed_output_path)

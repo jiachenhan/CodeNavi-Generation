@@ -18,10 +18,12 @@ import repair.pattern.Pattern;
 import repair.pattern.abstraction.Abstractor;
 import repair.pattern.abstraction.LLMAbstractor;
 import repair.pattern.abstraction.TermFrequencyAbstractor;
+import repair.pattern.serialize.JsonSerializer;
 import repair.pattern.serialize.Serializer;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.apache.commons.io.FileUtils.writeStringToFile;
@@ -136,26 +138,69 @@ public class GenPat {
 
     }
 
-    public static void abstract_main(String[] args) {
-        if (args.length < 3) {
-            logger.error("Please given the arguments java -jar Main.jar genpat_ab [patternOriPath] [PatternAbsPath]");
-            return;
-        }
-
-        Path patternOriPath = Path.of(args[1]);
-        Path patternAbsPath = Path.of(args[2]);
-
-        Optional<Pattern> patternOri = Serializer.deserializeFromDisk(patternOriPath);
-        if (patternOri.isEmpty()) {
-            logger.error("Failed to read pattern from: {}", patternOriPath);
-            return;
-        }
-        Pattern pattern = patternOri.get();
-
-        Abstractor abstractor = new TermFrequencyAbstractor();
-        abstractor.doAbstraction(pattern);
-
-        Serializer.serializeToDisk(pattern, patternAbsPath);
+//    public static void abstract_main(String[] args) {
+//        if (args.length < 3) {
+//            logger.error("Please given the arguments java -jar Main.jar genpat_ab [patternOriPath] [PatternAbsPath]");
+//            return;
+//        }
+//
+//        Path patternOriPath = Path.of(args[1]);
+//        Path patternAbsPath = Path.of(args[2]);
+//
+//        Optional<Pattern> patternOri = Serializer.deserializeFromDisk(patternOriPath);
+//        if (patternOri.isEmpty()) {
+//            logger.error("Failed to read pattern from: {}", patternOriPath);
+//            return;
+//        }
+//        Pattern pattern = patternOri.get();
+//
+//        Abstractor abstractor = new TermFrequencyAbstractor();
+//        abstractor.doAbstraction(pattern);
+//
+//
+//        Serializer.serializeToDisk(pattern, patternAbsPath);
+//    }
+public static void abstract_main(String[] args) {
+    if (args.length < 3) {
+        logger.error("Please given the arguments java -jar Main.jar genpat_ab [patternOriPath] [PatternAbsPath]");
+        return;
     }
 
+    Path patternOriPath = Path.of(args[1]);
+    Path patternAbsPath = Path.of(args[2]);
+    // 修改为上一级目录下的 considered_nodes.json
+    Path consideredNodesPath = patternOriPath.getParent().resolve("considered_nodes.json");
+
+    Optional<Pattern> patternOri = Serializer.deserializeFromDisk(patternOriPath);
+    if (patternOri.isEmpty()) {
+        logger.error("Failed to read pattern from: {}", patternOriPath);
+        return;
+    }
+    Pattern pattern = patternOri.get();
+
+    Abstractor abstractor = new TermFrequencyAbstractor();
+    abstractor.doAbstraction(pattern);
+
+    // 序列化抽象后的模式
+    Serializer.serializeToDisk(pattern, patternAbsPath);
+
+    // 收集并保存所有应该被考虑的节点
+    saveConsideredNodesToJson(pattern, consideredNodesPath);
+}
+
+    /**
+     * 保存所有应该被考虑的节点到JSON文件
+     */
+    private static void saveConsideredNodesToJson(Pattern pattern, Path outputPath) {
+        // 获取所有应该被考虑的节点
+        Map<MoNode, Boolean> nodeToConsidered = pattern.getNodeToConsidered();
+        List<MoNode> consideredNodes = nodeToConsidered.entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        // 序列化到JSON
+        JsonSerializer.serializeToJson(consideredNodes, outputPath);
+        logger.info("Saved considered nodes to: {}", outputPath);
+    }
 }
