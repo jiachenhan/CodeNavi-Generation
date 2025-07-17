@@ -73,4 +73,11 @@ public class FileUtils {
             return "UTF-8";
         }
     }
+
+    public static String getStem(Path path) {
+        if (path == null) return null;
+        String fileName = path.getFileName().toString();
+        int dotIndex = fileName.lastIndexOf('.');
+        return (dotIndex > 0) ? fileName.substring(0, dotIndex) : fileName;
+    }
 }

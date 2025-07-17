@@ -168,7 +168,7 @@ public static void abstract_main(String[] args) {
 
     Path patternOriPath = Path.of(args[1]);
     Path patternAbsPath = Path.of(args[2]);
-    String caseName = patternOriPath.getFileName().toString();
+    String caseName = FileUtils.getStem(patternOriPath.getFileName());
     // 修改为上一级目录下的 considered_nodes.json
     Path consideredNodesPath = patternOriPath.getParent().resolve(caseName + "_considered_nodes.json");
 
