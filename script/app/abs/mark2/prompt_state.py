@@ -1,10 +1,10 @@
 import ast
 import copy
+import json
 import re
 from itertools import chain
 from typing import Dict, List, Union, TYPE_CHECKING, Generator, Callable
 
-from pydantic import json
 
 from app.abs.mark2.prompts import ROUGH_SELECT_LINES_PROMPT, TASK_DESCRIPTION_PROMPT, IDENTIFY_ELEMENTS_PROMPT
 from app.basic_modification_analysis import background_analysis
@@ -141,9 +141,12 @@ class IdentifyState(PromptState):
         with open(self.analyzer.ori_path, 'r', encoding='utf-8') as f:
             ori_data = json.load(f)
 
+        json_str = json.dumps(ori_data, indent=2, ensure_ascii=False)
+        escaped_json = json_str.replace("{", "{{").replace("}", "}}")
+
         # 将JSON内容转换为字符串并格式化到提示中
         formatted_prompt = IDENTIFY_ELEMENTS_PROMPT.format(
-            Genpat_Json_info=json.dumps(ori_data, indent=2, ensure_ascii=False)
+            Genpat_Json_info=escaped_json
         )
 
         _identify_elements_prompt2 = [{"role": "user", "content": formatted_prompt}]
