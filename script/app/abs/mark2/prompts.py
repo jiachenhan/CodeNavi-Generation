@@ -114,15 +114,15 @@ The following JSON list comprises elements pre-identified as likely significant 
 4. line_number is the starting line of the element in the code
 
 ### EXAMPLE CODE
-4: try {
+4: try {{
 5:   Files.newReader(asciiFile, null);
 6:   fail("expected exception");
-7: } catch (NullPointerException e) {
-8: }
+7: }} catch (NullPointerException e) {{
+8: }}
 
 ### EXAMPLE OUTPUT
 [CRITICAL_ELEMENTS_START]
-@@ TryStatement @@ try {...} catch (...) {...} @@ 4
+@@ TryStatement @@ try {{...}} catch (...) {{...}} @@ 4
 @@ CatchClause @@ catch (NullPointerException e) @@ 7
 @@ SimpleType @@ NullPointerException @@ 7
 @@ MethodInvocation @@ Files.newReader(asciiFile, null) @@ 5
