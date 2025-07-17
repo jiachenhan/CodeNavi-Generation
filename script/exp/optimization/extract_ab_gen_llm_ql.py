@@ -20,7 +20,7 @@ def llm_abstract(_llm,
                  _output_path: Path,
                  _ori_path: Path) -> None:
     try:
-        run_llm_analysis(_llm, _pattern_input, _output_path,_ori_path)
+        run_llm_analysis(_llm, _pattern_input, _output_path, _ori_path)
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -37,7 +37,7 @@ def run_llm_analysis(_llm,
                      _pattern_input: PatternInput,
                      _output_path: Path,
                      _ori_path: Path):
-    analyzer = Analyzer(_llm, _pattern_input, _output_path,_ori_path)
+    analyzer = Analyzer(_llm, _pattern_input, _output_path, _ori_path)
     analyzer.analysis()
 
 
@@ -160,7 +160,7 @@ async def main():
     sem = asyncio.Semaphore(5)  # 根据API总限制调整
 
     dataset_name = "ql"
-    dataset_path = Path(r"C:\Users\frexv\Desktop\codenavi") / dataset_name
+    dataset_path = Path(r"/Users/jiachenhan/DataSets/DEFs") / dataset_name
 
     pattern_path = utils.config.get_pattern_base_path() / model_name / dataset_name
     pattern_info_path = utils.config.get_pattern_info_base_path() / model_name / dataset_name
