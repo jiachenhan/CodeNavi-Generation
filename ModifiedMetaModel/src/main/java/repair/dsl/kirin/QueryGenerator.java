@@ -123,10 +123,10 @@ public class QueryGenerator {
                 .map(node -> NodePath.computeNodePath(insertedNode, node, consideredNodes))
                 .toList();
 
-        if (consideredNodes.isEmpty()) {
-            // 如果没有需要考虑约束的节点，那么直接不生成否定条件
-            return;
-        }
+//        if (consideredNodes.isEmpty()) {
+//            // 如果没有需要考虑约束的节点，那么直接不生成否定条件
+//            return;
+//        }
 
         List<DSLRole> roleList = new ArrayList<>();
         if (insertParent instanceof MoBlock) {
@@ -181,10 +181,10 @@ public class QueryGenerator {
                 .map(node -> NodePath.computeNodePath(moveParent, node, consideredNodes))
                 .toList();
 
-        if (consideredNodes.isEmpty()) {
-            // 如果没有需要考虑约束的节点，那么直接不生成否定条件
-            return;
-        }
+//        if (consideredNodes.isEmpty()) {
+//            // 如果没有需要考虑约束的节点，那么直接不生成否定条件
+//            return;
+//        }
 
         if (queryMap.containsKey(movedNode)) {
             Query query = queryMap.get(movedNode);
