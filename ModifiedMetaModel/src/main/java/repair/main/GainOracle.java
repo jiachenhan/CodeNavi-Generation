@@ -17,7 +17,7 @@ import static repair.common.JDTUtils.genASTFromFile;
 import static repair.common.JDTUtils.getOnlyMethodDeclaration;
 
 public class GainOracle {
-    private final static Logger logger = LoggerFactory.getLogger(GenPat.class);
+    private final static Logger logger = LoggerFactory.getLogger(GainOracle.class);
 
     public static void main(String[] args) {
         if (args.length < 4) {

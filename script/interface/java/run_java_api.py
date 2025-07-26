@@ -1,6 +1,6 @@
 import subprocess
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 import utils.config
 from utils.config import LoggerConfig
@@ -221,6 +221,34 @@ def genpat_detect(timeout_sec: float,
     if timeout:
         return False
     return "YES" in sout.strip().upper()
+
+
+def statistic_dataset(timeout_sec: float,
+                      buggy_file: Path,
+                      fixed_file: Path,
+                      jar_path: Path) -> Dict[str, int]:
+    work_dir = utils.config.get_root_project_path()
+
+    cmd = ["java",
+           "-Dfile.encoding=utf-8",
+           "-jar", str(jar_path), "statistic",
+           str(buggy_file), str(fixed_file)]
+
+    timeout, sout = start_process(cmd, work_dir, timeout_sec)
+    if timeout:
+        _logger.error("time out")
+        return {}
+
+    # 用正则提取所有指标
+    stats = {}
+    for line in sout.splitlines():
+        import re
+        match = re.match(r"(\w+(?: \w+)*):\s+(\d+)", line.strip())
+        if match:
+            key = match.group(1).lower().replace(" ", "_")  # 比如 total changed → total_changed
+            stats[key] = int(match.group(2))
+
+    return stats
 
 
 def genpat_detect_all(_timeout_sec: float,

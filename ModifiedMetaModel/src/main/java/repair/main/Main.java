@@ -35,6 +35,7 @@ public class Main {
             case "genpat_ab" -> GenPat.abstract_main(args);
             case "detect" -> Detect.main(args);
             case "genquery" -> GenQuery.main(args);
+            case "statistic" -> Statistic.main(args);
             default -> logger.error("not supported command: {}", args[0]);
         }
     }
