@@ -7,4 +7,9 @@ public class Annotation extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "annotation";
     }
+
+    @Override
+    public String getAlias() {
+        return "anno";
+    }
 }

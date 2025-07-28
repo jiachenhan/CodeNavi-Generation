@@ -8,4 +8,10 @@ public class AnnoMember extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "annoMember";
     }
+
+    @Override
+    public String getAlias() {
+        return "annoMeb";
+    }
+
 }

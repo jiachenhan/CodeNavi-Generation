@@ -7,4 +7,9 @@ public class CaseStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "caseStatement";
     }
+
+    @Override
+    public String getAlias() {
+        return "case";
+    }
 }

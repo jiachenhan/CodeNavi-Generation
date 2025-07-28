@@ -7,4 +7,9 @@ public class TryWithResources extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "tryWithResources";
     }
+
+    @Override
+    public String getAlias() {
+        return "tryWithRes";
+    }
 }

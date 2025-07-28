@@ -7,4 +7,9 @@ public class AnonymousInnerClassExpression extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "anonymousInnerClassExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "innerClassExp";
+    }
 }

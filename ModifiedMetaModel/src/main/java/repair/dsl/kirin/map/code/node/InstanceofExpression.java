@@ -7,4 +7,9 @@ public class InstanceofExpression extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "instanceofExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "insExpr";
+    }
 }

@@ -25,4 +25,9 @@ public class Modifier extends DSLNode {
             case DEFAULT -> "isDefault";
         };
     }
+
+    @Override
+    public String getAlias() {
+        return "Modifier";
+    }
 }

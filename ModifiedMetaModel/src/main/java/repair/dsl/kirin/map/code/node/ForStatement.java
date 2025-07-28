@@ -7,4 +7,9 @@ public class ForStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "forBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "forBlk";
+    }
 }

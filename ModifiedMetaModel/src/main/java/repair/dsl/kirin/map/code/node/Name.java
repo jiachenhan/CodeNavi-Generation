@@ -24,4 +24,9 @@ public class Name extends DSLNode implements Nameable {
         }
         throw new RuntimeException("should not happened");
     }
+
+    @Override
+    public String getAlias() {
+        return "";
+    }
 }

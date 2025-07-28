@@ -7,4 +7,9 @@ public class FieldAccess extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "fieldAccess";
     }
+
+    @Override
+    public String getAlias() {
+        return "fieldAcc";
+    }
 }

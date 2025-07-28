@@ -7,4 +7,9 @@ public class ThrowStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "throwStatement";
     }
+
+    @Override
+    public String getAlias() {
+        return "throw";
+    }
 }

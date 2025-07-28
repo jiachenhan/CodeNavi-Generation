@@ -7,4 +7,9 @@ public class ObjectCreationExpression extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "objectCreationExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "objCreaExpr";
+    }
 }

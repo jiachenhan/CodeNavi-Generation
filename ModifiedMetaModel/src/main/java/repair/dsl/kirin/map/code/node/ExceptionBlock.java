@@ -7,4 +7,9 @@ public class ExceptionBlock extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "exceptionBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "exceptBlk";
+    }
 }

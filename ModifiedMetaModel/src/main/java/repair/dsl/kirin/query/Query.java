@@ -6,15 +6,14 @@ import repair.ast.MoNode;
 import repair.dsl.kirin.Printable;
 import repair.dsl.kirin.alias.Alias;
 import repair.dsl.kirin.alias.AliasManager;
-import repair.dsl.kirin.alias.Aliasable;
-import repair.dsl.kirin.condition.BinaryCondition;
+import repair.dsl.kirin.alias.QueryAliasable;
 import repair.dsl.kirin.condition.Condition;
 import repair.dsl.kirin.condition.UnionCondition;
 import repair.dsl.kirin.expr.Rhs;
 
 import java.util.Optional;
 
-public abstract class Query implements Printable, Aliasable, Rhs {
+public abstract class Query implements Printable, QueryAliasable, Rhs {
     private static final Logger logger = LoggerFactory.getLogger(Query.class);
 
     protected static final String conditionPrefix = "where";

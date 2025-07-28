@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Dict, List, Generator, Union
 
 import utils
-from app.abs.mark2.history import GlobalHistories, MessageList
-from app.abs.mark2.prompt_state import InitialState, ExitState
+from app.abs.llm_4_round.history import GlobalHistories, MessageList
+from app.abs.llm_4_round.prompt_state import InitialState, ExitState
 from app.communication import PatternInput
 from interface.java.run_java_api import java_extract_pattern, java_llm_abstract, java_generate_query
 from interface.llm.llm_api import LLMAPI
@@ -20,13 +20,12 @@ class Analyzer:
                  llm: LLMAPI,
                  pattern_input: PatternInput,
                  store_path: Path,
-                 ori_path,
                  retries: int = 5):
         self.llm = llm
         self.pattern_input = pattern_input
         self.retries = retries
         self.store_path = store_path
-        self.ori_path = ori_path
+
         self.prompt_state = InitialState(self)
         self.global_history = GlobalHistories()
 

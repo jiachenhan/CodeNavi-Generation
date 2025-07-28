@@ -7,4 +7,9 @@ public class ArrayAccess extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "arrayAccess";
     }
+
+    @Override
+    public String getAlias() {
+        return "arrayAcc";
+    }
 }

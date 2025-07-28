@@ -7,4 +7,9 @@ public class IfStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "ifBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "ifBlk";
+    }
 }

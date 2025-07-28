@@ -7,4 +7,9 @@ public class CastExpression extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "castExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "castExp";
+    }
 }

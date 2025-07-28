@@ -7,4 +7,9 @@ public class ValueDeclaration extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "valueDeclaration";
     }
+
+    @Override
+    public String getAlias() {
+        return "valDecl";
+    }
 }

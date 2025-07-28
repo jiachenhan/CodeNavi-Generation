@@ -5,45 +5,49 @@ from pathlib import Path
 from typing import Generator
 
 import utils
-from app.abs.mark.inference import Analyzer
+from app.abs.llm_genpat_4_round.inference import Analyzer
+from app.abs.select_methods import run_analysis, LLM_4_ROUND, LLM_GENPAT_4_ROUND, navi_abstract
 from app.communication import PatternInput
-from interface.java.run_java_api import java_extract_pattern, java_llm_abstract, java_generate_query
+from interface.java.run_java_api import java_extract_pattern, java_llm_abstract, java_generate_query, \
+    java_genpat_abstract
 from interface.llm.llm_pool import AsyncLLMPool
 from utils.config import set_config, LoggerConfig
 
 _logger = LoggerConfig.get_logger(__name__)
 
 
-def llm_abstract(_llm,
-                 _pattern_input: PatternInput,
-                 _output_path: Path) -> None:
-    try:
-        run_llm_analysis(_llm, _pattern_input, _output_path)
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        _logger.error(f"Error in {_output_path}: {e}")
-        return
 
 
 """
 这个修饰器不支持直接在这个文件作为入口函数时使用
 在spawn过程中报错: Can't Pickle <function run_llm_analysis ...>: it's not the same object as __main__.run_llm_analysis
 """
-# @timeout(30 * 60)
-def run_llm_analysis(_llm,
-                     _pattern_input: PatternInput,
-                     _output_path: Path):
-    analyzer = Analyzer(_llm, _pattern_input, _output_path)
-    analyzer.analysis()
 
 
+# def extract_pattern(_jar: str, _case_path: Path, _pattern_path: Path, _pattern_info_path: Path):
+# #     checker_name = _case_path.parent.parent.stem
+# #     group_name = _case_path.parent.stem
+# #     pattern_ori_path = _pattern_path / "ori" / checker_name / group_name / f"{_case_path.stem}.ser"
+# #     pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
+# #     java_extract_pattern(30, _case_path, pattern_ori_path, pattern_info_input_path, _jar)
 def extract_pattern(_jar: str, _case_path: Path, _pattern_path: Path, _pattern_info_path: Path):
     checker_name = _case_path.parent.parent.stem
     group_name = _case_path.parent.stem
+
+    # 原始模式路径
     pattern_ori_path = _pattern_path / "ori" / checker_name / group_name / f"{_case_path.stem}.ser"
+
+    # 抽象模式路径（新增）
+    pattern_abs_path = _pattern_path / "abs" / checker_name / group_name / f"{_case_path.stem}.ser"
+
+    # 模式信息路径
     pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
+
+    # 1. 提取原始模式
     java_extract_pattern(30, _case_path, pattern_ori_path, pattern_info_input_path, _jar)
+
+    # 2. 使用genpat进行抽象化（新增）
+    java_genpat_abstract(30, pattern_ori_path, pattern_abs_path, _jar)
 
 
 async def async_abstract_pattern(
@@ -62,15 +66,19 @@ async def async_abstract_pattern(
     pattern_info_input_path = _pattern_info_path / "input" / checker_name / group_name / f"{_case_path.stem}.json"
     pattern_info_output_path = _pattern_info_path / "output" / checker_name / group_name / f"{_case_path.stem}.json"
 
+    json_path = _pattern_path / "ori" / checker_name / f"{group_name}_considered_nodes.json"
+
     if pattern_abs_path.exists():
         return
 
     pattern_input = PatternInput.from_file(pattern_info_input_path)
     pattern_input.set_error_info(case_info)
     await _llm_pool.async_run(
-        llm_abstract,
+        navi_abstract,
         pattern_input,
-        pattern_info_output_path
+        pattern_info_output_path,
+        LLM_GENPAT_4_ROUND,
+        json_path
     )
 
     java_llm_abstract(30, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
@@ -136,7 +144,7 @@ async def main():
     sem = asyncio.Semaphore(5)  # 根据API总限制调整
 
     dataset_name = "pmd"
-    dataset_path = Path("E:/dataset/Navi/DEFs") / dataset_name
+    dataset_path = Path(r"/Users/jiachenhan/DataSets/DEFs") / dataset_name
 
     pattern_path = utils.config.get_pattern_base_path() / model_name / dataset_name
     pattern_info_path = utils.config.get_pattern_info_base_path() / model_name / dataset_name
@@ -150,9 +158,9 @@ async def main():
         checker_name = case.parent.parent.stem
         group_name = case.parent.stem
         dsl_group_path = dsl_path / checker_name / group_name
-        if dsl_group_path.exists():
-            _logger.info(f"{checker_name}/{group_name} already exists")
-            continue
+        # if dsl_group_path.exists():
+        #     _logger.info(f"{checker_name}/{group_name} already exists")
+        #     continue
 
         task = asyncio.create_task(
             process_single_case(

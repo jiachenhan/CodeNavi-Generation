@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 import utils
+from app.abs.select_methods import LLM_4_ROUND, navi_abstract, LLM_GENPAT_4_ROUND
 from app.communication import PatternInput
 from app.abs.classified_topdown.inference import Analyzer
 from interface.java.run_java_api import java_llm_abstract, java_genpat_abstract
@@ -13,29 +14,14 @@ from utils.config import LoggerConfig, set_config, PipelineConfig
 _logger = LoggerConfig.get_logger(__name__)
 
 
-def llm_abstract(_llm,
-                 _pattern_input: PatternInput,
-                 _output_path: Path) -> None:
-    try:
-        run_llm_analysis(_llm, _pattern_input, _output_path)
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        _logger.error(f"Error in {_output_path}: {e}")
-        return
+
 
 
 """
 这个修饰器不支持直接在这个文件作为入口函数时使用
 在spawn过程中报错: Can't Pickle <function run_llm_analysis ...>: it's not the same object as __main__.run_llm_analysis
 """
-# @timeout(30 * 60)
-def run_llm_analysis(_llm,
-                     _pattern_input: PatternInput,
-                     _output_path: Path):
-    analyzer = Analyzer(_llm, _pattern_input)
-    analyzer.analysis()
-    analyzer.serialize(_output_path)
+
 
 
 def do_abstract(use_llm: bool = False):
@@ -46,7 +32,7 @@ def do_abstract(use_llm: bool = False):
                         model_name=_config.get("openai").get("model"))
 
         _pattern_input = PatternInput.from_file(PipelineConfig.pattern_info_path)
-        llm_abstract(_llm, _pattern_input, PipelineConfig.pattern_output_path)
+        navi_abstract(_llm, _pattern_input, PipelineConfig.pattern_output_path, LLM_GENPAT_4_ROUND)
         java_llm_abstract(10,
                           PipelineConfig.pattern_ori_path,
                           PipelineConfig.pattern_output_path,
@@ -79,7 +65,7 @@ def inner_main():
 
     # 调用LLM抽象
     pattern_input = PatternInput.from_file(pattern_info_path)
-    llm_abstract(llm, pattern_input, pattern_output_path)
+    navi_abstract(llm, pattern_input, pattern_output_path)
     # 生成修改后pattern
     java_llm_abstract(10, pattern_ori_path, pattern_output_path, pattern_abs_path, jar_path)
 

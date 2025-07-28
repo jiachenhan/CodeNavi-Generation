@@ -7,4 +7,9 @@ public class FinallyBlock extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "finallyBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "finalBlk";
+    }
 }

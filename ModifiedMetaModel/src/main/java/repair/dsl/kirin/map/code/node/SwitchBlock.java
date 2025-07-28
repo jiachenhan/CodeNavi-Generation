@@ -7,4 +7,9 @@ public class SwitchBlock extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "switchBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "switchBlk";
+    }
 }

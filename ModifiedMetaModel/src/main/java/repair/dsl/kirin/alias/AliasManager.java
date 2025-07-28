@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AliasManager {
     private static AliasManager instance;
 
-    private final BidiMap<Aliasable, Alias> aliasMap;
+    private final BidiMap<QueryAliasable, Alias> aliasMap;
     private final Map<Class<? extends DSLNode>, AtomicInteger> typeAliasCounter;
     private final AtomicInteger otherCounter;
 
@@ -29,11 +29,11 @@ public class AliasManager {
         return instance;
     }
 
-    private Alias generateAlias(Aliasable aliasable) {
-        if (aliasable instanceof NormalQuery normalQuery) {
+    private Alias generateAlias(QueryAliasable queryAliasable) {
+        if (queryAliasable instanceof NormalQuery normalQuery) {
             DSLNode dslNode = normalQuery.getDslNode();
             AtomicInteger atomicInteger = typeAliasCounter.computeIfAbsent(dslNode.getClass(), k -> new AtomicInteger(1));
-            String aliasKey = dslNode.prettyPrint().toLowerCase() + "_" + atomicInteger.getAndIncrement();
+            String aliasKey = dslNode.getAlias().toLowerCase() + "_" + atomicInteger.getAndIncrement();
             return new Alias(aliasKey);
         } else {
             String aliasKey = "alias_" + otherCounter.getAndIncrement();
@@ -41,8 +41,8 @@ public class AliasManager {
         }
     }
 
-    public Alias getAlias(Aliasable aliasable) {
-        return aliasMap.computeIfAbsent(aliasable, this::generateAlias);
+    public Alias getAlias(QueryAliasable queryAliasable) {
+        return aliasMap.computeIfAbsent(queryAliasable, this::generateAlias);
     }
 
 }

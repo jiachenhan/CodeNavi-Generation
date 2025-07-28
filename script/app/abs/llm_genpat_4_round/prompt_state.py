@@ -6,7 +6,7 @@ from itertools import chain
 from typing import Dict, List, Union, TYPE_CHECKING, Generator, Callable
 
 
-from app.abs.mark2.prompts import ROUGH_SELECT_LINES_PROMPT, TASK_DESCRIPTION_PROMPT, IDENTIFY_ELEMENTS_PROMPT
+from app.abs.llm_genpat_4_round.prompts import ROUGH_SELECT_LINES_PROMPT, TASK_DESCRIPTION_PROMPT, IDENTIFY_ELEMENTS_PROMPT
 from app.basic_modification_analysis import background_analysis
 from utils.common import retry_times, valid_with
 from utils.config import LoggerConfig

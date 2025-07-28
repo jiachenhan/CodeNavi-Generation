@@ -6,7 +6,7 @@ from typing import Generator
 
 import utils
 from app.communication import PatternInput
-from app.pipeline.abstract import llm_abstract
+from app.pipeline.abstract import navi_abstract
 from interface.java.run_java_api import java_extract_pattern, java_llm_abstract, java_generate_query
 from interface.llm.llm_pool import AsyncLLMPool
 from utils.config import set_config, LoggerConfig
@@ -41,7 +41,7 @@ async def async_abstract_pattern(
     pattern_input = PatternInput.from_file(pattern_info_input_path)
     pattern_input.set_error_info(case_info)
     await _llm_pool.async_run(
-        llm_abstract,
+        navi_abstract,
         pattern_input,
         pattern_info_output_path
     )

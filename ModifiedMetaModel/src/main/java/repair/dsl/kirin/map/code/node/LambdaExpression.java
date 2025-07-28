@@ -7,4 +7,9 @@ public class LambdaExpression extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "lambdaExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "lambdaExpr";
+    }
 }

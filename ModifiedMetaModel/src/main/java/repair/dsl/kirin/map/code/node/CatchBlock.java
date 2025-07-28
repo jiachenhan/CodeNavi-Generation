@@ -7,4 +7,9 @@ public class CatchBlock extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "catchBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "catchBlk";
+    }
 }

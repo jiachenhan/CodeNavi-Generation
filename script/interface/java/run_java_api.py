@@ -95,11 +95,12 @@ def java_genpat_abstract(timeout_sec: float,
                          # LLM的抽象结果抽象pattern
                          origin_pattern_path: Path,
                          abstract_pattern_path: Path,
+                         nodes_json_path:Path,
                          java_program: str):
     _logger.info(f"Start abstract pattern using genpat for {origin_pattern_path.stem}")
     work_dir = utils.config.get_root_project_path()
     cmd = ["java", "-jar", java_program, "genpat_ab",
-           str(origin_pattern_path), str(abstract_pattern_path)]
+           str(origin_pattern_path), str(abstract_pattern_path), str(nodes_json_path)]
     start_process(cmd, work_dir, timeout_sec)
 
 

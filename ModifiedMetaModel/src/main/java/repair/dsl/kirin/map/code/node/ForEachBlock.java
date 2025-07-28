@@ -7,4 +7,9 @@ public class ForEachBlock extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "forEachBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "forEachBlk";
+    }
 }

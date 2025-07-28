@@ -7,4 +7,9 @@ public class DoWhileBlock extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "doWhileBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "doWhileBlk";
+    }
 }

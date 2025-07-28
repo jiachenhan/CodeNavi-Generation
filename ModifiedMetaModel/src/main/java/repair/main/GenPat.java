@@ -168,9 +168,7 @@ public static void abstract_main(String[] args) {
 
     Path patternOriPath = Path.of(args[1]);
     Path patternAbsPath = Path.of(args[2]);
-    String caseName = FileUtils.getStem(patternOriPath.getFileName());
-    // 修改为上一级目录下的 considered_nodes.json
-    Path consideredNodesPath = patternOriPath.getParent().resolve(caseName + "_considered_nodes.json");
+    Path consideredNodesJsonPath = Path.of(args[3]);
 
     Optional<Pattern> patternOri = Serializer.deserializeFromDisk(patternOriPath);
     if (patternOri.isEmpty()) {
@@ -186,7 +184,7 @@ public static void abstract_main(String[] args) {
     Serializer.serializeToDisk(pattern, patternAbsPath);
 
     // 收集并保存所有应该被考虑的节点
-    saveConsideredNodesToJson(pattern, consideredNodesPath);
+    saveConsideredNodesToJson(pattern, consideredNodesJsonPath);
 }
 
     /**

@@ -7,4 +7,9 @@ public class MethodReferenceExpression extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "methodReferenceExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "methRefExpr";
+    }
 }

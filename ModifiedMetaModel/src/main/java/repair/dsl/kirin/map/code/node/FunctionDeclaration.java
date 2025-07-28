@@ -7,4 +7,9 @@ public class FunctionDeclaration extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "functionDeclaration";
     }
+
+    @Override
+    public String getAlias() {
+        return "funDecl";
+    }
 }

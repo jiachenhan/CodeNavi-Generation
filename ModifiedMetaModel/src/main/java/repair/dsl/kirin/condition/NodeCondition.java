@@ -1,9 +1,9 @@
 package repair.dsl.kirin.condition;
 
 import repair.dsl.kirin.alias.Alias;
-import repair.dsl.kirin.alias.Aliasable;
+import repair.dsl.kirin.alias.QueryAliasable;
 
-public class NodeCondition extends Condition implements Aliasable {
+public class NodeCondition extends Condition implements QueryAliasable {
     // 先不考虑
 
     @Override

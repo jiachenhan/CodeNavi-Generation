@@ -7,4 +7,9 @@ public class InitArrayExpression extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "initArrayExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "initArrExpr";
+    }
 }

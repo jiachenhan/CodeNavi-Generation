@@ -7,4 +7,9 @@ public class ThisCall extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "thisCall";
     }
+
+    @Override
+    public String getAlias() {
+        return "thisCall";
+    }
 }

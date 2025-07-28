@@ -7,4 +7,9 @@ public class ArrayCreation extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "arrayCreationExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "arrayCrea";
+    }
 }

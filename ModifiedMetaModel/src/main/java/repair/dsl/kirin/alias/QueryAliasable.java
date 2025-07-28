@@ -1,5 +1,5 @@
 package repair.dsl.kirin.alias;
 
-public interface Aliasable {
+public interface QueryAliasable {
     Alias getAlias();
 }

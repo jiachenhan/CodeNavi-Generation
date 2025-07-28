@@ -7,4 +7,9 @@ public class SynchronizedBlock extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "synchronizedBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "syncBlk";
+    }
 }

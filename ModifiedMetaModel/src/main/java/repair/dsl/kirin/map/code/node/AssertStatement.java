@@ -7,4 +7,9 @@ public class AssertStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "assertStatement";
     }
+
+    @Override
+    public String getAlias() {
+        return "assert";
+    }
 }

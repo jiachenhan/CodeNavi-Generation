@@ -7,4 +7,9 @@ public class UnaryOperation extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "unaryOperation";
     }
+
+    @Override
+    public String getAlias() {
+        return "unaryOper";
+    }
 }

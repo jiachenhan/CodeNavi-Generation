@@ -4,7 +4,7 @@ from typing import Generator
 
 import utils
 from app.communication import PatternInput
-from app.pipeline.abstract import llm_abstract
+from app.pipeline.abstract import navi_abstract
 from interface.java.run_java_api import java_extract_pattern, java_llm_abstract, java_generate_query
 from interface.llm.llm_api import LLMAPI
 from interface.llm.llm_openai import LLMOpenAI
@@ -30,7 +30,7 @@ def abstract_pattern(_llm: LLMAPI, _jar: str, _case_path: Path, _pattern_path: P
         return
 
     pattern_input = PatternInput.from_file(pattern_info_input_path)
-    llm_abstract(_llm, pattern_input, pattern_info_output_path)
+    navi_abstract(_llm, pattern_input, pattern_info_output_path)
     java_llm_abstract(10, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)
 
 

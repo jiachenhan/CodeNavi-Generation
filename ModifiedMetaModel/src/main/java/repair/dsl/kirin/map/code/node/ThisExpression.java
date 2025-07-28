@@ -7,4 +7,9 @@ public class ThisExpression extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "thisExpression";
     }
+
+    @Override
+    public String getAlias() {
+        return "thisExpr";
+    }
 }

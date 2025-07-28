@@ -7,4 +7,9 @@ public class AssignStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "binaryOperation";
     }
+
+    @Override
+    public String getAlias() {
+        return "assign";
+    }
 }

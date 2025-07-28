@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Generator
 
 import utils
-from app.abs.mark.inference import Analyzer
+from app.abs.llm_4_round.inference import Analyzer
+from app.abs.select_methods import run_analysis, LLM_GENPAT_4_ROUND, LLM_4_ROUND, navi_abstract
 from app.communication import PatternInput
 from interface.java.run_java_api import java_extract_pattern, java_llm_abstract, java_generate_query, \
     java_genpat_abstract
@@ -15,28 +16,10 @@ from utils.config import set_config, LoggerConfig
 _logger = LoggerConfig.get_logger(__name__)
 
 
-def llm_abstract(_llm,
-                 _pattern_input: PatternInput,
-                 _output_path: Path) -> None:
-    try:
-        run_llm_analysis(_llm, _pattern_input, _output_path)
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        _logger.error(f"Error in {_output_path}: {e}")
-        return
-
-
 """
 这个修饰器不支持直接在这个文件作为入口函数时使用
 在spawn过程中报错: Can't Pickle <function run_llm_analysis ...>: it's not the same object as __main__.run_llm_analysis
 """
-# @timeout(30 * 60)
-def run_llm_analysis(_llm,
-                     _pattern_input: PatternInput,
-                     _output_path: Path):
-    analyzer = Analyzer(_llm, _pattern_input, _output_path)
-    analyzer.analysis()
 
 
 # def extract_pattern(_jar: str, _case_path: Path, _pattern_path: Path, _pattern_info_path: Path):
@@ -88,9 +71,10 @@ async def async_abstract_pattern(
     pattern_input = PatternInput.from_file(pattern_info_input_path)
     pattern_input.set_error_info(case_info)
     await _llm_pool.async_run(
-        llm_abstract,
+        navi_abstract,
         pattern_input,
-        pattern_info_output_path
+        pattern_info_output_path,
+        LLM_4_ROUND
     )
 
     java_llm_abstract(30, pattern_ori_path, pattern_info_output_path, pattern_abs_path, _jar)

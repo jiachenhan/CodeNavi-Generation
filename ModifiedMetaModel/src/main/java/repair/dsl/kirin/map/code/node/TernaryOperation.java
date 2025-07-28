@@ -7,4 +7,9 @@ public class TernaryOperation extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "ternaryOperation";
     }
+
+    @Override
+    public String getAlias() {
+        return "ternOper";
+    }
 }

@@ -7,4 +7,9 @@ public class BreakStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "breakStatement";
     }
+
+    @Override
+    public String getAlias() {
+        return "break";
+    }
 }

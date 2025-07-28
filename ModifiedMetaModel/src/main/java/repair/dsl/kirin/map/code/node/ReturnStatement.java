@@ -7,4 +7,9 @@ public class ReturnStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "returnStatement";
     }
+
+    @Override
+    public String getAlias() {
+        return "return";
+    }
 }

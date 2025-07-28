@@ -7,4 +7,9 @@ public class DSLUnSupportNode extends DSLNode {
     public String prettyPrint() {
         throw new UnSupportException("should not happened");
     }
+
+    @Override
+    public String getAlias() {
+        return "";
+    }
 }

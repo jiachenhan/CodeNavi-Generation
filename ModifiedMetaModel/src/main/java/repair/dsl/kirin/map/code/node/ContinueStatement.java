@@ -7,4 +7,9 @@ public class ContinueStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "continueStatement";
     }
+
+    @Override
+    public String getAlias() {
+        return "continue";
+    }
 }

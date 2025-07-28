@@ -7,4 +7,9 @@ public class SuperCall extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "superCall";
     }
+
+    @Override
+    public String getAlias() {
+        return "superCall";
+    }
 }

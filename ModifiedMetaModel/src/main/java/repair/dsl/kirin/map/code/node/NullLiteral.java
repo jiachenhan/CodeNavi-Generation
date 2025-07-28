@@ -7,4 +7,9 @@ public class NullLiteral extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "nullLiteral";
     }
+
+    @Override
+    public String getAlias() {
+        return "nullLit";
+    }
 }

@@ -7,4 +7,9 @@ public class DefaultCase extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "defaultStatement";
     }
+
+    @Override
+    public String getAlias() {
+        return "defaultStat";
+    }
 }

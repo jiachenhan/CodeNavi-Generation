@@ -7,4 +7,9 @@ public class WhileStatement extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "whileBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "whileBlk";
+    }
 }

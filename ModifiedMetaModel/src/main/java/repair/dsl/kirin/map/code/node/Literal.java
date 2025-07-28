@@ -53,4 +53,8 @@ public class Literal extends DSLNode implements Nameable, KeyWord {
         return number;
     }
 
+    @Override
+    public String getAlias() {
+        return "literal";
+    }
 }

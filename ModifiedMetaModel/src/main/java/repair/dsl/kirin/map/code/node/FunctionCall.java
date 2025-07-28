@@ -7,4 +7,9 @@ public class FunctionCall extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "functionCall";
     }
+
+    @Override
+    public String getAlias() {
+        return "funCall";
+    }
 }

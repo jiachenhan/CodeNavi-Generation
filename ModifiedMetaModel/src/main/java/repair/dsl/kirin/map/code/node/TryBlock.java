@@ -7,4 +7,9 @@ public class TryBlock extends DSLNode implements KeyWord {
     public String prettyPrint() {
         return "tryBlock";
     }
+
+    @Override
+    public String getAlias() {
+        return "tryBlk";
+    }
 }
