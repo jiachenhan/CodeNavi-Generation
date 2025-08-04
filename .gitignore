@@ -24,6 +24,8 @@ artifacts/
 
 # python
 **/__pycache__/
+*.pyc
+/script/.venv/
 
 ### Eclipse ###
 .apt_generated
