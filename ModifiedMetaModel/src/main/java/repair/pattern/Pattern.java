@@ -160,7 +160,6 @@ public class Pattern implements Serializable {
     *
     * */
 
-
     public DiffComparator getDiffComparator() {
         return diffComparator;
     }
