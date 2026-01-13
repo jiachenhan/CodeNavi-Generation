@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>🔍 Bug Detection Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <input type="text" class="search-box" placeholder="🔍 搜索方法签名或文件名..." onkeyup="filterMethods(this.value)">
+        <div class="filter-buttons">
+            <button class="filter-btn filter-all active" onclick="filterByLabel('all')">全部</button>
+            <button class="filter-btn filter-tp" onclick="filterByLabel('tp')">TP</button>
+            <button class="filter-btn filter-fp" onclick="filterByLabel('fp')">FP</button>
+            <button class="filter-btn filter-fn" onclick="filterByLabel('fn')">FN</button>
+        </div>
+        <div class="sidebar-body">
+            <div class="nav-tree"></div>
+            <div class="nav-method-list"></div>
+        </div>
+    </div>
+
+    <div class="content">
+    </div>
+</div>
+
+<script src="../static/script.js"></script>
+</body>
+</html>
