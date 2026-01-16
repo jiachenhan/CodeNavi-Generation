@@ -26,6 +26,7 @@ artifacts/
 **/__pycache__/
 *.pyc
 /script/.venv/
+/script/script.egg-info/
 
 ### Eclipse ###
 .apt_generated

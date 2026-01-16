@@ -412,6 +412,18 @@ function renderCode(item) {
         ? highlightHtml(safeDslSource, keyword)
         : safeDslSource;
 
+    const buggyRaw = item.buggy_code || '';
+    const safeBuggyCode = escapeHtml(buggyRaw);
+    const highlightedBuggyCode = keyword
+        ? highlightHtml(safeBuggyCode, keyword)
+        : safeBuggyCode;
+
+    const fixedRaw = item.fixed_code || '';
+    const safeFixedCode = escapeHtml(fixedRaw);
+    const highlightedFixedCode = keyword
+        ? highlightHtml(safeFixedCode, keyword)
+        : safeFixedCode;
+
     content.innerHTML = `
         <div class="code-panel code-panel-main">
             <div class="code-header">
@@ -455,12 +467,46 @@ function renderCode(item) {
                         <span class="pill-label pill-label-dsl">DSL</span>
                     </div>
                 </div>
+                ${
+                    item.may_be_fixed_violations
+                        ? `<div class="code-header-meta">
+                            <div>
+                                <span class="meta-label">ℹ️ May Be Fixed Violations</span>
+                                <span class="meta-value">${escapeHtml(item.may_be_fixed_violations)}</span>
+                            </div>
+                        </div>`
+                        : ''
+                }
             </div>
-            ${
-                dslRaw
-                    ? `<pre class="code-block code-block-dsl"><code>${highlightedDslSource}</code></pre>`
-                    : `<div class="dsl-empty">未找到对应的 DSL (.kirin) 文件</div>`
-            }
+            <div class="dsl-content-wrapper">
+                <div class="dsl-code-dsl">
+                    <div class="code-pair-item dsl-only-item">
+                        ${
+                            dslRaw
+                                ? `<pre class="code-block code-block-dsl"><code>${highlightedDslSource}</code></pre>`
+                                : `<div class="dsl-empty">未找到对应的 DSL (.kirin) 文件</div>`
+                        }
+                    </div>
+                </div>
+                <div class="dsl-code-main">
+                    <div class="code-pair-item">
+                        <div class="code-pair-header">Buggy Code</div>
+                        ${
+                            item.buggy_code
+                                ? `<pre class="code-block code-block-pair"><code>${highlightedBuggyCode}</code></pre>`
+                                : `<div class="code-empty">未找到 buggy.java</div>`
+                        }
+                    </div>
+                    <div class="code-pair-item">
+                        <div class="code-pair-header">Fixed Code</div>
+                        ${
+                            item.fixed_code
+                                ? `<pre class="code-block code-block-pair"><code>${highlightedFixedCode}</code></pre>`
+                                : `<div class="code-empty">未找到 fixed.java</div>`
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 

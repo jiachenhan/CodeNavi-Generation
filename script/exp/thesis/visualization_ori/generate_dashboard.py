@@ -14,7 +14,8 @@ if __name__ == "__main__":
     # TODO: 根据自己的实验目录调整默认路径
     base_dir = Path("E:/dataset/Navi/final_thesis_datas/ori_dsl_detect_results")
     dsl_base_dir = Path("E:/dataset/Navi/final_thesis_datas/ori_dsl")
+    code_pair_base_dir = Path("E:/dataset/Navi/DEFs")
     work_dir = Path(__file__).parent
 
-    data = merge_results_from_dirs(base_dir, dsl_base_dir=dsl_base_dir)
+    data = merge_results_from_dirs(base_dir, dsl_base_dir=dsl_base_dir, code_pair_base_dir=code_pair_base_dir)
     generate_dashboard(data, work_dir)

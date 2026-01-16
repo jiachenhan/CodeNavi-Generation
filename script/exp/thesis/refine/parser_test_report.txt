@@ -1,0 +1,657 @@
+================================================================================
+DSL Parser Test Report
+================================================================================
+Root Directory: E:\dataset\Navi\final_thesis_datas\ori_dsl
+Total Files: 335
+Success: 335 (100.0%)
+Failed: 0 (0.0%)
+
+Statistics by Directory:
+--------------------------------------------------------------------------------
+  codeql_v1_commits\Boxed_variable_is_never_null\0:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Boxed_variable_is_never_null\1:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Comparison_of_narrow_type_with_wide_type_in_loop_condition\1:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Confusing_overloading_of_methods\2:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Dangerous_non-short-circuit_logic\0:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Deprecated_method_or_constructor_invocation\1:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Deprecated_method_or_constructor_invocation\12:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Double-checked_locking_is_not_thread-safe\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Equals_method_does_not_inspect_argument_type\0:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Executing_a_command_with_a_relative_path\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Expression_always_evaluates_to_the_same_value\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Inefficient_empty_string_test\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Inefficient_primitive_constructor\0:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Inefficient_primitive_constructor\4:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Inefficient_primitive_constructor\6:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Missing_Override_annotation\12:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Missing_Override_annotation\17:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Missing_Override_annotation\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Missing_catch_of_NumberFormatException\0:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Missing_catch_of_NumberFormatException\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Missing_enum_case_in_switch\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Missing_enum_case_in_switch\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Missing_enum_case_in_switch\2:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Potential_database_resource_leak\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Potential_database_resource_leak\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Potential_database_resource_leak\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Potential_input_resource_leak\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Potential_input_resource_leak\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Potential_output_resource_leak\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v1_commits\Random_used_only_once\0:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Random_used_only_once\1:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Random_used_only_once\2:
+    Total: 2, Success: 2, Failed: 0 (100.0%)
+  codeql_v1_commits\Useless_toString_on_String\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Deprecated_method_or_constructor_invocation\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Deprecated_method_or_constructor_invocation\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Deprecated_method_or_constructor_invocation\18:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Deprecated_method_or_constructor_invocation\21:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Deprecated_method_or_constructor_invocation\22:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Deprecated_method_or_constructor_invocation\23:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Deprecated_method_or_constructor_invocation\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Deprecated_method_or_constructor_invocation\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Dereferenced_variable_may_be_null\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Expression_always_evaluates_to_the_same_value\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Expression_always_evaluates_to_the_same_value\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\10:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\11:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\12:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Inefficient_primitive_constructor\9:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Missing_Override_annotation\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Missing_Override_annotation\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Missing_catch_of_NumberFormatException\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  codeql_v2_commits\Missing_catch_of_NumberFormatException\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AssignmentInOperand\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AssignmentInOperand\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidAccessibilityAlteration\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidAccessibilityAlteration\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidCatchingNPE\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidCatchingNPE\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidCatchingNPE\6:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidCatchingThrowable\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidCatchingThrowable\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidInstanceofChecksInCatchClause\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidPrintStackTrace\14:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidReassigningLoopVariables\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidReassigningParameters\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidSynchronizedAtMethodLevel\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidSynchronizedAtMethodLevel\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidSynchronizedAtMethodLevel\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidSynchronizedStatement\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\AvoidSynchronizedStatement\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\CloseResource\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\CloseResource\14:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\CloseResource\20:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\CompareObjectsWithEquals\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\CompareObjectsWithEquals\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\DetachedTestCase\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\DetachedTestCase\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\DetachedTestCase\6:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\DoNotTerminateVM\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\EmptyCatchBlock\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\EmptyCatchBlock\15:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\GuardLogStatement\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\GuardLogStatement\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\ImplicitSwitchFallThrough\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\ImplicitSwitchFallThrough\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\InstantiationToGetClass\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\InvalidLogMessageFormat\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\JUnit5TestShouldBePackagePrivate\127:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\JUnit5TestShouldBePackagePrivate\19:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\JUnit5TestShouldBePackagePrivate\89:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\JUnitUseExpected\53:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\JUnitUseExpected\67:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\JUnitUseExpected\76:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\LiteralsFirstInComparisons\10:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\LooseCoupling\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\MissingOverride\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\MissingOverride\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\NonExhaustiveSwitch\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\NonExhaustiveSwitch\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\NonExhaustiveSwitch\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\NullAssignment\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\NullAssignment\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\NullAssignment\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\PreserveStackTrace\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\PrimitiveWrapperInstantiation\11:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\PrimitiveWrapperInstantiation\16:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\PrimitiveWrapperInstantiation\20:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\ReturnEmptyCollectionRatherThanNull\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\ReturnEmptyCollectionRatherThanNull\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\ReturnFromFinallyBlock\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\SimpleDateFormatNeedsLocale\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\SimpleDateFormatNeedsLocale\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\SimpleDateFormatNeedsLocale\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\SystemPrintln\25:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\SystemPrintln\31:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UnitTestShouldIncludeAssert\14:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UnitTestShouldUseAfterAnnotation\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UnitTestShouldUseTestAnnotation\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UnitTestShouldUseTestAnnotation\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UnnecessaryBooleanAssertion\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseCollectionIsEmpty\11:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseCollectionIsEmpty\19:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseCollectionIsEmpty\20:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseLocaleWithCaseConversions\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseLocaleWithCaseConversions\12:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseLocaleWithCaseConversions\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseNotifyAllInsteadOfNotify\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseProperClassLoader\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseStandardCharsets\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v1_commits\UseStandardCharsets\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AssignmentInOperand\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingNPE\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingNPE\10:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingNPE\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingNPE\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingNPE\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingNPE\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingNPE\9:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingThrowable\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingThrowable\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingThrowable\12:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingThrowable\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingThrowable\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidCatchingThrowable\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidInstanceofChecksInCatchClause\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidInstanceofChecksInCatchClause\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\11:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\17:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\18:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\19:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\21:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\22:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\24:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\26:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidPrintStackTrace\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidSynchronizedAtMethodLevel\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidSynchronizedAtMethodLevel\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidSynchronizedAtMethodLevel\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidSynchronizedAtMethodLevel\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidSynchronizedAtMethodLevel\6:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidSynchronizedStatement\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidSynchronizedStatement\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidSynchronizedStatement\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidUsingHardCodedIP\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidUsingHardCodedIP\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidUsingHardCodedIP\6:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\AvoidUsingHardCodedIP\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\CloseResource\11:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\CloseResource\15:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\CloseResource\17:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\CloseResource\21:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\CloseResource\23:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\CloseResource\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\CloseResource\9:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\CompareObjectsWithEquals\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\DetachedTestCase\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\DetachedTestCase\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\DetachedTestCase\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\DetachedTestCase\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\EmptyCatchBlock\18:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\EmptyCatchBlock\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\EmptyCatchBlock\20:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\EmptyCatchBlock\21:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\EmptyCatchBlock\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\21:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\23:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\29:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\37:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\44:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\46:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\47:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\GuardLogStatement\9:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\115:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\168:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\172:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\20:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\211:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\222:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\226:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\248:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\257:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\270:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\291:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\91:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnit5TestShouldBePackagePrivate\97:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\10:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\21:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\22:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\27:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\38:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\48:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\52:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\57:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\62:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\66:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\75:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\JUnitUseExpected\86:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LiteralsFirstInComparisons\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LiteralsFirstInComparisons\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LiteralsFirstInComparisons\11:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LiteralsFirstInComparisons\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LiteralsFirstInComparisons\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LooseCoupling\12:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LooseCoupling\14:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LooseCoupling\18:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LooseCoupling\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LooseCoupling\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LooseCoupling\30:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LooseCoupling\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\LooseCoupling\6:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NonExhaustiveSwitch\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NonExhaustiveSwitch\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NonExhaustiveSwitch\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NullAssignment\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NullAssignment\11:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NullAssignment\12:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NullAssignment\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NullAssignment\14:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NullAssignment\15:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NullAssignment\17:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\NullAssignment\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\10:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\15:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\18:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\19:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\21:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\22:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\24:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\25:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\PrimitiveWrapperInstantiation\9:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SimpleDateFormatNeedsLocale\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\15:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\16:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\17:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\18:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\19:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\27:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\28:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\36:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\SystemPrintln\6:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\12:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\14:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\15:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UnitTestShouldUseTestAnnotation\9:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\1:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\10:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\12:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\13:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\14:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\15:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\16:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\17:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\4:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\5:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseCollectionIsEmpty\9:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseConcurrentHashMap\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\0:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\10:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\11:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\2:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\3:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\6:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\7:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\8:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+  pmd_v2_commits\UseLocaleWithCaseConversions\9:
+    Total: 1, Success: 1, Failed: 0 (100.0%)
+
+Success Files Statistics:
+--------------------------------------------------------------------------------
+  Total queries per file:
+    Min: 1, Max: 31, Avg: 3.2
+  File sizes (bytes):
+    Min: 79, Max: 5015, Avg: 325
+  Line counts:
+    Min: 1, Max: 123, Avg: 6.0

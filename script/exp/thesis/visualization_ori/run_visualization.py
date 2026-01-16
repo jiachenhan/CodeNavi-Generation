@@ -25,6 +25,10 @@ BASE_DIR = Path("E:/dataset/Navi/final_thesis_datas/ori_dsl_detect_results")
 # 存放 DSL (.kirin) 文件的根目录： dsl_base_dir / {dataset} / {checker} / {group} / {case_num}.kirin
 DSL_BASE_DIR = Path("E:/dataset/Navi/final_thesis_datas/ori_dsl")
 
+# 存放代码对和 info.json 的数据集根目录： code_pair_base_dir / {mapped_dataset} / {checker} / {group} / {case1} / {buggy.java, fixed.java, info.json}
+# 注意：这是构建的名为 DEFS 的数据集，mapped_dataset 为 ql (对应 codeql) 或 pmd
+CODE_PAIR_BASE_DIR = Path("E:/dataset/Navi/DEFs")
+
 # 可视化代码所在目录（包含 templates/ 与 static/）
 WORK_DIR = Path(__file__).parent
 
@@ -45,18 +49,20 @@ def make_handler(directory: Path):
 def run_server() -> None:
     base_dir = BASE_DIR.resolve()
     dsl_base_dir = DSL_BASE_DIR.resolve()
+    code_pair_base_dir = CODE_PAIR_BASE_DIR.resolve()
     work_dir = WORK_DIR.resolve()
     port = PORT
     output_dir = get_output_dir(work_dir)
 
     print(f"📦 结果根目录: {base_dir}")
     print(f"🧾 DSL 代码目录: {dsl_base_dir}")
+    print(f"📝 代码对数据集目录: {code_pair_base_dir}")
     print(f"📁 可视化工作目录: {work_dir}")
     print(f"📂 输出目录: {output_dir}")
     print(f"🌐 服务端口: {port}")
 
     # 启动前准备数据与页面（会在 output_dir 写入 data.json 与 dashboard.html）
-    prepare_dashboard(base_dir, work_dir, dsl_base_dir=dsl_base_dir)
+    prepare_dashboard(base_dir, work_dir, dsl_base_dir=dsl_base_dir, code_pair_base_dir=code_pair_base_dir)
 
     # 静态根目录使用 work_dir，这样既能访问 output/dashboard.html，也能访问 static/ 资源
     handler_cls = make_handler(work_dir)

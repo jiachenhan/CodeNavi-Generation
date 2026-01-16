@@ -1,0 +1,11 @@
+functionDeclaration functiondeclaration_1 where 
+functiondeclaration_1.body contain catchBlock catchblock_1 where 
+and(
+    catchblock_1.body contain binaryOperation binaryoperation_1 where 
+    and(
+        not(binaryoperation_1 contain functionCall functioncall_1 where 
+        functioncall_1.base.name match "(?i).*(utils|helper|utility|service|manager)$"
+        ) 
+        ,binaryoperation_1 is instanceofExpression
+    ) 
+    ,catchblock_1.parameters contain alias_1 where alias_1 is valueDeclaration);
