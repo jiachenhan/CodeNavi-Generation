@@ -548,10 +548,9 @@ class ValidateConstraintState(PromptState):
     
     @retry_times(retries=5)
     @valid_with(check_valid)
-    def invoke_validate_retry(self, messages: list) -> tuple[bool, str]:
+    def invoke_validate_retry(self, messages: list) -> str:
         response = self.refiner.llm.invoke(messages)
-        success = self.check_valid(response)
-        return success, response
+        return response
     
     def validate_constraint(self, constraint: ExtraConstraint, original_dsl: str) -> tuple[bool, Optional[str], Optional[str]]:
         """
@@ -591,10 +590,16 @@ class ValidateConstraintState(PromptState):
             
             # 查找该别名对应的节点类型
             node_type = None
-            if hasattr(parser, 'node_map') and alias in parser.node_map:
+            # 首先尝试从parser的node_map中查找（包含所有嵌套查询的节点）
+            if hasattr(parser, 'get_node_by_alias'):
+                node_query = parser.get_node_by_alias(alias)
+                if node_query:
+                    node_type = node_query.entity.node_type
+            elif hasattr(parser, 'node_map') and alias in parser.node_map:
                 node_type = parser.node_map[alias].entity.node_type
-            else:
-                # 尝试从原始查询中查找
+            
+            # 如果还没找到，尝试从原始查询中查找
+            if not node_type:
                 if original_query.entity.alias == alias:
                     node_type = original_query.entity.node_type
                 else:
@@ -616,7 +621,21 @@ class ValidateConstraintState(PromptState):
                     node_type = find_node_type_in_condition(original_query.condition, alias)
             
             if not node_type:
-                return False, f"Cannot find node type for alias '{alias}' in original DSL", None
+                # 如果找不到节点类型，说明约束中的别名在原始DSL中不存在
+                # 这可能是约束本身的问题，需要LLM修复
+                available_aliases = []
+                if hasattr(parser, 'node_map'):
+                    available_aliases = list(parser.node_map.keys())
+                if original_query.entity.alias:
+                    available_aliases.append(original_query.entity.alias)
+                
+                error_msg = f"Alias '{alias}' is not defined in original DSL"
+                if available_aliases:
+                    error_msg += f". Available aliases: {', '.join(set(available_aliases))}"
+                else:
+                    error_msg += ". Please check the constraint_path format."
+                
+                return False, error_msg, f"The alias '{alias}' in constraint path '{constraint.constraint_path}' does not exist in the original DSL. Please use a valid alias from the original DSL."
             
             # 构建一个临时查询用于验证
             from app.refine.parser import EntityDecl, Query
@@ -640,7 +659,10 @@ class ValidateConstraintState(PromptState):
             temp_parsed = temp_parser.parse()
             if not temp_parsed:
                 parse_errors = temp_parser.get_parse_errors()
-                error_msg = "; ".join(parse_errors) if parse_errors else "Parse failed"
+                if parse_errors.has_errors():
+                    error_msg = "; ".join(parse_errors.to_string_list())
+                else:
+                    error_msg = "Parse failed"
                 return False, f"Syntax error: {error_msg}", None
             
             # 语义验证
@@ -754,9 +776,26 @@ class ValidateConstraintState(PromptState):
             self.add_user_message(RefineStep.VALIDATE_CONSTRAINT, prompt, messages)
             
             try:
+                # retry_times装饰器返回 (bool, result)
                 success, response = self.invoke_validate_retry(messages)
-                if not success:
+                if not success or not response:
                     _logger.error("Failed to get valid response after retries")
+                    # 只保留有效的约束
+                    valid_constraints = [c for idx, c in enumerate(constraints) if idx not in invalid_indices]
+                    self.refiner.context.extracted_constraints = valid_constraints
+                    self.refiner.prompt_state = ConstructDSLState(self.refiner)
+                    return
+                
+                # 验证响应格式（确保response是字符串）
+                if not isinstance(response, str):
+                    _logger.error(f"Invalid response type: {type(response)}, expected str")
+                    valid_constraints = [c for idx, c in enumerate(constraints) if idx not in invalid_indices]
+                    self.refiner.context.extracted_constraints = valid_constraints
+                    self.refiner.prompt_state = ConstructDSLState(self.refiner)
+                    return
+                
+                if not self.check_valid(response):
+                    _logger.error("LLM response does not contain valid [CONSTRAINTS] block")
                     # 只保留有效的约束
                     valid_constraints = [c for idx, c in enumerate(constraints) if idx not in invalid_indices]
                     self.refiner.context.extracted_constraints = valid_constraints
@@ -765,8 +804,17 @@ class ValidateConstraintState(PromptState):
                 
                 self.add_assistant_message(RefineStep.VALIDATE_CONSTRAINT, response, messages)
                 
+                # 打印LLM输出的优化后的约束
+                _logger.info(f"LLM response for constraint fixing (retry {retry_count + 1}):")
+                _logger.info(response)
+                
                 # 解析修复后的约束
                 fixed_constraints = self.parse_constraints(response, "fixed")
+                
+                if fixed_constraints:
+                    _logger.info(f"Parsed {len(fixed_constraints)} fixed constraints:")
+                    for idx, fc in enumerate(fixed_constraints, 1):
+                        _logger.info(f"  Constraint {idx}: {fc.constraint_path} {fc.operator} {fc.value} (type: {fc.constraint_type.value}, negative: {fc.is_negative})")
                 
                 if fixed_constraints:
                     # 更新约束列表（保持顺序，只替换无效的约束）

@@ -21,6 +21,8 @@ dependencies = [
     "jinja2>=3.1.6",
     "lxml>=6.0.2",
     "antlr4-python3-runtime>=4.13.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
 ]
 
 [project.scripts]
@@ -32,3 +34,34 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["app", "exp", "data", "interface", "utils"]
+
+[tool.pytest.ini_options]
+# pytest 配置
+
+# 测试文件匹配模式
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# 测试发现路径
+testpaths = ["tests"]
+
+# 输出选项
+# 默认跳过需要 LLM 的测试（使用 -m "requires_llm" 来运行这些测试）
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--disable-warnings",
+    "-m",
+    "not requires_llm",
+]
+
+# 标记定义
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "requires_llm: marks tests that require LLM API",
+    "requires_data: marks tests that require test data files",
+]

@@ -511,13 +511,18 @@ Fix the invalid constraints based on the validation errors and fix suggestions. 
 **Output Format:**
 [CONSTRAINTS]
 Constraint 1:
-- Type: {type}
-- Path: {fixed_path}
-- Operator: {fixed_operator}
-- Value: {fixed_value}
-- Is Negative: {is_negative}
+- Type: add
+- Path: funcCall.name
+- Operator: ==
+- Value: "specificMethod"
+- Is Negative: no
 
 Constraint 2:
+- Type: edit
+- Path: funcCall.arguments
+- Operator: ==
+- Value: empty
+- Is Negative: no
 ...
 [/CONSTRAINTS]
 
