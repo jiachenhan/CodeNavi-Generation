@@ -171,7 +171,7 @@ def constraint_to_dsl_condition(constraint: ExtraConstraint) -> str:
         _logger.warning(f"Invalid constraint: missing required fields")
         return ""
     
-    # constraint_path格式：nodeAlias.attribute
+    # constraint_path格式：nodeAlias 或 nodeAlias.attribute
     # 直接使用路径和操作符构建条件
     return f"{constraint.constraint_path} {constraint.operator} {constraint.value}"
 
@@ -187,10 +187,14 @@ def constraints_to_dsl_conditions(constraints: List[ExtraConstraint], dsl_node: 
     Returns:
         组合后的DSL条件字符串
     """
-    # 过滤出属于该节点的约束（constraint_path格式：nodeAlias.attribute）
+    # 过滤出属于该节点的约束
+    # constraint_path可以是 "nodeAlias" 或 "nodeAlias.attribute"
     node_constraints = [
-        c for c in constraints 
-        if c.constraint_path and c.constraint_path.startswith(f"{dsl_node}.")
+        c for c in constraints
+        if c.constraint_path and (
+            c.constraint_path == dsl_node or  # 节点本身的约束（如类型检查）
+            c.constraint_path.startswith(f"{dsl_node}.")  # 节点属性的约束
+        )
     ]
     
     if not node_constraints:
@@ -219,12 +223,12 @@ def constraints_to_dsl_conditions(constraints: List[ExtraConstraint], dsl_node: 
 def find_condition_by_path(condition: Condition, constraint_path: str, operator: str) -> Optional[AtomicCondition]:
     """
     在条件树中查找匹配指定路径和操作符的原子条件
-    
+
     Args:
         condition: 条件树
-        constraint_path: 约束路径（如 "nodeAlias.attribute"）
-        operator: 操作符（如 "==", "match"）
-    
+        constraint_path: 约束路径（如 "nodeAlias" 或 "nodeAlias.attribute"）
+        operator: 操作符（如 "==", "match", "is"）
+
     Returns:
         匹配的AtomicCondition，如果未找到则返回None
     """
@@ -466,16 +470,19 @@ def merge_constraints_to_dsl(original_dsl: str, constraints: List[ExtraConstrain
             continue
         
         # 提取节点别名
+        # constraint_path 可以是 "nodeAlias" (类型检查) 或 "nodeAlias.property" (属性检查)
         if '.' in constraint.constraint_path:
             node_alias = constraint.constraint_path.split('.')[0]
-            # 检查该alias是否存在（主查询或子查询）
-            query = parser.get_node_by_alias(node_alias)
-            if query:
-                node_constraints_map[node_alias][constraint.constraint_type.value].append(constraint)
-            else:
-                _logger.warning(f"Node alias '{node_alias}' not found in DSL, skipping constraint")
         else:
-            _logger.warning(f"Invalid constraint_path format: '{constraint.constraint_path}'")
+            # 没有 "." 说明是对节点本身的约束（如类型检查：binaryoperation_1 is instanceofExpression）
+            node_alias = constraint.constraint_path
+
+        # 检查该alias是否存在（主查询或子查询）
+        query = parser.get_node_by_alias(node_alias)
+        if query:
+            node_constraints_map[node_alias][constraint.constraint_type.value].append(constraint)
+        else:
+            _logger.warning(f"Node alias '{node_alias}' not found in DSL, skipping constraint: {constraint.constraint_path}")
     
     # 递归处理所有查询（包括嵌套查询）中的约束
     def process_query_constraints(query: Query, node_alias: str, constraint_groups: Dict[str, List[ExtraConstraint]]):

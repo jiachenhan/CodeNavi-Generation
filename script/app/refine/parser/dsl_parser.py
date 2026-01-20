@@ -132,6 +132,47 @@ class DSLParserANTLR:
             _logger.error("No error listener found")
             return None
         return self._error_listener.get_first_error_position()
+
+    def parse_condition(self, node_map: Dict[str, Query] = None) -> Optional[Condition]:
+        """
+        解析独立的Condition（不需要完整的Query结构）
+
+        Args:
+            node_map: 可选的节点别名映射，用于验证时的上下文信息
+
+        Returns:
+            Condition AST对象，如果解析失败则返回None
+        """
+        # 创建词法分析器
+        lexer = DSLLexer(InputStream(self.dsl))
+        # 创建token流
+        token_stream = CommonTokenStream(lexer)
+
+        # 创建语法分析器
+        parser = AntlrDSLParser(token_stream)
+
+        # 添加错误监听器
+        error_listener = DSLParseErrorListener()
+        self._error_listener = error_listener
+        parser.removeErrorListeners()
+        parser.addErrorListener(error_listener)
+
+        # 直接解析 condition 规则
+        tree = parser.condition()
+
+        # 检查是否有错误
+        if error_listener.errors:
+            for error in error_listener.errors:
+                _logger.error(f"Parse error in condition: {error}")
+            return None
+
+        # 使用Visitor模式构建AST
+        visitor = DSLToASTVisitor()
+        if node_map:
+            visitor.node_map = node_map  # 传入已有的node_map用于验证
+        condition = visitor.visit(tree)
+
+        return condition
     
 
 class ParseErrorType(Enum):

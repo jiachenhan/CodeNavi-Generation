@@ -39,11 +39,13 @@ class ConstraintType(Enum):
 class ExtraConstraint:
     """
     额外约束的数据结构
-    
-    约束位置使用精确路径：node_alias.attribute_path
-    例如：funcCall.body 或 ifBlock.condition
+
+    约束位置可以是：
+    1. node_alias（对节点本身的约束，如类型检查：binaryoperation_1 is instanceofExpression）
+    2. node_alias.attribute（对属性的约束：functioncall_1.name == "test"）
+    3. node_alias.attribute.subattribute（对嵌套属性的约束：functioncall_1.base.name match "regex"）
     """
-    constraint_path: str  # 约束位置：格式为 "node_alias.attribute_path"（如 "funcCall.body"）
+    constraint_path: str  # 约束位置：格式为 "node_alias" 或 "node_alias.attribute_path"
     operator: str  # 操作符：match, is, ==, !=, contain, in
     value: str  # 值或子查询（如果是子查询，包含完整的DSL子查询）
     constraint_type: ConstraintType = ConstraintType.ADD  # 修改类型：add/edit/del

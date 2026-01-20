@@ -6,9 +6,9 @@
 import pytest
 
 # antlr4 是必需的依赖，直接导入（如果失败会在导入时报错）
-from app.refine.parser.dsl_parser_antlr import DSLParserANTLR
-from app.refine.parser.dsl_validator import DSLValidator
-from app.refine.parser.dsl_fix_suggester import DSLFixSuggester
+from app.refine.parser.dsl_parser import DSLParserANTLR
+from app.refine.parser.validators.semantic_validator import DSLValidator
+from app.refine.parser.validators.fix_suggester import DSLFixSuggester
 
 
 class TestDSLValidator:

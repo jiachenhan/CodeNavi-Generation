@@ -1,491 +1,405 @@
 """
 DSL优化框架的Prompt模板
+
+设计原则:
+1. 只提供约束层面的知识,不讲完整DSL语法
+2. 示例必须是约束片段,不是完整Query
+3. 明确提供节点类型-属性元数据
+4. 简洁清晰,每个prompt控制在合理长度
 """
 
-# DSL语法说明（详细版）
-DSL_GRAMMAR_PROMPT = """
-DSL Grammar Overview (BNF):
+# ============================================================================
+# 元数据生成函数
+# ============================================================================
 
-Query ::= EntityDecl where Condition ;  
-EntityDecl ::= NodeType (Alias)?  
-Condition ::= AtomicCond  
-           | not (Condition)  
-           | and (Condition (, Condition)+)  
-           | or  (Condition (, Condition)+)  
-AtomicCond ::= ValueMatch | RelMatch  
-ValueMatch ::= Attribute ValueComp Value  
-RelMatch   ::= Attribute NodeComp Query  
-Attribute  ::= Alias (.Property)*  
-Value      ::= NodeType | <var name> | literal value  
-NodeType   ::= functionCall | ifBlock | objectCreationExpression | ...  
-Property   ::= body | arguments | type | ...  
-ValueComp  ::= match | is | == | !=  
-NodeComp   ::= contain | in  
-Alias      ::= any valid identifier
+def get_node_metadata_prompt() -> str:
+    """
+    生成节点类型和属性的元数据prompt
 
----
-
-**Detailed Lexical and Syntax Rules:**
-
-1. **Keywords** (case-insensitive): where, not, and, or, match, is, contain, in
-
-2. **Operators**: 
-   - Comparison: ==, !=
-   - Property access: .
-   - Separators: , (comma), ; (semicolon)
-   - Grouping: ( )
-
-3. **Identifiers**:
-   - Must start with letter (a-z, A-Z) or underscore (_)
-   - Can contain letters, digits (0-9), and underscores
-   - Examples: functionCall, _node, node1, catchBlock_1
-   - Invalid: 1node (cannot start with digit), node-name (cannot contain hyphen)
-
-4. **String Literals**:
-   - Support single quotes '...' and double quotes "..."
-   - Support escape sequences: \\", \\', \\\\, \\n, \\t, \\r, \\b, \\f, \\uXXXX
-   - Examples: "hello", 'world', "say \\"hello\\"", 'it\\'s ok'
-
-5. **Number Literals**:
-   - Integers: 0, 123, -45
-   - Floats: 3.14, -0.5
-   - Scientific notation: 1e10, 2.5e-3
-
-6. **Boolean Literals**: true, false
-
-7. **Whitespace**: Spaces, tabs, newlines are ignored
-
----
-
-**Syntax Rules and Examples:**
-
-1. **Query Structure**:
-   - MUST end with semicolon (;)
-   - MUST have "where" keyword
-   - Format: NodeType [Alias] where Condition ;
-   
-   Example:
-   ```dsl
-   functionCall fc where fc.name == "test" ;
-   ```
-
-2. **Entity Declaration**:
-   - NodeType is required (e.g., functionCall, ifBlock)
-   - Alias is optional but recommended for referencing in conditions
-   
-   Examples:
-   ```dsl
-   functionCall          // No alias
-   functionCall fc       // Alias: fc
-   ```
-
-3. **Conditions**:
-   - Atomic: Simple value or relation match
-   - Logical NOT: not (Condition)
-   - Logical AND: and (Condition, Condition, ...)  // At least 2 conditions
-   - Logical OR: or (Condition, Condition, ...)    // At least 2 conditions
-   
-   Examples:
-   ```dsl
-   // Atomic
-   fc.name == "test"
-   
-   // NOT
-   not(fc.name == "test")
-   
-   // AND
-   and(
-       fc.name == "test",
-       fc.arguments != null
-   )
-   
-   // OR
-   or(
-       fc.name == "test1",
-       fc.name == "test2"
-   )
-   ```
-
-4. **Value Match**:
-   - Format: Attribute ValueComp Value
-   - ValueComp: match (regex), is (type check), ==, !=
-   
-   Examples:
-   ```dsl
-   fc.name == "test"
-   fc.name match "test.*"
-   fc.returnType is functionCall
-   ```
-
-5. **Relation Match** (Nested Query):
-   - Format: Attribute NodeComp Query
-   - NodeComp: contain, in
-   - Query MUST be complete (with semicolon)
-   
-   Example:
-   ```dsl
-   fd.body contain functionCall fc where fc.name == "helper" ;
-   ```
-
-6. **Attribute Path**:
-   - Format: Alias (.Property)*
-   - Must start with alias (cannot start with dot)
-   - Can have multiple property levels
-   
-   Examples:
-   ```dsl
-   fc                    // Simple alias
-   fc.name               // One level
-   fc.body.arguments     // Multiple levels
-   ```
-
-7. **Value Types**:
-   - NodeType identifier
-   - Variable identifier
-   - String literal (with quotes)
-   - Number literal
-   - Boolean literal (true/false)
-
----
-
-**Common Syntax Errors to Avoid:**
-
-1. ❌ Missing semicolon:
-   ```dsl
-   functionCall where fc.name == "test"  // Missing ;
-   ```
-   ✅ Correct:
-   ```dsl
-   functionCall where fc.name == "test" ;
-   ```
-
-2. ❌ Attribute path without alias:
-   ```dsl
-   functionCall where .name == "test" ;  // Missing alias
-   ```
-   ✅ Correct:
-   ```dsl
-   functionCall fc where fc.name == "test" ;
-   ```
-
-3. ❌ Nested query without semicolon:
-   ```dsl
-   fd.body contain functionCall fc where fc.name == "helper"  // Missing ;
-   ```
-   ✅ Correct:
-   ```dsl
-   fd.body contain functionCall fc where fc.name == "helper" ;
-   ```
-
-4. ❌ and/or with single condition:
-   ```dsl
-   and(fc.name == "test")  // Need at least 2 conditions
-   ```
-   ✅ Correct:
-   ```dsl
-   and(
-       fc.name == "test",
-       fc.arguments != null
-   )
-   ```
-
-5. ❌ Unmatched quotes:
-   ```dsl
-   fc.name == "test'  // Quote mismatch
-   ```
-   ✅ Correct:
-   ```dsl
-   fc.name == "test"
-   ```
-
----
-
-**Complete Examples:**
-
-Example 1 - Simple query:
-```dsl
-functionCall fc where fc.name == "test" ;
-```
-
-Example 2 - Nested query:
-```dsl
-functionDeclaration fd where
-    fd.body contain functionCall fc where
-        fc.name == "helper"
-    ;
-```
-
-Example 3 - Complex conditions:
-```dsl
-catchBlock cb where
-    and(
-        cb.body contain binaryOperation bo where
-            bo.operator == "instanceof",
-        cb.parameters contain valueDeclaration vd where
-            vd.type == "Exception"
+    这是最关键的信息,告诉LLM:
+    - 哪些节点类型存在
+    - 每个节点有哪些属性
+    - 属性的类型(Collection/Body/Child/Simple)决定如何访问
+    """
+    from app.refine.parser.dsl_metadata import (
+        OPERATOR_TO_NODE_TYPE
     )
-;
-```
 
-Example 4 - Regex matching:
-```dsl
-functionCall fc where
-    fc.name match "(?i).*(utils|helper|utility)$"
-;
-```
+    # 常用节点类型及其属性
+    common_nodes = {
+        "functionCall": ["name", "base", "arguments"],
+        "functionDeclaration": ["name", "returnType", "parameters", "body", "exceptionTypes"],
+        "ifBlock": ["condition", "thenBlock", "elseBlock"],
+        "whileBlock": ["condition", "body"],
+        "forBlock": ["initialization", "condition", "iteration", "body"],
+        "catchBlock": ["parameters", "body"],
+        "binaryOperation": ["lhs", "rhs"],  # 注意: 没有operator属性!
+        "instanceofExpression": ["lhs", "rhs"],
+        "valueDeclaration": ["name", "type", "initializer"],
+        "objectCreationExpression": ["type", "arguments"],
+        "throwStatement": ["operand"],
+        "returnStatement": ["returnValue"],
+    }
 
-Example 5 - Logical combinations:
-```dsl
-ifBlock ifb where
-    and(
-        ifb.condition != null,
-        or(
-            ifb.body contain functionCall,
-            ifb.body contain objectCreationExpression
-        )
-    )
-;
-```
+    lines = ["**Node Types and Their Properties:**\n"]
+    for node_type, properties in sorted(common_nodes.items()):
+        lines.append(f"  {node_type}: {', '.join(properties)}")
 
----
+    # 属性类型分类 - 这是关键!
+    lines.append("\n**CRITICAL: Property Access Rules:**")
+    lines.append("\n1. Collection Properties (contain multiple nodes):")
+    lines.append("   - arguments, parameters, dimensions, elements, generics, throwExceptionTypes")
+    lines.append("   - ❌ CANNOT use: catchblock_1.parameters.type")
+    lines.append("   - ✅ MUST use: catchblock_1.parameters contain valueDeclaration where ...")
 
-**Important Constraints for LLM Generation:**
+    lines.append("\n2. Body Properties (contain statements):")
+    lines.append("   - body, thenBlock, elseBlock, tryBlock, catchBlocks, finallyBlock")
+    lines.append("   - ❌ CANNOT use: catchblock_1.body.name")
+    lines.append("   - ✅ MUST use: catchblock_1.body contain binaryOperation where ...")
 
-1. ✅ ALWAYS end queries with semicolon (;)
-2. ✅ Use aliases to reference nodes in conditions (e.g., fc.name, not functionCall.name)
-3. ✅ Wrap logical operations in parentheses: and(...), or(...), not(...)
-4. ✅ Attribute paths must start with alias, not with dot
-5. ✅ Escape quotes in strings: use \\" or \\'
-6. ✅ Nested queries must be complete (with semicolon)
-7. ✅ and/or require at least 2 conditions
-8. ✅ Match operator expects regex pattern in string literal
+    lines.append("\n3. Child Properties (single node, can chain):")
+    lines.append("   - type, condition, lhs, rhs, base, operand, returnValue")
+    lines.append("   - ✅ CAN use: functioncall_1.base.name")
+    lines.append("   - ✅ CAN use: binaryoperation_1.lhs != null")
+
+    lines.append("\n4. Simple Properties (direct values):")
+    lines.append("   - value, primitiveTypeCode")
+    lines.append("   - ✅ CAN use: literal_1.value == \"test\"")
+
+    # 特殊规则
+    lines.append("\n**Special Rules:**")
+    lines.append("  ❌ binaryOperation does NOT have 'operator' property")
+    lines.append("  ✅ To check instanceof: use 'nodeAlias is instanceofExpression'")
+
+    return "\n".join(lines)
+
+
+# ============================================================================
+# 精简的约束语法指南 (用于ExtractConstraint阶段)
+# ============================================================================
+
+CONSTRAINT_SYNTAX_GUIDE = """
+**Your Task: Generate Simple Constraints**
+
+You will add/edit/delete constraints on EXISTING nodes in the DSL.
+DO NOT create new node structures or complete DSL queries.
+
+**Constraint Types:**
+
+1. **Attribute value check (for Child/Simple properties):**
+   Format: nodeAlias.property == value
+   Example: functioncall_1.name == "helper"
+   Example: binaryoperation_1.lhs != null
+
+   ❌ WRONG: catchblock_1.parameters.type (parameters is Collection!)
+   ❌ WRONG: catchblock_1.body.name (body is Body type!)
+
+2. **Node type check:**
+   Format: nodeAlias is NodeType
+   Example: binaryoperation_1 is instanceofExpression
+   Example: valuedeclaration_1 is valueDeclaration
+
+**Valid Operators:**
+- == : equals
+- != : not equals
+- match : regex pattern matching (use with string literals)
+- is : type check
+
+**Critical Rules:**
+✅ Use EXISTING node aliases from the original DSL
+✅ Only add constraints to nodes that already exist
+✅ Use 'is' for type checking, not property access
+✅ Collection/Body properties CANNOT be accessed with "." - they need contain/in queries
+✅ Only Child/Simple properties can be chained with "."
+
+❌ Don't create new node structures
+❌ Don't modify contain/in sub-queries
+❌ Don't use properties that don't exist on the node type
+❌ Don't chain after Collection/Body properties (parameters, arguments, body, etc.)
 """
 
-# Step1: 分析DSL数据
+
+# ============================================================================
+# Step 1: 分析DSL (精简版)
+# ============================================================================
+
 ANALYZE_DSL_PROMPT = """
-You are given a DSL query that attempts to detect a specific type of bug. This DSL was generated based on the buggy code and fixed code pair, with the goal of matching code that exhibits the root cause of the defect.
+You are analyzing a DSL query that detects a specific bug pattern.
 
-IMPORTANT PRINCIPLES:
-- The DSL MUST match the buggy_code (it should detect the defect pattern)
-- The DSL MUST NOT match the fixed_code (it should not match the corrected code)
-- The DSL should ideally capture the essential characteristics described by the root cause
+**DSL Format (Brief):**
+A DSL query has: NodeType alias where Condition ;
 
-Your task is to analyze the DSL query and understand:
-1. What AST nodes and their properties the DSL is trying to match
-2. What conditions are being checked
-3. The structure and logic of the DSL query
-4. Whether the DSL comprehensively captures the root cause or only partially describes the buggy code structure
-
-{dsl_grammar}
+Conditions can check:
+- Properties: alias.property == value
+- Node types: alias is NodeType
+- Logical ops: and(...), or(...), not(...)
+- Nested queries: alias.property contain NodeType where ...
 
 ---
 
-Here is the DSL query:
+**DSL Query:**
 ```dsl
 {dsl_code}
 ```
 
-Here is the buggy code (the DSL should match this):
+**Buggy Code (DSL should match this):**
 ```java
 {buggy_code}
 ```
 
-Here is the fixed code (the DSL should NOT match this):
+**Fixed Code (DSL should NOT match this):**
 ```java
 {fixed_code}
 ```
 
-Description of the root cause:
+**Root Cause:**
 {root_cause}
 
 ---
 
-Please analyze the DSL query structure and explain:
-1. What entity types are being queried
-2. What conditions are applied to each entity
-3. How the conditions are combined (and/or/not)
-4. What properties and values are being checked
-5. Whether the DSL comprehensively captures the root cause description, or only partially describes the buggy code structure
-6. What essential characteristics from the root cause might be missing in the current DSL
+**Your Task:**
+Analyze whether the DSL comprehensively captures the root cause.
 
-Output your analysis in the following format:
+1. What nodes and properties does the DSL check?
+2. What conditions are applied?
+3. Does the DSL capture the ESSENTIAL characteristics of the root cause?
+4. What might be missing?
+
+Output format:
 [DSL_ANALYSIS]
-<your detailed analysis here>
+<your analysis>
 [/DSL_ANALYSIS]
 """
 
-# Step2: 分析FP原因
-ANALYZE_FP_PROMPT = """
-Based on the previous DSL analysis, you found a false positive (FP) - code that the DSL incorrectly matches but should not.
 
-Here is the FP code:
+# ============================================================================
+# Step 2: 分析FP原因
+# ============================================================================
+
+ANALYZE_FP_PROMPT = """
+Based on your DSL analysis, you found a **False Positive (FP)** - code that the DSL incorrectly matches but should NOT match.
+
+**FP Code:**
 ```java
 {fp_code}
 ```
 
-Your task is to explain in natural language what needs to be changed in the DSL to avoid matching this FP code.
+**Understanding FP Scenarios:**
 
-Think about:
-1. **Which DSL node/condition is causing the false match?**
-   - For example: "The node named 'funcCall' matches any function call, but it should only match calls to specific methods"
-   - Or: "The condition 'funcCall.arguments == null' is too broad, it matches cases where arguments exist but are empty"
+A False Positive means the DSL's constraints are NOT strict enough. We need to add more constraints to exclude the FP.
 
-2. **What should be different?**
-   - For example: "The node name should be more specific, like 'funcCall' should become 'funcCall where funcCall.name == \"specificMethod\"'"
-   - Or: "We need to check not just if arguments exist, but also if they contain specific values"
+**Scenario 1: DSL is too broad**
+- The constraints extracted from buggy code are also satisfied by FP code
+- FP shares some characteristics with buggy code, but lacks the KEY defect pattern
+- **Solution**: Add constraints that FP does NOT satisfy (to exclude FP)
 
-3. **What's the root cause?**
-   - Scenario 1: The DSL is too general - it correctly describes the pattern but matches too many cases. We need to add more specific conditions.
-   - Scenario 2: The DSL is incomplete - it's missing important conditions from the buggy code that would distinguish real defects from FPs.
-
-Output your analysis in natural language:
-[FP_ANALYSIS]
-Scenario: <1 or 2>
-Reasoning: <explain in plain language why this scenario applies>
-
-What needs to change:
-<describe in natural language what specific DSL nodes/conditions need to be modified or added>
-- Example: "The 'funcCall' node should check that the function name matches 'specificMethod'"
-- Example: "We need to add a condition that 'funcCall.arguments' contains at least one element"
-
-Key differences between FP and buggy code:
-<describe what makes the FP code different from the actual buggy code>
-[/FP_ANALYSIS]
-"""
-
-# Step3: 提取额外约束
-EXTRACT_CONSTRAINT_PROMPT = """
-Based on the previous FP analysis, extract the specific constraints that need to be modified in the DSL.
-
-**IMPORTANT: You must base your constraints on the EXISTING nodes in the original DSL.**
-- Only add constraints to nodes that already exist in the original DSL
-- Use the exact node aliases from the original DSL
-- Do NOT create new node structures or modify contain/in sub-queries in ways that change the node structure
-- Focus on adding simple attribute constraints to existing nodes
-
-Original DSL:
-```dsl
-{original_dsl}
-```
-
-Source code to analyze:
-```java
-{source_code}
-```
-
-Source type: {source_type} (buggy/fixed/fp)
+**Scenario 2: Key constraints from buggy code were NOT extracted**
+- The original buggy code has important characteristics that were missed during extraction
+- The DSL cannot fully capture the defect's root cause, causing over-matching
+- **Solution**: Go back to buggy code and extract the MISSING constraints (even if they don't directly describe the root cause)
 
 ---
 
-**What to extract:**
+**Your Task:**
 
-For each constraint modification you find, specify:
+1. **Compare FP code with buggy code** - What's the KEY difference?
+2. **Identify the scenario** - Is it Scenario 1 (need to exclude FP) or Scenario 2 (missed buggy code features)?
+3. **Propose constraints** - What constraints should be added to prevent matching FP?
 
-1. **Type**: The type of modification needed
-   - "add": Add a new constraint (the constraint doesn't exist in the original DSL)
-   - "edit": Modify an existing constraint's value (the constraint exists but needs a different value)
-   - "del": Remove an existing constraint (the constraint should be deleted from the DSL)
-   
-2. **Constraint Path**: Where the constraint is located, in format "nodeAlias.attribute"
-   - **CRITICAL**: The nodeAlias MUST be an existing node alias from the original DSL above
-   - Example: "funcCall.name" means the "name" attribute of the node with alias "funcCall" (if "funcCall" exists in original DSL)
-   - Example: "ifBlock.condition" means the "condition" attribute of the "ifBlock" node (if "ifBlock" exists in original DSL)
-   - **For sub-query constraints**: Use the alias of the node defined in the contain/in sub-query directly
-     - Example: If original DSL has "body contain valueDeclaration vd", use "vd.name" to add constraint to the sub-query node
-     - The nodeAlias must match an existing alias in the original DSL (e.g., "vd", "param", etc.)
-   - **DO NOT** create new node aliases or modify the node structure
-   - For "edit" and "del" types, this must match an existing constraint path in the original DSL
-   - For "add" type, the nodeAlias must exist in the original DSL, and you're adding a new attribute constraint to that existing node
-   
-3. **Operator**: How to compare (required for "add" and "edit" types)
-   - For simple values: "==", "!=", "match", "is"
-   - For checking if something contains another node: "contain", "in"
-   - For "del" type, this field can be omitted or left empty
-   
-4. **Value**: What to compare against (required for "add" and "edit" types)
-   - For simple values: the actual value (e.g., "specificMethod", "null", "true")
-   - For sub-queries: the complete DSL sub-query (e.g., "functionCall where functionCall.name == \"method\" ;")
-   - For "edit" type: this is the NEW value that should replace the existing one
-   - For "del" type, this field can be omitted or left empty
-   
-5. **Original Value**: (Optional, only for "edit" type)
-   - The original value of the constraint that needs to be modified
-   - This helps locate the exact constraint to edit when multiple constraints exist at the same path
-   - If omitted, the first matching constraint at the path will be edited
-   
-6. **Is Negative**: "yes" if this constraint should filter out FP (use not()), "no" if it should be added as a positive condition
-   - For "del" type, this field can be omitted
+**Output format:**
+[FP_ANALYSIS]
+Scenario: <1 or 2>
 
-**Output Format:**
-[CONSTRAINTS]
-Constraint 1:
-- Type: add
-- Path: funcCall.name
-- Operator: ==
-- Value: specificMethod
-- Is Negative: no
+Reasoning:
+<Explain which scenario applies and why>
 
-Constraint 2:
-- Type: edit
-- Path: funcCall.arguments
-- Operator: ==
-- Original Value: null
-- Value: empty
-- Is Negative: no
+Key differences between FP and buggy code:
+<List the critical differences that should distinguish them>
 
-Constraint 3:
-- Type: del
-- Path: ifBlock.condition
-- Is Negative: no
+What constraints to add:
+<Describe what constraints need to be added to the DSL>
+- If Scenario 1: Constraints that FP does NOT satisfy
+- If Scenario 2: Constraints from buggy code that were missed
 
-Constraint 4:
-- Type: add
-- Path: funcCall.arguments
-- Operator: contain
-- Value: functionCall where functionCall.name == "helper" ;
-- Is Negative: yes
-
-[/CONSTRAINTS]
-
-**Important:**
-- **CRITICAL RULE**: All node aliases in Path MUST exist in the original DSL above. Do NOT create new node structures.
-- Path format: "nodeAlias.attribute" (use the EXACT alias from the original DSL)
-  - For main query nodes: use the main node alias from original DSL (e.g., if original has "functionDeclaration fd", use "fd.name")
-  - For sub-query nodes: use the sub-query node alias from original DSL (e.g., if original has "body contain valueDeclaration vd", use "vd.name")
-  - **Always verify the nodeAlias exists in the original DSL before using it**
-- Type must be one of: "add", "edit", "del"
-- For "add" type: Path, Operator, and Value are required
-  - **"add" means adding a new attribute constraint to an EXISTING node** (e.g., adding "operator is instanceof" to an existing "binaryoperation_1" node)
-  - **DO NOT use "add" to create new node structures or modify contain/in sub-queries**
-- For "edit" type: Path, Operator, and Value are required; Original Value is optional but recommended
-- For "del" type: Only Path is required; Operator and Value can be omitted
-- **Avoid complex sub-query modifications**: Prefer adding simple attribute constraints to existing nodes
-- Keep it simple and clear - one constraint per block
-- If no constraints found, output: [CONSTRAINTS]\n[/CONSTRAINTS]
-
-**Examples for sub-query constraints:**
-- Original DSL: `functionDeclaration fd where fd.body contain valueDeclaration vd;`
-- To add constraint to sub-query: Path should be "vd.name" (using the sub-query alias "vd" directly)
-- Original DSL: `functionCall fc where fc.arguments contain param where param.type == "String";`
-- To edit constraint in sub-query: Path should be "param.type" (using the sub-query alias "param" directly)
-
-**Format Variations Accepted:**
-The following format variations are also acceptable:
-- Field names can be separated by colons or dashes: "Path:", "Path -", "Type:", "Type -"
-- Field order can vary
-- Multiple constraints can be separated by blank lines or "Constraint N:" markers
+[/FP_ANALYSIS]
 """
 
-# Step3.5: 验证和修复约束
-VALIDATE_CONSTRAINT_PROMPT = """
-You previously extracted constraints to modify the DSL. However, some of these constraints have syntax or semantic errors.
+
+# ============================================================================
+# Step 3: 提取约束 (核心阶段,重点优化)
+# ============================================================================
+
+EXTRACT_CONSTRAINT_PROMPT = """
+Based on your FP analysis, extract specific constraints to modify the DSL.
+
+{node_metadata}
+
+{constraint_syntax}
+
+---
 
 **Original DSL:**
 ```dsl
 {original_dsl}
 ```
 
-**Extracted Constraints (with errors):**
+**Source Code:**
+```java
+{source_code}
+```
+
+**Source Type:** {source_type}
+
+---
+
+**Constraint Extraction Rules:**
+
+1. **Type**: add / edit / del
+   - add: Add new constraint to EXISTING node
+   - edit: Change existing constraint value
+   - del: Remove constraint
+
+2. **Path**: nodeAlias.property OR nodeAlias (for type check)
+   - MUST use existing alias from original DSL above
+   - Examples: binaryoperation_1, functioncall_1.name, catchblock_1.parameters
+
+3. **Operator**: ==, !=, match, is
+   - Use 'is' for type checking
+   - Use 'match' for regex patterns
+
+4. **Value**: The constraint value
+   - For type check: NodeType name (e.g., "instanceofExpression")
+   - For property check: literal value or regex pattern
+   - MUST be a valid value based on metadata above
+
+---
+
+**What NOT to Do (IMPORTANT):**
+
+❌ BAD Example 1 - Creating new node:
+Constraint:
+- Type: add
+- Path: catchblock_1.body
+- Operator: contain
+- Value: binaryOperation newnode where newnode is instanceofExpression;
+
+Why bad: This creates a NEW node structure, violating the rules.
+
+❌ BAD Example 2 - Using non-existent property:
+Constraint:
+- Type: add
+- Path: binaryoperation_1.operator
+- Operator: match
+- Value: instanceof
+
+Why bad: Property 'operator' doesn't exist on binaryOperation (check metadata).
+
+❌ BAD Example 3 - Duplicate constraint:
+If original DSL already has: binaryoperation_1 is instanceofExpression
+Don't add:
+- Type: add
+- Path: binaryoperation_1
+- Operator: is
+- Value: instanceofExpression
+
+Why bad: This constraint already exists in the original DSL. Check the original DSL carefully before adding constraints.
+
+❌ BAD Example 4 - Reusing existing alias in new contain clause:
+If original DSL already has: catchblock_1.body contain binaryOperation binaryoperation_1 where ...
+Don't add:
+- Type: add
+- Path: catchblock_1.body
+- Operator: contain
+- Value: binaryOperation binaryoperation_1 where binaryoperation_1.lhs != null;
+
+Why bad: This reuses the alias 'binaryoperation_1' which already exists. If you want to add constraints to binaryoperation_1, directly use:
+- Path: binaryoperation_1.lhs
+- Operator: !=
+- Value: null
+
+❌ BAD Example 5 - Overfitting to FP by creating new contain clause:
+If original DSL has: binaryoperation_1 contain functionCall functioncall_1 where functioncall_1.base.name match "(?i).*(utils|helper)$"
+And FP code calls: CloseUtil.closeQuietly(...)
+Don't add:
+- Type: add
+- Path: catchblock_1.body
+- Operator: contain
+- Value: functionCall functioncall_2 where not(functioncall_2.base.name match "(?i).*CloseUtil.*")
+
+Why bad:
+1. 这创建了一个带有新别名functioncall_2的新contain子句（违反规则：只能修改现有节点）
+2. 这过拟合到特定的FP示例 - 排除"CloseUtil"不会帮助处理其他FP模式
+3. 现有的functioncall_1约束已经泛化地处理了helper方法
+4. 应该让现有约束更精确地匹配bug pattern，而不是为每个FP添加负向过滤器
+
+❌ BAD Example 6 - Adding conflicting constraint to same property:
+If original DSL has: functioncall_1.base.name match "(?i).*(utils|helper)$"
+Don't add:
+- Type: add
+- Path: functioncall_1.base.name
+- Operator: match
+- Value: "(?i).*CloseUtil.*"
+
+Why bad:
+1. functioncall_1.base.name已经有一个match约束了
+2. 同一个属性不能同时匹配两个不同的regex模式
+3. 如果需要修改现有约束，应该使用Type: edit而不是add
+
+---
+
+**GOOD Examples:**
+
+✅ Add type check to existing node:
+Constraint:
+- Type: add
+- Path: binaryoperation_1
+- Operator: is
+- Value: instanceofExpression
+
+✅ Add property constraint:
+Constraint:
+- Type: add
+- Path: functioncall_1.name
+- Operator: !=
+- Value: "helper"
+
+---
+
+**Output Format:**
+[CONSTRAINTS]
+Constraint 1:
+- Type: add
+- Path: <existing_alias or existing_alias.property>
+- Operator: <==|!=|match|is>
+- Value: <value>
+
+Constraint 2:
+...
+[/CONSTRAINTS]
+
+**Remember:**
+- Only modify EXISTING nodes - use aliases that are already defined in the original DSL
+- Check metadata for valid properties
+- Check original DSL to avoid duplicate constraints
+- If a constraint already exists in original DSL, don't add it again
+- NEVER reuse an existing alias in a new contain/in clause - this creates alias conflicts
+- If you want to add constraints to an existing node, use its alias directly in Path field
+"""
+
+
+# ============================================================================
+# Step 3.5: 验证和修复约束
+# ============================================================================
+
+VALIDATE_CONSTRAINT_PROMPT = """
+Your previous constraints have validation errors. Fix them based on the errors and suggestions.
+
+**Original DSL:**
+```dsl
+{original_dsl}
+```
+
+**Your Constraints (with errors):**
 {constraints_json}
 
 **Validation Errors:**
@@ -497,36 +411,35 @@ You previously extracted constraints to modify the DSL. However, some of these c
 ---
 
 **Your Task:**
-Fix the invalid constraints based on the validation errors and fix suggestions. You must output the corrected constraints in the same format as before.
 
-**Important Rules:**
-1. **Only fix the constraints that have errors** - keep valid constraints unchanged
-2. **Follow DSL syntax rules strictly** - use the DSL grammar provided earlier
-3. **Node types and properties must be valid** - refer to the validation errors for details
-4. **For operator property issues**: If you see errors like "Property 'operator' is not supported", use node type check instead
-   - Wrong: `binaryoperation_1.operator is instanceof`
-   - Correct: `binaryoperation_1 is instanceofExpression`
-5. **Maintain the same constraint structure** - only change the invalid parts
+1. **Follow the Fix Suggestions** - Each error has a specific fix suggestion provided above
+2. **Only fix constraints with errors** - Keep valid constraints unchanged
+3. **Maintain constraint structure** - Only change the invalid parts based on suggestions
 
 **Output Format:**
 [CONSTRAINTS]
 Constraint 1:
 - Type: add
-- Path: funcCall.name
-- Operator: ==
-- Value: "specificMethod"
-- Is Negative: no
-
-Constraint 2:
-- Type: edit
-- Path: funcCall.arguments
-- Operator: ==
-- Value: empty
-- Is Negative: no
+- Path: <corrected_path>
+- Operator: <corrected_operator>
+- Value: <corrected_value>
 ...
 [/CONSTRAINTS]
 
-**Note:** Output ALL constraints (both fixed and unchanged) in the same order, but with corrections applied to invalid ones.
+Output ALL constraints (both fixed and unchanged) in order.
 """
 
-# Step4已移除，改为基于约束手动编辑DSL，不再使用LLM
+
+# ============================================================================
+# 动态生成完整prompt
+# ============================================================================
+
+def get_extract_constraint_prompt(original_dsl: str, source_code: str, source_type: str) -> str:
+    """生成ExtractConstraint阶段的完整prompt"""
+    return EXTRACT_CONSTRAINT_PROMPT.format(
+        node_metadata=get_node_metadata_prompt(),
+        constraint_syntax=CONSTRAINT_SYNTAX_GUIDE,
+        original_dsl=original_dsl,
+        source_code=source_code,
+        source_type=source_type
+    )

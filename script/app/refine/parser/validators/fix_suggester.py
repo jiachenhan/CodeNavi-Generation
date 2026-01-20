@@ -7,7 +7,7 @@ DSL修复建议生成器
 """
 from typing import Optional
 from app.refine.parser.dsl_ast import Query, Condition, AtomicCondition, ValueMatch, Attribute
-from app.refine.parser.dsl_validator import ValidationError, ValidationErrorType
+from app.refine.parser.validators.semantic_validator import ValidationError, ValidationErrorType
 from app.refine.parser.dsl_metadata import (
     UNSUPPORTED_PROPERTY_PATHS,
     PROPERTY_VALUE_TYPE_HINTS,
@@ -21,11 +21,11 @@ class DSLFixSuggester:
     def suggest_fix_for_error(error: ValidationError, query: Query) -> Optional[str]:
         """
         为验证错误生成修复建议
-        
+
         Args:
             error: 验证错误
             query: 查询对象
-            
+
         Returns:
             修复后的DSL片段，如果无法修复则返回None
         """
@@ -33,7 +33,10 @@ class DSLFixSuggester:
             return DSLFixSuggester._fix_unsupported_property_path(error, query)
         elif error.error_type == ValidationErrorType.INVALID_VALUE_FOR_PROPERTY:
             return DSLFixSuggester._fix_invalid_property_value(error, query)
-        
+        elif error.error_type == ValidationErrorType.DUPLICATE_ALIAS:
+            # 别名重复错误已经在 error.suggestion 中提供了修复建议
+            return error.suggestion
+
         return None
     
     @staticmethod

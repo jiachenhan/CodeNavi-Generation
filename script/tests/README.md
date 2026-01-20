@@ -57,12 +57,81 @@ pytest tests/parser/test_validator.py::TestDSLValidator::test_correct_dsl
 ### 批量测试 .kirin 文件
 
 ```bash
-# 使用默认路径（从环境变量 KIRIN_TEST_ROOT 读取）
+# 使用 conftest.py 中配置的路径
 pytest tests/parser/test_parser_all_kirin.py
-
-# 指定测试目录
-pytest tests/parser/test_parser_all_kirin.py --kirin-root "E:/dataset/Navi/final_thesis_datas/ori_dsl"
 ```
+
+## 测试数据路径配置
+
+所有测试数据路径都统一在 `tests/conftest.py` 中管理。
+
+### 修改路径配置
+
+直接修改 `tests/conftest.py` 中的 `TestDataPaths` 类属性：
+
+```python
+class TestDataPaths:
+    # 数据集基础路径
+    DATASET_BASE_PATH = Path("E:/dataset/Navi")
+    
+    # DSL 文件根目录（.kirin 文件）
+    DSL_ROOT_PATH = Path("E:/dataset/Navi/final_thesis_datas/ori_dsl")
+    
+    # 检测结果文件根目录
+    DETECT_RESULTS_ROOT_PATH = Path("E:/dataset/Navi/final_thesis_datas/ori_dsl_detect_results")
+    
+    # 缺陷修复数据根目录（DEFs）
+    DEFS_ROOT_PATH = Path("E:/dataset/Navi/DEFs")
+```
+
+**示例：**
+
+```python
+# 修改所有路径
+DATASET_BASE_PATH = Path("D:/my_test_data")
+DSL_ROOT_PATH = Path("D:/my_test_data/final_thesis_datas/ori_dsl")
+DETECT_RESULTS_ROOT_PATH = Path("D:/my_test_data/final_thesis_datas/ori_dsl_detect_results")
+DEFS_ROOT_PATH = Path("D:/my_test_data/DEFs")
+```
+
+### 在测试中使用
+
+所有测试都可以通过 fixture 获取统一的路径配置：
+
+```python
+def test_something(test_data_paths):
+    # 获取 .kirin 文件路径
+    kirin_file = test_data_paths.dsl_root_path / "pmd_v1_commits" / "pattern" / "1.kirin"
+    
+    # 获取 DEF 文件路径
+    buggy_file = test_data_paths.defs_root_path / "pmd" / "pattern" / "1" / "buggy.java"
+    
+    # 获取检测结果路径
+    result_file = test_data_paths.detect_results_root_path / "pmd_v1_commits" / "pattern" / "1_results.json"
+```
+
+### 路径结构
+
+测试数据应遵循以下目录结构：
+
+```
+DATASET_BASE_PATH/
+├── final_thesis_datas/
+│   ├── ori_dsl/                    (对应 DSL_ROOT_PATH)
+│   │   └── pmd_v1_commits/
+│   │       └── ...
+│   └── ori_dsl_detect_results/     (对应 DETECT_RESULTS_ROOT_PATH)
+│       └── ...
+└── DEFs/                            (对应 DEFS_ROOT_PATH)
+    └── pmd/
+        └── ...
+```
+
+**路径说明：**
+- `DSL_ROOT_PATH`: .kirin 文件根目录
+- `DETECT_RESULTS_ROOT_PATH`: 检测结果文件目录
+- `DEFS_ROOT_PATH`: 缺陷修复数据目录（包含 buggy.java、fixed.java、info.json 等文件）
+- `DATASET_BASE_PATH`: 数据集基础路径（可选，用于统一管理）
 
 ## 测试标记
 
@@ -87,11 +156,6 @@ pytest tests/parser/
 # 运行所有测试（包括需要 LLM 的）
 pytest -m ""  # 或者修改 pyproject.toml 中的 addopts
 ```
-
-## 环境变量
-
-- `KIRIN_TEST_ROOT`: 默认的 .kirin 文件测试根目录
-- `TEST_DATA_BASE`: 测试数据的基础路径
 
 ## 依赖处理
 

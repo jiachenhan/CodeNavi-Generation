@@ -13,25 +13,13 @@ import os
 from app.refine.parser import DSLParser
 from utils.config import LoggerConfig
 
+# 导入测试数据路径配置
+# 注意：在 pytest_generate_tests 中无法使用 fixture，所以直接导入全局实例
+from tests.conftest import _test_data_paths
+
 _logger = LoggerConfig.get_logger(__name__)
 
 
-def get_kirin_root_path(config_or_request) -> Path:
-    """
-    获取 .kirin 文件的根目录路径
-    
-    Args:
-        config_or_request: pytest config 对象或 request 对象
-        
-    Returns:
-        根目录路径
-    """
-    root_dir = config_or_request.config.getoption("--kirin-root", default=None)
-    if root_dir:
-        return Path(root_dir)
-    else:
-        default_path = os.getenv("KIRIN_TEST_ROOT", "E:/dataset/Navi/final_thesis_datas/ori_dsl")
-        return Path(default_path)
 
 
 def find_all_kirin_files(root_dir: Path) -> Generator[Path, None, None]:
@@ -167,7 +155,9 @@ def pytest_generate_tests(metafunc: pytest.Metafunc):
     """
     if "kirin_file" in metafunc.fixturenames:
         # 获取文件列表
-        root_path = get_kirin_root_path(metafunc)
+        # 注意：在 pytest_generate_tests 中无法直接使用 fixture
+        # 所以使用全局的 _test_data_paths 实例
+        root_path = _test_data_paths.dsl_root_path
         
         # 将生成器转换为列表
         files = list(find_all_kirin_files(root_path))
@@ -187,7 +177,10 @@ def pytest_generate_tests(metafunc: pytest.Metafunc):
         metafunc.parametrize("kirin_file", files, ids=test_ids)
 
 
-def test_parse_single_kirin_file(kirin_file: Path, request: pytest.FixtureRequest):
+def test_parse_single_kirin_file(
+    kirin_file: Path, 
+    dsl_root_path: Path
+):
     """
     测试解析单个 .kirin 文件
     
@@ -196,10 +189,10 @@ def test_parse_single_kirin_file(kirin_file: Path, request: pytest.FixtureReques
     
     Args:
         kirin_file: .kirin 文件路径（通过 pytest_generate_tests 参数化传入）
-        request: pytest request 对象（用于获取配置）
+        dsl_root_path: DSL 文件根目录路径（从 fixture 获取）
     """
     # 获取基准路径用于计算相对路径
-    base_path = get_kirin_root_path(request)
+    base_path = dsl_root_path
     
     # 获取相对路径用于输出
     rel_path = get_relative_path(kirin_file, base_path)
@@ -228,11 +221,3 @@ def test_parse_single_kirin_file(kirin_file: Path, request: pytest.FixtureReques
         pytest.fail(error_message)
 
 
-def pytest_addoption(parser):
-    """添加 pytest 命令行选项"""
-    parser.addoption(
-        "--kirin-root",
-        action="store",
-        default=None,
-        help="Root directory containing .kirin files to test"
-    )

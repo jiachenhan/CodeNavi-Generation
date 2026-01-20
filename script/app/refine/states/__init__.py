@@ -1,32 +1,34 @@
 """
-DSL Refine 状态机 - 兼容层
+DSL Refine 状态机 - States 子包
 
-这个文件现在是一个兼容层，所有State类都已经迁移到states/子包中。
-保留这个文件是为了向后兼容，避免破坏现有的导入。
+每个State一个独立文件，包含：
+- State类本身
+- 该State的辅助类/函数
+- 该State的解析器/验证器
 
-新代码应该使用：
-    from app.refine.states import ExtractConstraintState
-
-旧代码（兼容）：
-    from app.refine.prompt_state import ExtractConstraintState
+状态流程：
+InitialState → AnalyzeDSLState → AnalyzeFPState → ExtractConstraintState
+→ ValidateConstraintState → ConstructDSLState → ExitState
 """
 
-# 从states子包导入所有State类，实现向后兼容
 from app.refine.states.base_state import PromptState
-from app.refine.states.common_states import InitialState, ExitState
 from app.refine.states.analyze_dsl_state import AnalyzeDSLState
 from app.refine.states.analyze_fp_state import AnalyzeFPState
 from app.refine.states.extract_constraint_state import ExtractConstraintState
 from app.refine.states.validate_constraint_state import ValidateConstraintState
 from app.refine.states.construct_dsl_state import ConstructDSLState
+from app.refine.states.common_states import InitialState, ExitState
 
 __all__ = [
+    # 基类
     "PromptState",
+
+    # 状态类
     "InitialState",
-    "ExitState",
     "AnalyzeDSLState",
     "AnalyzeFPState",
     "ExtractConstraintState",
     "ValidateConstraintState",
     "ConstructDSLState",
+    "ExitState",
 ]

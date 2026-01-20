@@ -1,3 +1,10 @@
+"""
+    Try Zero-shot refine for DSL, 
+    However, it can NOT be able to handle the complex cases.
+    Especially the cases that the DSL grammer is unusual, 
+    e.g. biniaryoperation_1.operator == "instanceof", -> binaryoperation_1 is instanceofExpression
+"""
+
 import json
 import re
 from pathlib import Path

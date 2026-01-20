@@ -28,6 +28,7 @@ class ValidationErrorType(Enum):
     UNSUPPORTED_PROPERTY_PATH = "unsupported_property_path"
     INVALID_VALUE_FOR_PROPERTY = "invalid_value_for_property"
     MISSING_ALIAS = "missing_alias"
+    DUPLICATE_ALIAS = "duplicate_alias"  # 在contain/in子句中重复使用已存在的别名
 
 
 @dataclass
@@ -62,23 +63,58 @@ class DSLValidator:
     def validate(self, query: Query) -> ValidationResult:
         """
         验证DSL查询
-        
+
         Args:
             query: 要验证的查询
-            
+
         Returns:
             验证结果
         """
         self.errors = []
         self.warnings = []
         self.node_map = {}
-        
+
         # 收集所有节点（包括嵌套查询）
         self._collect_nodes(query)
-        
+
         # 验证查询
         self._validate_query(query)
-        
+
+        return ValidationResult(
+            is_valid=len(self.errors) == 0,
+            errors=self.errors,
+            warnings=self.warnings
+        )
+
+    def validate_condition(self, condition: Condition, node_map: Dict[str, Query]) -> ValidationResult:
+        """
+        验证独立的Condition（不需要完整Query）
+
+        Args:
+            condition: 要验证的条件
+            node_map: 节点别名到Query的映射（来自原始DSL）
+
+        Returns:
+            验证结果
+        """
+        self.errors = []
+        self.warnings = []
+        self.node_map = node_map  # 使用提供的node_map
+
+        # 从node_map中提取上下文信息
+        # 假设验证的条件属于第一个节点（通常是根节点）
+        if node_map:
+            first_query = next(iter(node_map.values()))
+            context_node_type = first_query.entity.node_type
+            context_alias = first_query.entity.alias
+        else:
+            # 如果没有提供node_map，使用默认值
+            context_node_type = "unknown"
+            context_alias = None
+
+        # 验证条件
+        self._validate_condition(condition, context_node_type, context_alias)
+
         return ValidationResult(
             is_valid=len(self.errors) == 0,
             errors=self.errors,

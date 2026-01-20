@@ -111,6 +111,59 @@ VALID_PROPERTIES = {
     "primitiveTypeCode",
 }
 
+# 属性的RoleAction类型分类（从DSLRole子类提取）
+# 这决定了属性如何被访问
+PROPERTY_ROLE_ACTIONS = {
+    # Collection类型: 包含多个节点,必须使用contain/in查询,不能直接用"."访问子属性
+    "arguments": "Collection",
+    "parameters": "Collection",
+    "dimensions": "Collection",
+    "elements": "Collection",  # arrayInitializer.elements
+    "generics": "Collection",
+    "throwExceptionTypes": "Collection",
+
+    # Body类型: 包含多个语句,必须使用contain查询
+    "body": "Body",
+    "thenBlock": "Body",
+    "elseBlock": "Body",
+    "tryBlock": "Body",
+    "catchBlocks": "Body",
+    "finallyBlock": "Body",
+    "tryResources": "Body",
+    "annoMembers": "Body",
+    "annotations": "Body",
+    "anonymousClassBody": "Body",
+
+    # Child类型: 单个子节点,可以用"."访问其属性
+    "type": "Child",
+    "condition": "Child",
+    "returnValue": "Child",
+    "operand": "Child",
+    "lhs": "Child",
+    "rhs": "Child",
+    "base": "Child",
+    "baseType": "Child",
+    "castType": "Child",
+    "arrayIndex": "Child",
+    "initArray": "Child",
+    "thenExpression": "Child",
+    "elseExpression": "Child",
+    "forInit": "Child",
+    "forIter": "Child",
+    "switchSelector": "Child",
+    "caseExpression": "Child",
+    "forEachVariable": "Child",
+    "forEachIterable": "Child",
+    "lock": "Child",
+    "annoValue": "Child",
+    "variableInit": "Child",
+    "assertMessage": "Child",
+
+    # Simple类型: 简单值,可以直接比较
+    "value": "Simple",  # 字面量的值
+    "primitiveTypeCode": "Simple",
+}
+
 # 节点类型到有效属性的映射
 # 注意：这个映射需要根据DSLRoleMapping.java中的实际映射关系来构建
 # 这里先提供一个基础版本，后续可以根据需要扩展
