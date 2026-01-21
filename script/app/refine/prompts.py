@@ -186,40 +186,66 @@ Based on your DSL analysis, you found a **False Positive (FP)** - code that the 
 
 **Understanding FP Scenarios:**
 
-A False Positive means the DSL's constraints are NOT strict enough. We need to add more constraints to exclude the FP.
+A False Positive means the DSL does NOT accurately capture the bug pattern. The DSL may be too broad OR missing key characteristics.
 
 **Scenario 1: DSL is too broad**
-- The constraints extracted from buggy code are also satisfied by FP code
+- The DSL matches patterns that are NOT related to the root cause
 - FP shares some characteristics with buggy code, but lacks the KEY defect pattern
-- **Solution**: Add constraints that FP does NOT satisfy (to exclude FP)
+- **Solution**: Add constraints to capture the ESSENTIAL bug pattern that FP does NOT have
 
-**Scenario 2: Key constraints from buggy code were NOT extracted**
+**Scenario 2: Key characteristics from buggy code were NOT extracted**
 - The original buggy code has important characteristics that were missed during extraction
 - The DSL cannot fully capture the defect's root cause, causing over-matching
-- **Solution**: Go back to buggy code and extract the MISSING constraints (even if they don't directly describe the root cause)
+- **Solution**: Go back to buggy code and extract the MISSING constraints
+
+---
+
+**CRITICAL THINKING:**
+
+Before proposing constraints, ask yourself:
+1. **What is the CORE bug pattern described in the root cause?**
+2. **Does the original DSL directly detect this CORE pattern?**
+3. **If NOT, what parts of the original DSL are IRRELEVANT to the root cause?**
+
+**Important:**
+- If the original DSL contains constraints that are NOT related to the root cause, you should consider REMOVING them
+- Don't just keep adding more constraints on top of irrelevant ones
+- Focus on constraints that DIRECTLY capture the essence of the bug
 
 ---
 
 **Your Task:**
 
-1. **Compare FP code with buggy code** - What's the KEY difference?
-2. **Identify the scenario** - Is it Scenario 1 (need to exclude FP) or Scenario 2 (missed buggy code features)?
-3. **Propose constraints** - What constraints should be added to prevent matching FP?
+1. **Identify the CORE bug pattern** from the root cause description
+2. **Compare FP code with buggy code** - What's the KEY difference related to the CORE bug pattern?
+3. **Analyze the original DSL** - Does it check for the CORE bug pattern? Or is it checking something else?
+4. **Identify the scenario** - Is it Scenario 1 (DSL too broad) or Scenario 2 (missed key features)?
+5. **Propose DSL modifications** - What should be changed?
 
 **Output format:**
 [FP_ANALYSIS]
 Scenario: <1 or 2>
 
+Core Bug Pattern:
+<Describe the ESSENTIAL pattern that defines this bug, based on root cause>
+
 Reasoning:
 <Explain which scenario applies and why>
 
 Key differences between FP and buggy code:
-<List the critical differences that should distinguish them>
+<List the critical differences that distinguish FP from buggy code>
 
-What constraints to add:
-<Describe what constraints need to be added to the DSL>
-- If Scenario 1: Constraints that FP does NOT satisfy
-- If Scenario 2: Constraints from buggy code that were missed
+Original DSL Issues:
+<Analyze what's wrong with the original DSL - is it checking the right thing?>
+- Does it detect the CORE bug pattern? If not, what is it detecting?
+- Are there constraints unrelated to the root cause that should be removed?
+
+Recommended Changes:
+<Describe what should be changed in the DSL>
+- Constraints to ADD (that capture the CORE bug pattern)
+- Constraints to REMOVE (that are unrelated to the bug pattern)
+- If Scenario 1: Focus on adding constraints that capture what FP is MISSING
+- If Scenario 2: Focus on adding constraints from buggy code that were missed
 
 [/FP_ANALYSIS]
 """
@@ -252,138 +278,64 @@ Based on your FP analysis, extract specific constraints to modify the DSL.
 
 ---
 
-**Constraint Extraction Rules:**
+**Constraint Format:**
+- Type: add / edit / del
+- Path: nodeAlias or nodeAlias.property (use EXISTING aliases from original DSL)
+- Operator: == / != / match / is
+- Value: The constraint value
+- Is Negative: no (default) or yes (rare - only for explicit exclusion)
 
-1. **Type**: add / edit / del
-   - add: Add new constraint to EXISTING node
-   - edit: Change existing constraint value
-   - del: Remove constraint
-
-2. **Path**: nodeAlias.property OR nodeAlias (for type check)
-   - MUST use existing alias from original DSL above
-   - Examples: binaryoperation_1, functioncall_1.name, catchblock_1.parameters
-
-3. **Operator**: ==, !=, match, is
-   - Use 'is' for type checking
-   - Use 'match' for regex patterns
-
-4. **Value**: The constraint value
-   - For type check: NodeType name (e.g., "instanceofExpression")
-   - For property check: literal value or regex pattern
-   - MUST be a valid value based on metadata above
+**Key Rules:**
+1. Only modify EXISTING nodes - use aliases already defined in original DSL
+2. To delete irrelevant constraints: Type: del
+3. Always include "Is Negative: no" unless explicitly excluding something
 
 ---
 
-**What NOT to Do (IMPORTANT):**
+**Common Mistakes:**
 
-❌ BAD Example 1 - Creating new node:
-Constraint:
-- Type: add
-- Path: catchblock_1.body
-- Operator: contain
-- Value: binaryOperation newnode where newnode is instanceofExpression;
+❌ Creating new nodes/aliases - Only modify EXISTING aliases from original DSL
+❌ Using non-existent properties - Check metadata first (e.g., binaryOperation has no 'operator' property)
+❌ Duplicate constraints - Check if constraint already exists in original DSL
 
-Why bad: This creates a NEW node structure, violating the rules.
+---
 
-❌ BAD Example 2 - Using non-existent property:
-Constraint:
-- Type: add
-- Path: binaryoperation_1.operator
-- Operator: match
-- Value: instanceof
+**Examples:**
 
-Why bad: Property 'operator' doesn't exist on binaryOperation (check metadata).
-
-❌ BAD Example 3 - Duplicate constraint:
-If original DSL already has: binaryoperation_1 is instanceofExpression
-Don't add:
+✅ Add constraint:
 - Type: add
 - Path: binaryoperation_1
 - Operator: is
 - Value: instanceofExpression
+- Is Negative: no
 
-Why bad: This constraint already exists in the original DSL. Check the original DSL carefully before adding constraints.
-
-❌ BAD Example 4 - Reusing existing alias in new contain clause:
-If original DSL already has: catchblock_1.body contain binaryOperation binaryoperation_1 where ...
-Don't add:
-- Type: add
-- Path: catchblock_1.body
-- Operator: contain
-- Value: binaryOperation binaryoperation_1 where binaryoperation_1.lhs != null;
-
-Why bad: This reuses the alias 'binaryoperation_1' which already exists. If you want to add constraints to binaryoperation_1, directly use:
-- Path: binaryoperation_1.lhs
-- Operator: !=
-- Value: null
-
-❌ BAD Example 5 - Overfitting to FP by creating new contain clause:
-If original DSL has: binaryoperation_1 contain functionCall functioncall_1 where functioncall_1.base.name match "(?i).*(utils|helper)$"
-And FP code calls: CloseUtil.closeQuietly(...)
-Don't add:
-- Type: add
-- Path: catchblock_1.body
-- Operator: contain
-- Value: functionCall functioncall_2 where not(functioncall_2.base.name match "(?i).*CloseUtil.*")
-
-Why bad:
-1. 这创建了一个带有新别名functioncall_2的新contain子句（违反规则：只能修改现有节点）
-2. 这过拟合到特定的FP示例 - 排除"CloseUtil"不会帮助处理其他FP模式
-3. 现有的functioncall_1约束已经泛化地处理了helper方法
-4. 应该让现有约束更精确地匹配bug pattern，而不是为每个FP添加负向过滤器
-
-❌ BAD Example 6 - Adding conflicting constraint to same property:
-If original DSL has: functioncall_1.base.name match "(?i).*(utils|helper)$"
-Don't add:
-- Type: add
+✅ Delete irrelevant constraint:
+- Type: del
 - Path: functioncall_1.base.name
-- Operator: match
-- Value: "(?i).*CloseUtil.*"
-
-Why bad:
-1. functioncall_1.base.name已经有一个match约束了
-2. 同一个属性不能同时匹配两个不同的regex模式
-3. 如果需要修改现有约束，应该使用Type: edit而不是add
-
----
-
-**GOOD Examples:**
-
-✅ Add type check to existing node:
-Constraint:
-- Type: add
-- Path: binaryoperation_1
-- Operator: is
-- Value: instanceofExpression
-
-✅ Add property constraint:
-Constraint:
-- Type: add
-- Path: functioncall_1.name
-- Operator: !=
-- Value: "helper"
+- Operator: N/A
+- Value: N/A
+- Is Negative: no
 
 ---
 
 **Output Format:**
 [CONSTRAINTS]
 Constraint 1:
-- Type: add
+- Type: <add|edit|del>
 - Path: <existing_alias or existing_alias.property>
-- Operator: <==|!=|match|is>
-- Value: <value>
+- Operator: <==|!=|match|is|N/A>
+- Value: <value|N/A>
+- Is Negative: <no|yes>  // Use "no" for most cases. Only use "yes" for explicit exclusion.
 
 Constraint 2:
 ...
 [/CONSTRAINTS]
 
-**Remember:**
-- Only modify EXISTING nodes - use aliases that are already defined in the original DSL
-- Check metadata for valid properties
-- Check original DSL to avoid duplicate constraints
-- If a constraint already exists in original DSL, don't add it again
-- NEVER reuse an existing alias in a new contain/in clause - this creates alias conflicts
-- If you want to add constraints to an existing node, use its alias directly in Path field
+**Final Checklist:**
+- ✅ Used EXISTING aliases from original DSL (not creating new ones)
+- ✅ Checked metadata for valid properties
+- ✅ Set "Is Negative: no" for all constraints (unless explicitly excluding)
+- ✅ Verified no duplicate constraints
 """
 
 
@@ -392,41 +344,37 @@ Constraint 2:
 # ============================================================================
 
 VALIDATE_CONSTRAINT_PROMPT = """
-Your previous constraints have validation errors. Fix them based on the errors and suggestions.
+Some of your constraints have validation errors. Please fix them based on the error messages and suggestions below.
 
 **Original DSL:**
 ```dsl
 {original_dsl}
 ```
 
-**Your Constraints (with errors):**
-{constraints_json}
+**Constraints with Errors:**
 
-**Validation Errors:**
-{validation_errors}
-
-**Fix Suggestions:**
-{fix_suggestions}
+{fixable_constraints}
 
 ---
 
 **Your Task:**
 
-1. **Follow the Fix Suggestions** - Each error has a specific fix suggestion provided above
-2. **Only fix constraints with errors** - Keep valid constraints unchanged
-3. **Maintain constraint structure** - Only change the invalid parts based on suggestions
+Fix the constraints listed above by following the "HOW TO FIX" suggestions for each error.
 
 **Output Format:**
 [CONSTRAINTS]
-Constraint 1:
-- Type: add
-- Path: <corrected_path>
-- Operator: <corrected_operator>
-- Value: <corrected_value>
+Constraint N:  // Output ONLY the fixed constraints (the ones with errors above)
+- Type: <fixed_type>
+- Path: <fixed_path>
+- Operator: <fixed_operator>
+- Value: <fixed_value>
+- Is Negative: <no|yes>
+
+Constraint M:
 ...
 [/CONSTRAINTS]
 
-Output ALL constraints (both fixed and unchanged) in order.
+**IMPORTANT:** Only output the constraints that had errors. Do NOT output valid constraints.
 """
 
 

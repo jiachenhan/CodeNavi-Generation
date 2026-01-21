@@ -38,6 +38,7 @@ class ValidationError:
     message: str
     suggestion: Optional[str] = None
     location: Optional[Tuple[int, int]] = None  # (start_pos, end_pos)
+    should_discard_constraint: bool = False  # 是否应该直接丢弃整个约束
 
 
 @dataclass

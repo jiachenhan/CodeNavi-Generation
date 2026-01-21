@@ -313,21 +313,28 @@ class ConstraintBlockParser:
         block_idx: int,
         constraint_type: ConstraintType
     ) -> bool:
-        """解析 Is Negative 字段"""
+        """
+        解析 Is Negative 字段
+
+        Returns:
+            True if constraint should be negated (wrapped in not(...))
+            False otherwise (default)
+        """
         negative_str = FieldExtractor.extract(block, "Is Negative", block_idx, required=False)
 
         if negative_str:
             negative_str_lower = negative_str.lower().strip()
             return negative_str_lower in ['yes', 'true', 'y', '1']
         else:
-            # 默认根据 source_type 判断
-            is_negative = (self.source_type == "fp")
+            # 默认为 False - 大部分约束应该是肯定性的
+            # 不再根据 source_type 推断，因为这个假设是错误的：
+            # - Scenario 1 (FP缺少特征): 需要添加肯定约束来检测该特征
+            # - Scenario 2 (Buggy有特征): 需要添加肯定约束来检测该特征
             if constraint_type != ConstraintType.DEL:
                 _logger.debug(
-                    f"Constraint {block_idx}: Missing Is Negative field, "
-                    f"defaulting to {'yes' if is_negative else 'no'}"
+                    f"Constraint {block_idx}: Missing Is Negative field, defaulting to 'no'"
                 )
-            return is_negative
+            return False
 
 
 # ============================================================================

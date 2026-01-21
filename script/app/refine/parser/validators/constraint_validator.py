@@ -137,54 +137,29 @@ class AliasExistsRule(ConstraintValidationRule):
 
 
 class NoSubQueryOperatorRule(ConstraintValidationRule):
-    """验证不使用创建子查询的操作符（contain/in/notIn）"""
+    """
+    验证不使用创建子查询的操作符（contain/in/notIn）
+
+    这类错误是不可修复的，应该直接丢弃约束
+    """
 
     def _do_validate(self, constraint, context: ValidationContext) -> Optional[ValidationResult]:
         if constraint.operator not in ('contain', 'in', 'notIn'):
             return None  # 不是子查询操作符，通过验证
 
-        # 检测是否试图创建新的子查询
-        alias_match = re.match(r'^\s*(\w+)\s+(\w+)\s+where', constraint.value)
+        # 使用子查询操作符是不可修复的错误 - 应该直接丢弃约束
+        available = ', '.join(context.node_map.keys()) if context.node_map else "none"
 
-        if alias_match:
-            new_alias = alias_match.group(2)
-            # 确保已解析原始DSL
-            context.ensure_parsed()
-
-            if new_alias in context.node_map:
-                # 重用现有别名
-                return ValidationResult(
-                    is_valid=False,
-                    errors=[ValidationError(
-                        error_type=ValidationErrorType.DUPLICATE_ALIAS,
-                        message=f"Cannot create new '{constraint.operator}' clause: alias '{new_alias}' already exists",
-                        suggestion=f"To add constraints to '{new_alias}', use:\n- Path: {new_alias}.property\n- Operator: ==|!=|match|is\n- Value: <value>"
-                    )],
-                    warnings=[]
-                )
-            else:
-                # 创建新别名
-                available = ', '.join(context.node_map.keys()) if context.node_map else "none"
-                return ValidationResult(
-                    is_valid=False,
-                    errors=[ValidationError(
-                        error_type=ValidationErrorType.INVALID_VALUE_FOR_PROPERTY,
-                        message=f"Cannot use operator '{constraint.operator}': this creates new node '{new_alias}', only EXISTING nodes can be modified",
-                        suggestion=f"Available aliases: {available}\nUse operators: ==, !=, match, is"
-                    )],
-                    warnings=[]
-                )
-        else:
-            # 格式不匹配子查询模式
-            return ValidationResult(
-                is_valid=False,
-                errors=[ValidationError(
-                    error_type=ValidationErrorType.INVALID_VALUE_FOR_PROPERTY,
-                    message=f"Operator '{constraint.operator}' is not allowed in constraints (creates sub-queries)",
-                    suggestion="Use only: ==, !=, match, is"
-                )],
-                warnings=[]
-            )
+        return ValidationResult(
+            is_valid=False,
+            errors=[ValidationError(
+                error_type=ValidationErrorType.INVALID_VALUE_FOR_PROPERTY,
+                message=f"Operator '{constraint.operator}' creates sub-queries and is not allowed in constraints",
+                suggestion=f"To add constraints to existing nodes, use:\n- Path: <alias>.property (e.g., node_1.name)\n- Operator: ==, !=, match, is\n- Available aliases: {available}",
+                should_discard_constraint=True  # 标记为应该丢弃
+            )],
+            warnings=[]
+        )
 
 
 # ============================================================================
