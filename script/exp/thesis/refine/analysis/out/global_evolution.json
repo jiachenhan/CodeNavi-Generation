@@ -1,0 +1,168 @@
+{
+  "total_tasks": 223,
+  "max_iteration": 5,
+  "iteration_stats": [
+    {
+      "iteration": 0,
+      "active_tasks": 59,
+      "avg_precision": 0.5871,
+      "avg_recall": 0.7619,
+      "avg_f1": 0.6632,
+      "avg_fp_count": 3.58,
+      "total_tokens": null,
+      "total_time_seconds": null,
+      "tool_stats": {
+        "pmd": {
+          "count": 192,
+          "avg_precision": 0.5949,
+          "avg_recall": 0.7565,
+          "avg_f1": 0.666,
+          "avg_fp_count": 3.8
+        },
+        "codeql": {
+          "count": 31,
+          "avg_precision": 0.4812,
+          "avg_recall": 0.8649,
+          "avg_f1": 0.6184,
+          "avg_fp_count": 2.23
+        }
+      }
+    },
+    {
+      "iteration": 1,
+      "active_tasks": 46,
+      "avg_precision": 0.781,
+      "avg_recall": 0.7648,
+      "avg_f1": 0.7728,
+      "avg_fp_count": 1.16,
+      "total_tokens": 345508,
+      "total_time_seconds": 3507.3,
+      "tool_stats": {
+        "pmd": {
+          "count": 192,
+          "avg_precision": 0.7739,
+          "avg_recall": 0.7582,
+          "avg_f1": 0.7659,
+          "avg_fp_count": 1.31
+        },
+        "codeql": {
+          "count": 31,
+          "avg_precision": 0.8971,
+          "avg_recall": 0.8714,
+          "avg_f1": 0.8841,
+          "avg_fp_count": 0.23
+        }
+      }
+    },
+    {
+      "iteration": 2,
+      "active_tasks": 15,
+      "avg_precision": 0.7942,
+      "avg_recall": 0.7455,
+      "avg_f1": 0.7691,
+      "avg_fp_count": 0.96,
+      "total_tokens": 377615,
+      "total_time_seconds": 3950.84,
+      "tool_stats": {
+        "pmd": {
+          "count": 192,
+          "avg_precision": 0.787,
+          "avg_recall": 0.737,
+          "avg_f1": 0.7612,
+          "avg_fp_count": 1.08
+        },
+        "codeql": {
+          "count": 31,
+          "avg_precision": 0.8971,
+          "avg_recall": 0.8714,
+          "avg_f1": 0.8841,
+          "avg_fp_count": 0.23
+        }
+      }
+    },
+    {
+      "iteration": 3,
+      "active_tasks": 4,
+      "avg_precision": 0.8333,
+      "avg_recall": 0.7429,
+      "avg_f1": 0.7855,
+      "avg_fp_count": 0.73,
+      "total_tokens": 283166,
+      "total_time_seconds": 2976.67,
+      "tool_stats": {
+        "pmd": {
+          "count": 192,
+          "avg_precision": 0.8286,
+          "avg_recall": 0.7342,
+          "avg_f1": 0.7785,
+          "avg_fp_count": 0.81
+        },
+        "codeql": {
+          "count": 31,
+          "avg_precision": 0.8971,
+          "avg_recall": 0.8714,
+          "avg_f1": 0.8841,
+          "avg_fp_count": 0.23
+        }
+      }
+    },
+    {
+      "iteration": 4,
+      "active_tasks": 1,
+      "avg_precision": 0.8333,
+      "avg_recall": 0.7429,
+      "avg_f1": 0.7855,
+      "avg_fp_count": 0.73,
+      "total_tokens": 160149,
+      "total_time_seconds": 1721.52,
+      "tool_stats": {
+        "pmd": {
+          "count": 192,
+          "avg_precision": 0.8286,
+          "avg_recall": 0.7342,
+          "avg_f1": 0.7785,
+          "avg_fp_count": 0.81
+        },
+        "codeql": {
+          "count": 31,
+          "avg_precision": 0.8971,
+          "avg_recall": 0.8714,
+          "avg_f1": 0.8841,
+          "avg_fp_count": 0.23
+        }
+      }
+    },
+    {
+      "iteration": 5,
+      "active_tasks": 0,
+      "avg_precision": 0.8333,
+      "avg_recall": 0.7429,
+      "avg_f1": 0.7855,
+      "avg_fp_count": 0.73,
+      "total_tokens": 136153,
+      "total_time_seconds": 1436.52,
+      "tool_stats": {
+        "pmd": {
+          "count": 192,
+          "avg_precision": 0.8286,
+          "avg_recall": 0.7342,
+          "avg_f1": 0.7785,
+          "avg_fp_count": 0.81
+        },
+        "codeql": {
+          "count": 31,
+          "avg_precision": 0.8971,
+          "avg_recall": 0.8714,
+          "avg_f1": 0.8841,
+          "avg_fp_count": 0.23
+        }
+      }
+    }
+  ],
+  "overall_improvement": {
+    "precision_delta": 0.2462,
+    "recall_delta": -0.019,
+    "f1_delta": 0.1223,
+    "avg_fp_reduction_rate": 0.7961
+  }
+}

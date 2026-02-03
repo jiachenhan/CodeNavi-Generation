@@ -5,10 +5,10 @@ from typing import Generator
 import paramiko
 
 path_mapping = {
-    "codeql_v1_commits": "codeql_v1_commits_ori",
-    "codeql_v2_commits": "codeql_v2_commits_ori",
-    "pmd_v1_commits": "pmd_v1_commits_ori",
-    "pmd_v2_commits": "pmd_v2_commits_ori"
+    "codeql_v1_commits": "codeql_v1_commits",
+    "codeql_v2_commits": "codeql_v2_commits",
+    "pmd_v1_commits": "pmd_v1_commits",
+    "pmd_v2_commits": "pmd_v2_commits"
 }
 
 target_files = ["sat_warnings.json"]

@@ -1,0 +1,930 @@
+====================================================================================================
+高FP任务列表 (iteration 0 → 5)
+====================================================================================================
+总任务数: 223
+FP阈值: >= 2
+高FP任务数（去重）: 36
+高FP比例: 16.14%
+====================================================================================================
+
+
+====================================================================================================
+Iteration 0 - 找到 20 个高FP任务
+====================================================================================================
+
+1. pmd_v2_commits/UnitTestShouldUseTestAnnotation/2/1
+   FP数量: 214
+   TP数量: 9
+   FN数量: 0
+   Precision: 0.0404
+   Recall: 1.0000
+   F1: 0.0776
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\UnitTestShouldUseTestAnnotation\2\1
+
+2. pmd_v2_commits/UnitTestShouldUseTestAnnotation/4/0
+   FP数量: 81
+   TP数量: 58
+   FN数量: 0
+   Precision: 0.4173
+   Recall: 1.0000
+   F1: 0.5888
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\UnitTestShouldUseTestAnnotation\4\0
+
+3. pmd_v2_commits/LooseCoupling/2/1
+   FP数量: 72
+   TP数量: 30
+   FN数量: 36
+   Precision: 0.2941
+   Recall: 0.4545
+   F1: 0.3571
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\LooseCoupling\2\1
+
+4. pmd_v2_commits/GuardLogStatement/21/1
+   FP数量: 40
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.2308
+   Recall: 1.0000
+   F1: 0.3750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\GuardLogStatement\21\1
+
+5. codeql_v1_commits/Comparison_of_narrow_type_with_wide_type_in_loop_condition/1/0
+   FP数量: 35
+   TP数量: 3
+   FN数量: 0
+   Precision: 0.0789
+   Recall: 1.0000
+   F1: 0.1463
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\codeql_v1_commits\Comparison_of_narrow_type_with_wide_type_in_loop_condition\1\0
+
+6. pmd_v2_commits/DetachedTestCase/2/2
+   FP数量: 29
+   TP数量: 0
+   FN数量: 0
+   Precision: 0.0000
+   Recall: 0.0000
+   F1: 0.0000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\DetachedTestCase\2\2
+
+7. pmd_v1_commits/InvalidLogMessageFormat/7/0
+   FP数量: 25
+   TP数量: 6
+   FN数量: 0
+   Precision: 0.1935
+   Recall: 1.0000
+   F1: 0.3243
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v1_commits\InvalidLogMessageFormat\7\0
+
+8. codeql_v1_commits/Potential_input_resource_leak/0/0
+   FP数量: 24
+   TP数量: 0
+   FN数量: 1
+   Precision: 0.0000
+   Recall: 0.0000
+   F1: 0.0000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\codeql_v1_commits\Potential_input_resource_leak\0\0
+
+9. pmd_v1_commits/ReturnEmptyCollectionRatherThanNull/2/1
+   FP数量: 24
+   TP数量: 3
+   FN数量: 0
+   Precision: 0.1111
+   Recall: 1.0000
+   F1: 0.2000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v1_commits\ReturnEmptyCollectionRatherThanNull\2\1
+
+10. pmd_v2_commits/JUnitUseExpected/75/0
+   FP数量: 22
+   TP数量: 11
+   FN数量: 0
+   Precision: 0.3333
+   Recall: 1.0000
+   F1: 0.5000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\JUnitUseExpected\75\0
+
+11. pmd_v1_commits/UnitTestShouldIncludeAssert/14/4
+   FP数量: 17
+   TP数量: 24
+   FN数量: 0
+   Precision: 0.5854
+   Recall: 1.0000
+   F1: 0.7385
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v1_commits\UnitTestShouldIncludeAssert\14\4
+
+12. pmd_v1_commits/GuardLogStatement/0/11
+   FP数量: 14
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.4615
+   Recall: 1.0000
+   F1: 0.6316
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v1_commits\GuardLogStatement\0\11
+
+13. pmd_v2_commits/CloseResource/3/2
+   FP数量: 14
+   TP数量: 11
+   FN数量: 0
+   Precision: 0.4400
+   Recall: 1.0000
+   F1: 0.6111
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\CloseResource\3\2
+
+14. pmd_v1_commits/ReturnEmptyCollectionRatherThanNull/1/0
+   FP数量: 11
+   TP数量: 1
+   FN数量: 0
+   Precision: 0.0833
+   Recall: 1.0000
+   F1: 0.1538
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v1_commits\ReturnEmptyCollectionRatherThanNull\1\0
+
+15. pmd_v2_commits/GuardLogStatement/47/0
+   FP数量: 10
+   TP数量: 4
+   FN数量: 4
+   Precision: 0.2857
+   Recall: 0.5000
+   F1: 0.3636
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\GuardLogStatement\47\0
+
+16. pmd_v2_commits/LooseCoupling/5/0
+   FP数量: 10
+   TP数量: 30
+   FN数量: 36
+   Precision: 0.7500
+   Recall: 0.4545
+   F1: 0.5660
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\LooseCoupling\5\0
+
+17. pmd_v2_commits/LooseCoupling/6/0
+   FP数量: 10
+   TP数量: 30
+   FN数量: 36
+   Precision: 0.7500
+   Recall: 0.4545
+   F1: 0.5660
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\LooseCoupling\6\0
+
+18. pmd_v2_commits/LooseCoupling/3/4
+   FP数量: 9
+   TP数量: 19
+   FN数量: 47
+   Precision: 0.6786
+   Recall: 0.2879
+   F1: 0.4043
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v2_commits\LooseCoupling\3\4
+
+19. pmd_v1_commits/CloseResource/13/2
+   FP数量: 8
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.6000
+   Recall: 1.0000
+   F1: 0.7500
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v1_commits\CloseResource\13\2
+
+20. pmd_v1_commits/CloseResource/14/1
+   FP数量: 8
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.6000
+   Recall: 1.0000
+   F1: 0.7500
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_0\pmd_v1_commits\CloseResource\14\1
+
+
+====================================================================================================
+Iteration 1 - 找到 20 个高FP任务
+====================================================================================================
+
+1. pmd_v2_commits/UnitTestShouldUseTestAnnotation/2/1
+   FP数量: 214
+   TP数量: 9
+   FN数量: 0
+   Precision: 0.0404
+   Recall: 1.0000
+   F1: 0.0776
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\UnitTestShouldUseTestAnnotation\2\1
+
+2. pmd_v2_commits/GuardLogStatement/21/1
+   FP数量: 33
+   TP数量: 11
+   FN数量: 1
+   Precision: 0.2500
+   Recall: 0.9167
+   F1: 0.3929
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\GuardLogStatement\21\1
+
+3. pmd_v2_commits/DetachedTestCase/2/2
+   FP数量: 29
+   TP数量: 0
+   FN数量: 0
+   Precision: 0.0000
+   Recall: 0.0000
+   F1: 0.0000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\DetachedTestCase\2\2
+
+4. pmd_v1_commits/InvalidLogMessageFormat/7/0
+   FP数量: 25
+   TP数量: 6
+   FN数量: 0
+   Precision: 0.1935
+   Recall: 1.0000
+   F1: 0.3243
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v1_commits\InvalidLogMessageFormat\7\0
+
+5. pmd_v2_commits/JUnitUseExpected/75/0
+   FP数量: 22
+   TP数量: 11
+   FN数量: 0
+   Precision: 0.3333
+   Recall: 1.0000
+   F1: 0.5000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\JUnitUseExpected\75\0
+
+6. pmd_v1_commits/GuardLogStatement/0/11
+   FP数量: 14
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.4615
+   Recall: 1.0000
+   F1: 0.6316
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v1_commits\GuardLogStatement\0\11
+
+7. pmd_v2_commits/GuardLogStatement/47/0
+   FP数量: 10
+   TP数量: 4
+   FN数量: 4
+   Precision: 0.2857
+   Recall: 0.5000
+   F1: 0.3636
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\GuardLogStatement\47\0
+
+8. pmd_v2_commits/LooseCoupling/6/0
+   FP数量: 10
+   TP数量: 30
+   FN数量: 36
+   Precision: 0.7500
+   Recall: 0.4545
+   F1: 0.5660
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\LooseCoupling\6\0
+
+9. pmd_v2_commits/LooseCoupling/3/4
+   FP数量: 9
+   TP数量: 19
+   FN数量: 47
+   Precision: 0.6786
+   Recall: 0.2879
+   F1: 0.4043
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\LooseCoupling\3\4
+
+10. pmd_v1_commits/CloseResource/14/1
+   FP数量: 8
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.6000
+   Recall: 1.0000
+   F1: 0.7500
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v1_commits\CloseResource\14\1
+
+11. pmd_v2_commits/AvoidPrintStackTrace/11/2
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\AvoidPrintStackTrace\11\2
+
+12. pmd_v2_commits/AvoidPrintStackTrace/17/1
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\AvoidPrintStackTrace\17\1
+
+13. pmd_v2_commits/AvoidPrintStackTrace/18/4
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\AvoidPrintStackTrace\18\4
+
+14. pmd_v2_commits/AvoidPrintStackTrace/24/1
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\AvoidPrintStackTrace\24\1
+
+15. pmd_v2_commits/EmptyCatchBlock/21/0
+   FP数量: 6
+   TP数量: 7
+   FN数量: 0
+   Precision: 0.5385
+   Recall: 1.0000
+   F1: 0.7000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\EmptyCatchBlock\21\0
+
+16. pmd_v1_commits/AvoidReassigningLoopVariables/0/2
+   FP数量: 5
+   TP数量: 1
+   FN数量: 0
+   Precision: 0.1667
+   Recall: 1.0000
+   F1: 0.2857
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v1_commits\AvoidReassigningLoopVariables\0\2
+
+17. pmd_v1_commits/EmptyCatchBlock/15/3
+   FP数量: 5
+   TP数量: 4
+   FN数量: 0
+   Precision: 0.4444
+   Recall: 1.0000
+   F1: 0.6154
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v1_commits\EmptyCatchBlock\15\3
+
+18. pmd_v2_commits/GuardLogStatement/44/0
+   FP数量: 5
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.2857
+   Recall: 1.0000
+   F1: 0.4444
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\GuardLogStatement\44\0
+
+19. pmd_v2_commits/AvoidPrintStackTrace/5/8
+   FP数量: 4
+   TP数量: 7
+   FN数量: 0
+   Precision: 0.6364
+   Recall: 1.0000
+   F1: 0.7778
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\AvoidPrintStackTrace\5\8
+
+20. pmd_v2_commits/EmptyCatchBlock/2/1
+   FP数量: 4
+   TP数量: 1
+   FN数量: 0
+   Precision: 0.2000
+   Recall: 1.0000
+   F1: 0.3333
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_1\pmd_v2_commits\EmptyCatchBlock\2\1
+
+
+====================================================================================================
+Iteration 2 - 找到 20 个高FP任务
+====================================================================================================
+
+1. pmd_v2_commits/UnitTestShouldUseTestAnnotation/2/1
+   FP数量: 214
+   TP数量: 9
+   FN数量: 0
+   Precision: 0.0404
+   Recall: 1.0000
+   F1: 0.0776
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\UnitTestShouldUseTestAnnotation\2\1
+
+2. pmd_v2_commits/GuardLogStatement/21/1
+   FP数量: 33
+   TP数量: 11
+   FN数量: 1
+   Precision: 0.2500
+   Recall: 0.9167
+   F1: 0.3929
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\GuardLogStatement\21\1
+
+3. pmd_v2_commits/DetachedTestCase/2/2
+   FP数量: 29
+   TP数量: 0
+   FN数量: 0
+   Precision: 0.0000
+   Recall: 0.0000
+   F1: 0.0000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\DetachedTestCase\2\2
+
+4. pmd_v1_commits/InvalidLogMessageFormat/7/0
+   FP数量: 25
+   TP数量: 6
+   FN数量: 0
+   Precision: 0.1935
+   Recall: 1.0000
+   F1: 0.3243
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v1_commits\InvalidLogMessageFormat\7\0
+
+5. pmd_v2_commits/JUnitUseExpected/75/0
+   FP数量: 22
+   TP数量: 11
+   FN数量: 0
+   Precision: 0.3333
+   Recall: 1.0000
+   F1: 0.5000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\JUnitUseExpected\75\0
+
+6. pmd_v1_commits/GuardLogStatement/0/11
+   FP数量: 14
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.4615
+   Recall: 1.0000
+   F1: 0.6316
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v1_commits\GuardLogStatement\0\11
+
+7. pmd_v2_commits/GuardLogStatement/47/0
+   FP数量: 10
+   TP数量: 4
+   FN数量: 4
+   Precision: 0.2857
+   Recall: 0.5000
+   F1: 0.3636
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\GuardLogStatement\47\0
+
+8. pmd_v2_commits/LooseCoupling/6/0
+   FP数量: 10
+   TP数量: 30
+   FN数量: 36
+   Precision: 0.7500
+   Recall: 0.4545
+   F1: 0.5660
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\LooseCoupling\6\0
+
+9. pmd_v2_commits/LooseCoupling/3/4
+   FP数量: 9
+   TP数量: 19
+   FN数量: 47
+   Precision: 0.6786
+   Recall: 0.2879
+   F1: 0.4043
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\LooseCoupling\3\4
+
+10. pmd_v2_commits/AvoidPrintStackTrace/11/2
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\AvoidPrintStackTrace\11\2
+
+11. pmd_v2_commits/AvoidPrintStackTrace/24/1
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\AvoidPrintStackTrace\24\1
+
+12. pmd_v1_commits/EmptyCatchBlock/15/3
+   FP数量: 5
+   TP数量: 4
+   FN数量: 0
+   Precision: 0.4444
+   Recall: 1.0000
+   F1: 0.6154
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v1_commits\EmptyCatchBlock\15\3
+
+13. pmd_v2_commits/GuardLogStatement/44/0
+   FP数量: 5
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.2857
+   Recall: 1.0000
+   F1: 0.4444
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\GuardLogStatement\44\0
+
+14. pmd_v2_commits/AvoidPrintStackTrace/5/8
+   FP数量: 4
+   TP数量: 7
+   FN数量: 0
+   Precision: 0.6364
+   Recall: 1.0000
+   F1: 0.7778
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\AvoidPrintStackTrace\5\8
+
+15. pmd_v2_commits/EmptyCatchBlock/2/1
+   FP数量: 4
+   TP数量: 1
+   FN数量: 0
+   Precision: 0.2000
+   Recall: 1.0000
+   F1: 0.3333
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\EmptyCatchBlock\2\1
+
+16. pmd_v2_commits/JUnitUseExpected/86/0
+   FP数量: 4
+   TP数量: 10
+   FN数量: 0
+   Precision: 0.7143
+   Recall: 1.0000
+   F1: 0.8333
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v2_commits\JUnitUseExpected\86\0
+
+17. pmd_v1_commits/ReturnFromFinallyBlock/0/3
+   FP数量: 3
+   TP数量: 3
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v1_commits\ReturnFromFinallyBlock\0\3
+
+18. codeql_v1_commits/Boxed_variable_is_never_null/1/1
+   FP数量: 2
+   TP数量: 0
+   FN数量: 0
+   Precision: 0.0000
+   Recall: 0.0000
+   F1: 0.0000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\codeql_v1_commits\Boxed_variable_is_never_null\1\1
+
+19. codeql_v2_commits/Inefficient_primitive_constructor/13/0
+   FP数量: 2
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\codeql_v2_commits\Inefficient_primitive_constructor\13\0
+
+20. pmd_v1_commits/AvoidReassigningParameters/3/1
+   FP数量: 2
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_2\pmd_v1_commits\AvoidReassigningParameters\3\1
+
+
+====================================================================================================
+Iteration 3 - 找到 19 个高FP任务
+====================================================================================================
+
+1. pmd_v2_commits/UnitTestShouldUseTestAnnotation/2/1
+   FP数量: 214
+   TP数量: 9
+   FN数量: 0
+   Precision: 0.0404
+   Recall: 1.0000
+   F1: 0.0776
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\UnitTestShouldUseTestAnnotation\2\1
+
+2. pmd_v2_commits/GuardLogStatement/21/1
+   FP数量: 33
+   TP数量: 11
+   FN数量: 1
+   Precision: 0.2500
+   Recall: 0.9167
+   F1: 0.3929
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\GuardLogStatement\21\1
+
+3. pmd_v1_commits/InvalidLogMessageFormat/7/0
+   FP数量: 25
+   TP数量: 6
+   FN数量: 0
+   Precision: 0.1935
+   Recall: 1.0000
+   F1: 0.3243
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v1_commits\InvalidLogMessageFormat\7\0
+
+4. pmd_v1_commits/GuardLogStatement/0/11
+   FP数量: 14
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.4615
+   Recall: 1.0000
+   F1: 0.6316
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v1_commits\GuardLogStatement\0\11
+
+5. pmd_v2_commits/GuardLogStatement/47/0
+   FP数量: 10
+   TP数量: 4
+   FN数量: 4
+   Precision: 0.2857
+   Recall: 0.5000
+   F1: 0.3636
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\GuardLogStatement\47\0
+
+6. pmd_v2_commits/LooseCoupling/6/0
+   FP数量: 10
+   TP数量: 30
+   FN数量: 36
+   Precision: 0.7500
+   Recall: 0.4545
+   F1: 0.5660
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\LooseCoupling\6\0
+
+7. pmd_v2_commits/LooseCoupling/3/4
+   FP数量: 9
+   TP数量: 19
+   FN数量: 47
+   Precision: 0.6786
+   Recall: 0.2879
+   F1: 0.4043
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\LooseCoupling\3\4
+
+8. pmd_v2_commits/AvoidPrintStackTrace/11/2
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\AvoidPrintStackTrace\11\2
+
+9. pmd_v2_commits/AvoidPrintStackTrace/24/1
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\AvoidPrintStackTrace\24\1
+
+10. pmd_v1_commits/EmptyCatchBlock/15/3
+   FP数量: 5
+   TP数量: 4
+   FN数量: 0
+   Precision: 0.4444
+   Recall: 1.0000
+   F1: 0.6154
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v1_commits\EmptyCatchBlock\15\3
+
+11. pmd_v2_commits/GuardLogStatement/44/0
+   FP数量: 5
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.2857
+   Recall: 1.0000
+   F1: 0.4444
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\GuardLogStatement\44\0
+
+12. pmd_v2_commits/AvoidPrintStackTrace/5/8
+   FP数量: 4
+   TP数量: 7
+   FN数量: 0
+   Precision: 0.6364
+   Recall: 1.0000
+   F1: 0.7778
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\AvoidPrintStackTrace\5\8
+
+13. pmd_v2_commits/EmptyCatchBlock/2/1
+   FP数量: 4
+   TP数量: 1
+   FN数量: 0
+   Precision: 0.2000
+   Recall: 1.0000
+   F1: 0.3333
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\EmptyCatchBlock\2\1
+
+14. pmd_v2_commits/JUnitUseExpected/86/0
+   FP数量: 4
+   TP数量: 10
+   FN数量: 0
+   Precision: 0.7143
+   Recall: 1.0000
+   F1: 0.8333
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\JUnitUseExpected\86\0
+
+15. pmd_v1_commits/ReturnFromFinallyBlock/0/3
+   FP数量: 3
+   TP数量: 3
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v1_commits\ReturnFromFinallyBlock\0\3
+
+16. codeql_v1_commits/Boxed_variable_is_never_null/1/1
+   FP数量: 2
+   TP数量: 0
+   FN数量: 0
+   Precision: 0.0000
+   Recall: 0.0000
+   F1: 0.0000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\codeql_v1_commits\Boxed_variable_is_never_null\1\1
+
+17. codeql_v2_commits/Inefficient_primitive_constructor/13/0
+   FP数量: 2
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\codeql_v2_commits\Inefficient_primitive_constructor\13\0
+
+18. pmd_v1_commits/AvoidReassigningParameters/3/1
+   FP数量: 2
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v1_commits\AvoidReassigningParameters\3\1
+
+19. pmd_v2_commits/GuardLogStatement/1/4
+   FP数量: 2
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_3\pmd_v2_commits\GuardLogStatement\1\4
+
+
+====================================================================================================
+Iteration 4 - 找到 19 个高FP任务
+====================================================================================================
+
+1. pmd_v2_commits/UnitTestShouldUseTestAnnotation/2/1
+   FP数量: 214
+   TP数量: 9
+   FN数量: 0
+   Precision: 0.0404
+   Recall: 1.0000
+   F1: 0.0776
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\UnitTestShouldUseTestAnnotation\2\1
+
+2. pmd_v2_commits/GuardLogStatement/21/1
+   FP数量: 33
+   TP数量: 11
+   FN数量: 1
+   Precision: 0.2500
+   Recall: 0.9167
+   F1: 0.3929
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\GuardLogStatement\21\1
+
+3. pmd_v1_commits/InvalidLogMessageFormat/7/0
+   FP数量: 25
+   TP数量: 6
+   FN数量: 0
+   Precision: 0.1935
+   Recall: 1.0000
+   F1: 0.3243
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v1_commits\InvalidLogMessageFormat\7\0
+
+4. pmd_v1_commits/GuardLogStatement/0/11
+   FP数量: 14
+   TP数量: 12
+   FN数量: 0
+   Precision: 0.4615
+   Recall: 1.0000
+   F1: 0.6316
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v1_commits\GuardLogStatement\0\11
+
+5. pmd_v2_commits/GuardLogStatement/47/0
+   FP数量: 10
+   TP数量: 4
+   FN数量: 4
+   Precision: 0.2857
+   Recall: 0.5000
+   F1: 0.3636
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\GuardLogStatement\47\0
+
+6. pmd_v2_commits/LooseCoupling/6/0
+   FP数量: 10
+   TP数量: 30
+   FN数量: 36
+   Precision: 0.7500
+   Recall: 0.4545
+   F1: 0.5660
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\LooseCoupling\6\0
+
+7. pmd_v2_commits/LooseCoupling/3/4
+   FP数量: 9
+   TP数量: 19
+   FN数量: 47
+   Precision: 0.6786
+   Recall: 0.2879
+   F1: 0.4043
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\LooseCoupling\3\4
+
+8. pmd_v2_commits/AvoidPrintStackTrace/11/2
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\AvoidPrintStackTrace\11\2
+
+9. pmd_v2_commits/AvoidPrintStackTrace/24/1
+   FP数量: 8
+   TP数量: 28
+   FN数量: 0
+   Precision: 0.7778
+   Recall: 1.0000
+   F1: 0.8750
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\AvoidPrintStackTrace\24\1
+
+10. pmd_v1_commits/EmptyCatchBlock/15/3
+   FP数量: 5
+   TP数量: 4
+   FN数量: 0
+   Precision: 0.4444
+   Recall: 1.0000
+   F1: 0.6154
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v1_commits\EmptyCatchBlock\15\3
+
+11. pmd_v2_commits/GuardLogStatement/44/0
+   FP数量: 5
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.2857
+   Recall: 1.0000
+   F1: 0.4444
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\GuardLogStatement\44\0
+
+12. pmd_v2_commits/AvoidPrintStackTrace/5/8
+   FP数量: 4
+   TP数量: 7
+   FN数量: 0
+   Precision: 0.6364
+   Recall: 1.0000
+   F1: 0.7778
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\AvoidPrintStackTrace\5\8
+
+13. pmd_v2_commits/EmptyCatchBlock/2/1
+   FP数量: 4
+   TP数量: 1
+   FN数量: 0
+   Precision: 0.2000
+   Recall: 1.0000
+   F1: 0.3333
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\EmptyCatchBlock\2\1
+
+14. pmd_v2_commits/JUnitUseExpected/86/0
+   FP数量: 4
+   TP数量: 10
+   FN数量: 0
+   Precision: 0.7143
+   Recall: 1.0000
+   F1: 0.8333
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\JUnitUseExpected\86\0
+
+15. pmd_v1_commits/ReturnFromFinallyBlock/0/3
+   FP数量: 3
+   TP数量: 3
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v1_commits\ReturnFromFinallyBlock\0\3
+
+16. codeql_v1_commits/Boxed_variable_is_never_null/1/1
+   FP数量: 2
+   TP数量: 0
+   FN数量: 0
+   Precision: 0.0000
+   Recall: 0.0000
+   F1: 0.0000
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\codeql_v1_commits\Boxed_variable_is_never_null\1\1
+
+17. codeql_v2_commits/Inefficient_primitive_constructor/13/0
+   FP数量: 2
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\codeql_v2_commits\Inefficient_primitive_constructor\13\0
+
+18. pmd_v1_commits/AvoidReassigningParameters/3/1
+   FP数量: 2
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v1_commits\AvoidReassigningParameters\3\1
+
+19. pmd_v2_commits/GuardLogStatement/1/4
+   FP数量: 2
+   TP数量: 2
+   FN数量: 0
+   Precision: 0.5000
+   Recall: 1.0000
+   F1: 0.6667
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_4\pmd_v2_commits\GuardLogStatement\1\4
+
+
+====================================================================================================
+Iteration 5 - 找到 1 个高FP任务
+====================================================================================================
+
+1. pmd_v2_commits/EmptyCatchBlock/2/1
+   FP数量: 4
+   TP数量: 1
+   FN数量: 0
+   Precision: 0.2000
+   Recall: 1.0000
+   F1: 0.3333
+   路径: E:\dataset\Navi\final_thesis_datas\iterExp\iteration_5\pmd_v2_commits\EmptyCatchBlock\2\1
+

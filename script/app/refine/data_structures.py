@@ -24,7 +24,7 @@ class RefineInput:
     fixed_code: str  # 修复后的代码
     root_cause: str  # 缺陷原因描述
     fp_code: str  # 误报代码
-    dsl_path: Optional[Path] = None  # DSL文件路径（可选）
+    dsl_path: Optional[Path] = None  # DSL文件路径（可选），没用
 
 
 
@@ -70,7 +70,27 @@ class LLMContext:
     fp_analysis_result: Optional[str] = None  # Step2的分析结果
     fp_scenario: Optional[int] = None  # FP分析中的Scenario (1 or 2)
     extracted_constraints: List[ExtraConstraint] = field(default_factory=list)  # Step3提取的约束
-    
+
+    # Token使用统计
+    # 本次调用的token使用（单次API调用）
+    current_prompt_tokens: int = 0
+    current_completion_tokens: int = 0
+    current_total_tokens: int = 0
+    # 累计的token使用（本次refine所有API调用的总和）
+    accumulated_prompt_tokens: int = 0
+    accumulated_completion_tokens: int = 0
+    accumulated_total_tokens: int = 0
+
+    def record_api_call(self, prompt_tokens: int, completion_tokens: int):
+        """记录一次API调用的token使用"""
+        self.current_prompt_tokens = prompt_tokens
+        self.current_completion_tokens = completion_tokens
+        self.current_total_tokens = prompt_tokens + completion_tokens
+        # 累加到总量
+        self.accumulated_prompt_tokens += prompt_tokens
+        self.accumulated_completion_tokens += completion_tokens
+        self.accumulated_total_tokens += (prompt_tokens + completion_tokens)
+
     def _get_history_list(self, step: RefineStep) -> Optional[List[Dict]]:
         """获取指定步骤对应的历史列表（内部方法）"""
         if step == RefineStep.ANALYZE_DSL:

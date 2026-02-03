@@ -102,9 +102,15 @@ class DSLValidator:
         self.warnings = []
         self.node_map = node_map  # 使用提供的node_map
 
-        # 从node_map中提取上下文信息
-        # 假设验证的条件属于第一个节点（通常是根节点）
-        if node_map:
+        # 从条件中提取使用的alias，确定它属于哪个query
+        context_alias = self._extract_context_alias_from_condition(condition)
+
+        if context_alias and context_alias in node_map:
+            # 找到对应的query，使用其node_type和alias
+            context_query = node_map[context_alias]
+            context_node_type = context_query.entity.node_type
+        elif node_map:
+            # 如果无法从条件中提取alias，使用第一个query作为fallback
             first_query = next(iter(node_map.values()))
             context_node_type = first_query.entity.node_type
             context_alias = first_query.entity.alias
@@ -121,6 +127,22 @@ class DSLValidator:
             errors=self.errors,
             warnings=self.warnings
         )
+
+    def _extract_context_alias_from_condition(self, condition: Condition) -> Optional[str]:
+        """从条件中提取第一个使用的alias作为上下文"""
+        if condition.atomic:
+            if condition.atomic.value_match:
+                return condition.atomic.value_match.attribute.alias
+            elif condition.atomic.rel_match:
+                return condition.atomic.rel_match.attribute.alias
+
+        # 递归查找子条件
+        for sub_condition in condition.sub_conditions:
+            alias = self._extract_context_alias_from_condition(sub_condition)
+            if alias:
+                return alias
+
+        return None
     
     def _collect_nodes(self, query: Query):
         """收集所有节点到node_map"""

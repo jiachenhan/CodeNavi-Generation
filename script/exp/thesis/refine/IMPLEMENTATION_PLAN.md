@@ -4,12 +4,17 @@
 
 通过迭代式的FP反馈，逐步优化DSL规则，研究约束精炼对检测结果的影响。
 
+**实验设计：**
+- **训练阶段**: 从case1提取pattern → 检测case2 → 收集case2的FP → 迭代优化pattern
+- **观察指标**: 在case2上观察FP减少数量（每轮迭代）
+- **验证阶段**: 在case3上检测优化后的DSL，对比原始DSL/baseline
+
 **核心研究问题：**
 - RQ1: 原始DSL在进行缺陷检测方面表现怎么样
-- RQ2: 使用一个FP进行约束优化，能否减少其他FP的数量？（约束泛化能力）
+- RQ2: 使用一个FP进行约束优化，能否减少case2上其他FP的数量？（约束泛化能力）
 - RQ3: 迭代优化的收敛速度如何？需要多少轮迭代才能稳定？
-- RQ4: 不同Checker的优化效果差异？哪些类型的规则更容易优化？
-- RQ5: （Optional）优化后的DSL质量如何？（humancheck）
+- RQ4: **[本实验]** 在case3上验证优化效果（对比ground_truth/baseline/原始DSL/refined DSL）
+- RQ5: （Optional）合并原RQ4+RQ5：不同Checker的优化效果差异+人工质量检查
 
 ---
 
@@ -18,6 +23,11 @@
 ### 2.1 输入数据结构
 
 **原始数据集根目录：** `E:/dataset/Navi/`
+
+**实验数据说明：**
+- **case1**: 用于提取pattern的DEF（buggy/fixed/root_cause）
+- **case2**: 用于迭代优化的检测目标（观察FP减少）
+- **case3**: 用于最终验证的检测目标（对比优化效果）
 
 ```
 E:/dataset/Navi/
@@ -320,8 +330,9 @@ E:/dataset/Navi/final_thesis_datas/iterExp/
 
 **检测结果文件命名：**
 - 格式：`{dsl_case}_{scanned_case}_labeled_results.json`
-- 示例：`2_1_labeled_results.json`（DSL case=2, scanned case=1）
-- 保存位置：`iteration_N/{dataset}/{checker}/{group}/{case}/detect_results/`
+- 示例：`1_2_labeled_results.json`（case1的DSL检测case2）
+- 说明：dsl_case和scanned_case永远不同（case1的pattern检测case2/case3）
+- 保存位置：`iteration_N/{dataset}/{checker}/{group}/{dsl_case}/detect_results/`
 
 ### 4.5 LLM池调度 ✅
 
@@ -336,27 +347,32 @@ E:/dataset/Navi/final_thesis_datas/iterExp/
 
 **映射关系：**
 ```python
-# 示例任务ID: pmd_v1_commits/AvoidInstanceofChecksInCatchClause/3/2
+# 示例任务ID: pmd_v1_commits/AvoidInstanceofChecksInCatchClause/3/1
+# 说明：dsl_case=1（从case1提取pattern），迭代优化在case2上观察，最终验证在case3
 
-# 原始DSL
+# 原始DSL（从case1提取）
 dsl_path = ori_dsl_root / task_id + ".kirin"
-# → E:/dataset/Navi/final_thesis_datas/ori_dsl/pmd_v1_commits/AvoidInstanceofChecksInCatchClause/3/2.kirin
+# → E:/dataset/Navi/final_thesis_datas/ori_dsl/pmd_v1_commits/AvoidInstanceofChecksInCatchClause/3/1.kirin
 
-# 原始检测结果（Iteration 0）
-detect_result_path = ori_dsl_detect_results_root / dataset / checker / group / f"{dsl_case}_{scanned_case}_labeled_results.json"
-# → E:/dataset/Navi/final_thesis_datas/ori_dsl_detect_results/pmd_v1_commits/AvoidInstanceofChecksInCatchClause/3/2_1_labeled_results.json
+# 原始检测结果（case1的DSL检测case2）
+detect_result_path = ori_dsl_detect_results_root / dataset / checker / group / "1_2_labeled_results.json"
+# → E:/dataset/Navi/final_thesis_datas/ori_dsl_detect_results/pmd_v1_commits/AvoidInstanceofChecksInCatchClause/3/1_2_labeled_results.json
 
-# DEF数据
-buggy_path = defs_root / tool / checker / group / case / "buggy.java"
-# → E:/dataset/Navi/DEFs/pmd/AvoidInstanceofChecksInCatchClause/3/2/buggy.java
+# DEF数据（case1的buggy/fixed）
+buggy_path = defs_root / tool / checker / group / "1" / "buggy.java"
+# → E:/dataset/Navi/DEFs/pmd/AvoidInstanceofChecksInCatchClause/3/1/buggy.java
 
 # Iteration N的输出
 iteration_output_dir = iter_exp_root / f"iteration_{N}" / task_id
-# → E:/dataset/Navi/final_thesis_datas/iterExp/iteration_1/pmd_v1_commits/AvoidInstanceofChecksInCatchClause/3/2/
+# → E:/dataset/Navi/final_thesis_datas/iterExp/iteration_1/pmd_v1_commits/AvoidInstanceofChecksInCatchClause/3/1/
 
-# Iteration N的检测结果（用户手动放置）
-iteration_detect_result = iteration_output_dir / "detect_results" / f"{dsl_case}_{scanned_case}_labeled_results.json"
-# → E:/dataset/Navi/final_thesis_datas/iterExp/iteration_1/.../detect_results/2_1_labeled_results.json
+# Iteration N的检测结果（case1的refined DSL检测case2，用户手动放置）
+iteration_detect_result = iteration_output_dir / "detect_results" / "1_2_labeled_results.json"
+# → E:/dataset/Navi/final_thesis_datas/iterExp/iteration_1/.../detect_results/1_2_labeled_results.json
+
+# RQ4验证：case1的refined DSL检测case3
+validation_detect_result = iteration_output_dir / "detect_results" / "1_3_labeled_results.json"
+# → E:/dataset/Navi/final_thesis_datas/iterExp/iteration_N/.../detect_results/1_3_labeled_results.json
 ```
 
 ---
@@ -391,8 +407,10 @@ TASK_TIMEOUT = 300              # 单任务超时（秒）
 
 # 实验范围（支持glob模式）
 DSL_PATTERNS = [
+    "codeql_v1_commits/**/*.kirin",
+    "codeql_v2_commits/**/*.kirin",
     "pmd_v1_commits/**/*.kirin",
-    "codeql_v1_commits/**/*.kirin"
+    "pmd_v2_commits/**/*.kirin"
 ]
 
 # 注意：不设置MAX_ITERATIONS，每轮完成后由用户手动启动下一轮
@@ -465,15 +483,20 @@ DSL_PATTERNS = [
   - 收敛曲线（FP数量随迭代变化）
   - 停止原因分布统计
 
-- **RQ4 (不同Checker差异):**
-  - 各Checker的平均收敛轮次
-  - 各Checker的FP消除率对比
-  - 各Checker的Precision/Recall/F1变化趋势
+- **RQ4 (优化效果验证):**
+  - 在case3上对比以下检测结果：
+    - Ground Truth（人工标注的TP/FP）
+    - Baseline（无约束的检测结果）
+    - 原始DSL（从case1提取的pattern）
+    - Refined DSL（迭代优化后的pattern）
+  - 指标：Precision/Recall/F1对比
+  - 分析：优化是否过拟合case2？泛化能力如何？
 
-- **RQ5 (可选：人工检查):**
-  - 生成约束的语法/语义错误率
-  - 需要人工干预的案例统计
-  - LLM生成约束的质量评分
+- **RQ5 (可选：综合分析):**
+  - 不同Checker的优化效果差异（原RQ4）
+  - 生成约束的质量人工检查（原RQ5）
+  - 各Checker的平均收敛轮次
+  - LLM生成约束的语法/语义错误率
 
 ---
 

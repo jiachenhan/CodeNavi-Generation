@@ -10,7 +10,8 @@ from app.refine.prompt_state import (
     PromptState,
     InitialState,
     ExitState,
-    ConstructDSLState
+    ConstructDSLState,
+    ValidateConstraintState
 )
 from interface.llm.llm_api import LLMAPI
 from utils.config import LoggerConfig
@@ -65,13 +66,74 @@ class DSLRefiner:
             _logger.error("DSL refine failed")
             return None
     
+    def _calculate_token_usage(self):
+        """
+        计算本次refine的token使用量（基于对话历史估算）
+        使用tiktoken进行近似计算
+        """
+        try:
+            import tiktoken
+            # 使用gpt-4o的编码器作为通用估算
+            encoding = tiktoken.encoding_for_model("gpt-4o")
+        except Exception as e:
+            _logger.warning(f"Failed to load tiktoken, using fallback estimation: {e}")
+            # 回退到简单估算: 平均4个字符=1个token
+            self._fallback_token_estimation()
+            return
+
+        prompt_tokens = 0
+        completion_tokens = 0
+
+        # 遍历所有步骤的历史
+        for step in RefineStep:
+            history = self.context.get_history(step)
+            for message in history:
+                role = message.get("role", "")
+                content = message.get("content", "")
+                token_count = len(encoding.encode(content))
+
+                if role == "user" or role == "system":
+                    prompt_tokens += token_count
+                elif role == "assistant":
+                    completion_tokens += token_count
+
+        # 更新context
+        self.context.accumulated_prompt_tokens = prompt_tokens
+        self.context.accumulated_completion_tokens = completion_tokens
+        self.context.accumulated_total_tokens = prompt_tokens + completion_tokens
+
+    def _fallback_token_estimation(self):
+        """回退的token估算方法（当tiktoken不可用时）"""
+        prompt_chars = 0
+        completion_chars = 0
+
+        for step in RefineStep:
+            history = self.context.get_history(step)
+            for message in history:
+                role = message.get("role", "")
+                content = message.get("content", "")
+                char_count = len(content)
+
+                if role == "user" or role == "system":
+                    prompt_chars += char_count
+                elif role == "assistant":
+                    completion_chars += char_count
+
+        # 粗略估算: 4个字符 ≈ 1个token
+        self.context.accumulated_prompt_tokens = prompt_chars // 4
+        self.context.accumulated_completion_tokens = completion_chars // 4
+        self.context.accumulated_total_tokens = (prompt_chars + completion_chars) // 4
+
     def serialize_context(self, output_path: Path):
         """
         序列化上下文到JSON文件
-        
+
         Args:
             output_path: 输出文件路径
         """
+        # 计算token使用量
+        self._calculate_token_usage()
+
         data = {
             "dsl_analysis": self.context.dsl_analysis_result,
             "fp_analysis": self.context.fp_analysis_result,
@@ -95,16 +157,21 @@ class DSLRefiner:
                 RefineStep.VALIDATE_CONSTRAINT.value: self.context.validate_constraint_history,
                 RefineStep.CONSTRUCT_DSL.value: self.context.construct_dsl_history,
             },
+            "token_usage": {
+                "accumulated_prompt_tokens": self.context.accumulated_prompt_tokens,
+                "accumulated_completion_tokens": self.context.accumulated_completion_tokens,
+                "accumulated_total_tokens": self.context.accumulated_total_tokens
+            },
             "refined_dsl": self.refined_dsl
         }
-        
+
         if not output_path.parent.exists():
             output_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-        
-        _logger.info(f"Context serialized to {output_path}")
+
+        _logger.info(f"Context serialized to {output_path} (tokens: {self.context.accumulated_total_tokens})")
     
     def load_context_from_json(self, context_path: Path):
         """
@@ -164,8 +231,11 @@ class DSLRefiner:
             # 直接设置状态为ConstructDSLState
             self.prompt_state = ConstructDSLState(self)
             _logger.info("Starting from ConstructDSLState")
+        elif step == RefineStep.VALIDATE_CONSTRAINT:
+            self.prompt_state = ValidateConstraintState(self)
+            _logger.info("Starting from ValidateConstraintState")
         else:
-            raise ValueError(f"Unsupported start step: {step}. Only CONSTRUCT_DSL is supported for now.")
+            raise ValueError(f"Unsupported start step: {step}.")
 
 
 def load_fp_codes_from_results(
@@ -210,7 +280,7 @@ def load_refine_input_from_paths(
     fp_index: int = 0
 ) -> RefineInput:
     """
-    从文件路径加载RefineInput数据
+    从文件路径加载RefineInput数据（仅用于一次测试）
     
     Args:
         dsl_path: DSL文件路径

@@ -34,7 +34,6 @@ except ImportError:
 from app.refine.dsl_refiner import DSLRefiner, load_refine_input_from_paths
 from app.refine.data_structures import RefineStep
 from utils.config import set_config, LoggerConfig
-from tests.conftest import TestDataPaths  # 复用测试路径配置
 
 # 获取 logger
 _logger = LoggerConfig.get_logger(__name__)
@@ -49,25 +48,43 @@ class RefinerDebugger:
     
     def __init__(self):
         """初始化调试器"""
-        # 使用 TestDataPaths 获取路径配置
-        self.test_data_paths = TestDataPaths()
-        
         # 输出目录（在脚本所在目录下）
         self.output_dir = Path(__file__).parent / "refine_output"
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # 定义测试用例路径
+
+        # ===== 配置区域：修改这里来调试不同的任务 =====
+        # 数据根目录
+        root = Path("E:/dataset/Navi")
+        data_root = Path("E:/dataset/Navi/final_thesis_datas")
+
+        from_iter = 0
+        to_iter = 1  # 从iteration_1读取refine_context
+
+        dataset = "pmd_v2_commits"  # 或 "pmd_v1_commits", "codeql_v1_commits" 等
+        checker = "UnitTestShouldUseTestAnnotation"  # checker名称
+        group = "5"  # group编号
+        case = "1"  # case编号
+
+        # 工具名称（根据dataset自动推断，一般不需要改）
+        tool = "pmd" if dataset.startswith("pmd") else "codeql"
+        # ============================================
+
+        # 任务路径（在iterExp中的相对路径）
+        task_path = f"{dataset}/{checker}/{group}/{case}"
+
+        # 构建路径
         self.test_data = {
-            'dsl_path': self.test_data_paths.dsl_root_path / "pmd_v1_commits" / "AvoidInstanceofChecksInCatchClause" / "3" / "2.kirin",
-            'buggy_path': self.test_data_paths.defs_root_path / "pmd" / "AvoidInstanceofChecksInCatchClause" / "3" / "2" / "buggy.java",
-            'fixed_path': self.test_data_paths.defs_root_path / "pmd" / "AvoidInstanceofChecksInCatchClause" / "3" / "2" / "fixed.java",
-            'root_cause_path': self.test_data_paths.defs_root_path / "pmd" / "AvoidInstanceofChecksInCatchClause" / "3" / "2" / "info.json",
-            'fp_results_path': self.test_data_paths.detect_results_root_path / "pmd_v1_commits" / "AvoidInstanceofChecksInCatchClause" / "3" / "2_1_labeled_results.json",
+            'dsl_path': data_root / "iterExp" / "iteration_0" / task_path / "dsl.kirin",
+            'buggy_path': root / "DEFs" / tool / checker / group / case / "buggy.java",
+            'fixed_path': root / "DEFs" / tool / checker / group / case / "fixed.java",
+            'root_cause_path': root / "DEFs" / tool / checker / group / case / "info.json",
+            'fp_results_path': data_root / "iterExp" / "iteration_0" / task_path / "detect_results" / "1_2_labeled_results.json",
         }
-        
+
         # 输出文件路径
         self.refined_dsl_path = self.output_dir / "refined_dsl.kirin"
-        self.context_path = self.output_dir / "refine_context.json"
+        # Context路径：从iterExp的对应任务目录读取
+        self.context_path = data_root / "iterExp" / f"iteration_{to_iter}" / task_path / "refine_context.json"
     
     def check_test_data_files(self) -> bool:
         """检查测试数据文件是否存在"""
@@ -224,7 +241,7 @@ class RefinerDebugger:
         
         # 从构造步骤开始执行
         _logger.info("Starting from CONSTRUCT_DSL step...")
-        refiner.start_from_step(RefineStep.CONSTRUCT_DSL, input_data=input_data)
+        refiner.start_from_step(RefineStep.VALIDATE_CONSTRAINT, input_data=input_data)
         
         # 执行优化（只执行构造 DSL 步骤）
         _logger.info("Running refinement (construct DSL step only)...")
@@ -278,10 +295,11 @@ def main():
     
     args = parser.parse_args()
     
-    # 默认使用 --full
+    # 默认使用 --from-construct
     if not args.full and not args.from_construct:
-        args.full = True
-        _logger.info("No mode specified, using --full by default")
+        # args.full = True
+        args.from_construct = True
+        _logger.info("No mode specified, using --from-construct by default")
     
     try:
         debugger = RefinerDebugger()
