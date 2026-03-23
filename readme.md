@@ -1,12 +1,20 @@
-# DSLGEN: Extracting Bug Patterns from Bug-Fix Examples
+# Bug Pattern Detection: Automated Construction and Refinement
 
 ## 📝 Overview
-This repository contains the implementation of **DSLGEN**,
-a framework for automatically constructing generalizable bug patterns from concrete buggy-fix code examples.
-The extracted patterns are expressed in a domain-specific language (DSL), enabling precise and compact pattern-based analysis.
+This repository contains the implementation of two complementary techniques for bug pattern detection:
+
+### **DSLGEN: Automated Bug Pattern Construction from Code Modifications**
+Addresses the challenge of automatically generating reusable detection rules from individual bug-fix examples. DSLGEN constructs a **modification-associated graph** that performs differential analysis on pre- and post-fix code, organizing edit operations and syntactic structures from both sides to provide a complete foundation for semantic analysis. Building on this, it introduces a **repair-intent-driven semantic analysis mechanism** that infers root causes from repair intentions, identifies defect-related elements, and extracts constraints to transform them into DSL detection patterns.
 
 <p align="center">
-  <img src="05resources/overview.svg" width="700" alt="System Overview">
+  <img src="09appendix/overview-dslgen.svg" width="700" alt="DSLGEN Overview">
+</p>
+
+### **DSLRefiner: Pattern Refinement via Counterexample Feedback**
+Addresses the iterative optimization challenge when rules produce false positives during actual deployment. DSLRefiner is applicable to detection rules from any source (automatically generated or manually written). When false positives occur, it analyzes semantic differences between false-positive instances and correct matches, identifies detection conditions requiring adjustment, performs targeted pattern modifications, and ensures the refined rules do not miss truly problematic code through controlled constraint update strategies.
+
+<p align="center">
+  <img src="09appendix/overview-dslrefiner.pdf" width="700" alt="DSLRefiner Overview">
 </p>
 
 ## 📂 Repository Structure
